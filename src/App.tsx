@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import { ModalProvider } from 'react-modal-hook';
+import { Helmet } from 'react-helmet';
+import AppRouter from 'Routes';
+import { store } from 'Store/store';
+import Modal from 'react-modal';
+import { ReactSVG } from 'react-svg';
+import IconClose from 'Assets/images/icons/close-icon.svg';
 
-function App() {
+const App = () => {
+  useEffect(() => {
+    Modal.setAppElement('#root');
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Helmet>
+        <meta name="description" content="Web site created using create-react-app" />
+        <title>Signaturely</title>
+      </Helmet>
+      <ToastContainer
+        closeButton={<ReactSVG src={IconClose} />}
+        autoClose={6000}
+        draggablePercent={60}
+        newestOnTop
+      />
+      <ModalProvider>
+        <AppRouter />
+      </ModalProvider>
+    </Provider>
   );
-}
+};
 
 export default App;

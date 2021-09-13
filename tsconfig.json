@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
+    "noImplicitAny": false,
     "target": "es5",
+    "baseUrl": "src",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+    "suppressImplicitAnyIndexErrors": true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,6 +24,14 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src"
+    "./src/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "/src/custom.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }
