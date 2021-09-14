@@ -7,10 +7,7 @@ import {
     RequisiteItem,
     RequisiteModal,
 } from 'Components/RequisiteComponents';
-import {
-    RequisiteActionOption,
-    RequisiteActionTypes,
-} from 'Components/RequisiteComponents/RequisiteActionsDropdown/RequisiteActionsDropdown';
+import {RequisiteActionOption, RequisiteActionTypes,} from 'Components/RequisiteComponents/RequisiteActionsDropdown';
 import {Requisite} from 'Interfaces/Requisite';
 import {selectRequisite} from 'Utils/selectors';
 import UIModal from 'Components/UIComponents/UIModal';

@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
 import { formatDate } from 'Utils/formatters';
-import DropDownOptions from 'Components/DropDownOptions/DropDownOptions';
+import DropDownOptions from 'Components/DropDownOptions';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import IconPencil from 'Assets/images/icons/pencil.svg';
 import CrossInCircle from 'Assets/images/icons/cross-in-circle.svg';
 import { ApiKey } from 'Interfaces/ApiKey';
 import { useApiKeyDelete, useApiKeyRecover, useApiKeyRevoke } from 'Hooks/ApiKeys';
 import Toast from 'Services/Toast';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 import { useModal } from 'Hooks/Common';
 import History from 'Services/History';
 interface ApiKeyItemProps {

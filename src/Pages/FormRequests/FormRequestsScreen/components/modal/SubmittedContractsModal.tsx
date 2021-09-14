@@ -6,13 +6,13 @@ import * as _ from 'lodash';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { useDocumentsDelete, useFormRequestGetContracts } from 'Hooks/Document';
 import { selectFormRequestsContracts } from 'Utils/selectors';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import DownloadIcon from 'Assets/images/icons/download-icon.svg';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import Toast from 'Services/Toast';
 import { useDocumentDownload } from 'Hooks/Document';
 import { ReactSVG } from 'react-svg';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 import { useModal } from 'Hooks/Common';
 import IconEye from 'Assets/images/icons/eye-icon.svg';
 import HistoryService from 'Services/History';
@@ -135,7 +135,7 @@ const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps)
                   </div>
                 </div>
 
-                {contracts.map((contract:any) => {
+                {contracts.map(contract => {
                   return (
                     <div key={contract.id} className="table__row table__dataRow">
                       <div className="table__column table__column--text team__column-member">

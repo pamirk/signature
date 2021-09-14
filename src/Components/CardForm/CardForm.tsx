@@ -1,4 +1,4 @@
-import CardFields from 'Components/CardFields/CardFields';
+import CardFields from 'Components/CardFields';
 import CardFieldsMobile from 'Components/CardFields/CardFieldsMobile';
 import UIButton from 'Components/UIComponents/UIButton';
 import { useCreateCard, useUpdateCard } from 'Hooks/Billing';

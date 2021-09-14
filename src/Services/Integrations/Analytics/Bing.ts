@@ -1,4 +1,4 @@
-import { BingTrackerType } from './interfaces';
+import { BingTrackerType } from './Interfaces';
 
 class BingTracker implements BingTrackerType {
   fireRegistrationEvent = () => {

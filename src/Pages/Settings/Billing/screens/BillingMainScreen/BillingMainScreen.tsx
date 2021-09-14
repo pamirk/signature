@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import CardFields from 'Components/CardFields/CardFields';
+import CardFields from 'Components/CardFields';
 import {
   AppSumoBillingTable,
   BillingDetails,
@@ -104,6 +104,7 @@ const BillingMainScreen = () => {
 
   const [showSubscriptionCancelModal, hideSubscriptionCancelModal] = useModal(
     () => (
+      //  @ts-ignore
       <ConfirmModal
         onClose={hideSubscriptionCancelModal}
         isCancellable

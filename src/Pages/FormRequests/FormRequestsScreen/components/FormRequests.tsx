@@ -5,11 +5,11 @@ import classNames from 'classnames';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import IconSort from 'Assets/images/icons/sort.svg';
 
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import { TablePaginationProps } from 'Interfaces/Common';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { SelectableDocument } from 'Interfaces/Document';
-import FormRequestItem from './FormRequestItem/FormRequestItem';
+import FormRequestItem from './FormRequestItem';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import FormRequestsMobile from './FormRequestsMobile';
 import { Document } from 'Interfaces/Document';

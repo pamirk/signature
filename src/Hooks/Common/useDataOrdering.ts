@@ -3,7 +3,7 @@ import lodash from 'lodash';
 import { OrderingDirection } from 'Interfaces/Common';
 
 interface RequestOrdering<TItem, Key extends keyof TItem> {
-  (key:any, direction?:any): { key: Key; direction?: OrderingDirection  };
+  (key, direction?): { key: Key; direction?: OrderingDirection };
 }
 
 export default <TItem, Key extends keyof TItem>(

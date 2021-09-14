@@ -26,9 +26,9 @@ export const formatDate = (dateString: string) => {
   return `${monthNames[monthIndex]} ${day}, ${year}`;
 };
 
-export const trim = (value:string) => value && value.trim();
+export const trim = value => value && value.trim();
 
-export const toLowerCase = (value:string) => value && value.toLowerCase();
+export const toLowerCase = value => value && value.toLowerCase();
 
 export const capitalize = (str: string) => {
   if (!str) return str;
@@ -57,14 +57,14 @@ export const cardNumberMaskedProps = {
     /[\d*]/,
     /[\d*]/,
   ],
-  parse: (value:string) => {
+  parse: value => {
     return value && value.replace(/ /g, '');
   },
 };
 
 export const expirationMaskedProps = {
   mask: [/[\d]/, /[\d]/, ' ', '/', ' ', /[\d]/, /[\d]/, /[\d]/, /[\d]/],
-  parse: (value:string) => {
+  parse: value => {
     return value && value.replace(/ /g, '');
   },
 };
@@ -88,14 +88,14 @@ export const phoneNumberMaskedProps = {
     /\d/,
     /\d/,
   ],
-  parse: (value:string) => {
+  parse: value => {
     return value && value.replace(/[ ()-]+/g, '');
   },
 };
 
 export const phoneCodeMaskedProps = {
   mask: ['+', /\d/, /\d/, /\d/, /\d/],
-  parse: (value:string) => {
+  parse: value => {
     return value && value.replace(/[ ()-]+/g, '');
   },
 };

@@ -29,7 +29,7 @@ import {
 
 import {TemplateUpgradeModal} from 'Components/UpgradeModal';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
-import DropDownOptions from 'Components/DropDownOptions/DropDownOptions';
+import DropDownOptions from 'Components/DropDownOptions';
 import ConfirmModal from 'Components/ConfirmModal';
 
 import IntegrationsIcon from 'Assets/images/icons/integrations-icon.svg';
@@ -42,7 +42,7 @@ import EditableTitle from './EditableTitle';
 import {PlanTypes} from 'Interfaces/Billing';
 import TemplateItemMobileView from './TemplateItemMobileView';
 import useIsMobile from 'Hooks/Common/useIsMobile';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 
 interface TemplateItemProps {
     template: Document;
@@ -78,8 +78,8 @@ const TemplateItem = ({
     const userPlan = useSelector(selectUserPlan);
     const user = useSelector(selectUser) as User;
     const apiPlan = useSelector(selectApiPlan);
-    const apiTemplatesCount: number = useSelector(selectApiTemplatesCount);
-    const commonTemplatesCount: number = useSelector(selectCommonTemplatesCount);
+    const apiTemplatesCount = useSelector(selectApiTemplatesCount);
+    const commonTemplatesCount = useSelector(selectCommonTemplatesCount);
 
     const handleClickRenameTemplate = useCallback(() => {
         setIsEditFormActive(true);
@@ -112,7 +112,10 @@ const TemplateItem = ({
         try {
             await copyTemplate({documentId: template.id});
             Toast.success('Template successfully duplicated!');
-        } catch (error: any) {
+        }
+            //@ts-ignore
+        catch (error: any) {
+
             if (error.type === RequestErrorTypes.QUOTA_EXCEEDED) {
                 return openUpgradeModal();
             }
@@ -133,7 +136,10 @@ const TemplateItem = ({
                 });
                 Toast.success('Template successfully updated!');
                 setIsEditFormActive(false);
-            } catch (error) {
+            }
+                //@ts-ignore
+            catch (error: any) {
+
                 Toast.handleErrors(error);
             }
         },
@@ -144,7 +150,10 @@ const TemplateItem = ({
         try {
             await addTemplateToApi({documentId: template.id});
             Toast.success('Template successfully added to API!');
-        } catch (error) {
+        }
+            //@ts-ignore
+        catch (error: any) {
+
             Toast.handleErrors(error);
         }
     }, [addTemplateToApi, template.id]);
@@ -153,7 +162,10 @@ const TemplateItem = ({
         try {
             await removeTemplateFromApi({documentId: template.id});
             Toast.success('Template successfully removed from API!');
-        } catch (error:any) {
+        }
+            //@ts-ignore
+        catch (error: any) {
+
             if (error.type === RequestErrorTypes.QUOTA_EXCEEDED) {
                 return openUpgradeModal();
             }

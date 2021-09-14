@@ -3,12 +3,12 @@ import classNames from 'classnames';
 import { ReactSVG } from 'react-svg';
 import { UITextFieldProps } from './interfaces/UITextField';
 
-export type UITextInputProps = UITextFieldProps & {
+export type UITextInputProps = UITextFieldProps<HTMLInputElement> & {
   wrapperClassName?: string;
   inputClassName?: string;
 };
 
-function UITextInput(props: UITextInputProps, ref:any) {
+function UITextInput(props: UITextInputProps, ref) {
   const {
     onBlur,
     onFocus,

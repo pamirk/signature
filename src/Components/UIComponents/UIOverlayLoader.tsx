@@ -2,7 +2,6 @@ import React from 'react';
 import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
 
-// @ts-ignore
 import DocumentIcon from 'Assets/images/icons/document.svg';
 
 interface UIOverlayLoaderProps {

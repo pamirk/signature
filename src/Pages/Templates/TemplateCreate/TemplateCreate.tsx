@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { DocumentTypes, DocumentStatuses } from 'Interfaces/Document';
-import TemplateForm from 'Components/TemplateForm/TemplateForm';
+import TemplateForm from 'Components/TemplateForm';
 import { useSelector } from 'react-redux';
 import { selectUserPlan } from 'Utils/selectors';
 import { PlanTypes } from 'Interfaces/Billing';

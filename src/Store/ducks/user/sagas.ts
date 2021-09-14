@@ -103,7 +103,9 @@ function* handleAppSumoSignIn({
     const res = yield call(AuthApiService.appSumoSignIn, token);
     yield call(handleSignIn, res);
     yield put(signInAppSumoUser.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signInAppSumoUser.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -129,7 +131,9 @@ function* handleSignInPrimary({
 
     yield call(handleSignIn, res);
     yield put(signInPrimary.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signInPrimary.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -151,7 +155,9 @@ function* handleSignInTwillio({
 
     yield call(handleSignIn, res);
     yield put(signInTwillio.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signInTwillio.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -174,7 +180,9 @@ function* handleSignInGoogleAuthenticator({
 
     yield call(handleSignIn, res);
     yield put(signInGoogleAuthenticator.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signInGoogleAuthenticator.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -198,7 +206,9 @@ function* handleSignUp({ payload, meta }: ReturnType<typeof signUp.request>) {
     }
     yield call(handleSignIn, res);
     yield put(signUp.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signUp.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -216,7 +226,9 @@ function* handleEmailConfirm({ meta }: ReturnType<typeof confirmEmail.request>) 
     yield put(setIsEmailConfirmed(true));
     yield call(handleSignIn, res);
     yield put(confirmEmail.success(undefined, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(confirmEmail.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -233,7 +245,9 @@ function* handleConfirmationEmailSend({
     yield call(AuthApiService.sendConformationEmail, payload);
 
     yield put(sendConformationEmail.success(undefined, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(sendConformationEmail.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -254,7 +268,9 @@ function* handleCurrentUserGet({ meta }: ReturnType<typeof getCurrentUser.reques
     } else {
       yield put(setUnauthorized());
     }
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(getCurrentUser.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -276,7 +292,9 @@ function* handleSignedGetUrlGet({
     });
 
     yield put(getSignedGetUrl.success(data, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(getSignedGetUrl.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -298,7 +316,9 @@ function* handleSignedGetUrlBulkGet({
     });
 
     yield put(getSignedGetUrlBulk.success(data, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(getSignedGetUrlBulk.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -320,7 +340,9 @@ function* handleSignedGetDownloadUrlGet({
     });
 
     yield put(getSignedGetDownloadUrl.success(data, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(getSignedGetDownloadUrl.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -341,7 +363,9 @@ function* handleSignedPutUrlGet({
     });
 
     yield put(getSignedPutUrl.success(data, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(getSignedPutUrl.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -361,7 +385,9 @@ function* handleSignedPutAssetUrlGet({
     );
 
     yield put(getSignedPutAssetUrl.success(data, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(getSignedPutAssetUrl.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -374,7 +400,9 @@ function* handleRequisitePut({ payload, meta }: ReturnType<typeof putRequisite.r
   try {
     yield call(AWS.putFile, payload);
     yield put(putRequisite.success(undefined, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(putRequisite.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -395,7 +423,9 @@ function* handleCompanyLogoPut({
     }
 
     yield put(putCompanyLogo.success(UploadStatuses.UPLOADED, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(putCompanyLogo.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -413,7 +443,9 @@ function* handleAvatarPut({ payload, meta }: ReturnType<typeof putAvatar.request
     }
 
     yield put(putAvatar.success(UploadStatuses.UPLOADED, meta));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(putAvatar.failure(error, meta));
   } finally {
     if (yield cancelled()) {
@@ -430,7 +462,9 @@ function* handleProfileInfoUpdate({
     const result: User = yield call(UserApiService.updateProfileInfo, payload);
 
     yield put(updateProfileInfo.success(result, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(updateProfileInfo.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -447,7 +481,9 @@ function* handleCompanyInfoUpdate({
     const result: User = yield call(UserApiService.updateCompanyInfo, payload);
 
     yield put(updateCompanyInfo.success(result, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(updateCompanyInfo.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -461,7 +497,9 @@ function* handleAccountDelete({ meta }: ReturnType<typeof deleteAccount.request>
     yield call(UserApiService.deleteAccount);
 
     yield put(deleteAccount.success(undefined, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(deleteAccount.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -475,7 +513,9 @@ function* handleCodeGenerate({ meta, payload }: ReturnType<typeof generateCode.r
     yield call(UserApiService.generateCode, payload);
 
     yield put(generateCode.success(undefined, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(generateCode.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -489,7 +529,9 @@ function* handlePhoneVerify({ meta, payload }: ReturnType<typeof verifyPhone.req
     const user: User = yield call(UserApiService.verifyPhone, payload);
 
     yield put(verifyPhone.success(user, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(verifyPhone.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -506,7 +548,9 @@ function* handleTwillioDisable({
     const user: User = yield call(UserApiService.disableTwillio2fa, payload);
 
     yield put(disableTwillio2fa.success(user, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(disableTwillio2fa.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -523,7 +567,9 @@ function* handleGoogleAuthenticatorDisable({
     const user: User = yield call(UserApiService.disableGoogleAuthenticator, payload);
 
     yield put(disableGoogleAuthenticator.success(user, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(disableGoogleAuthenticator.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -542,7 +588,9 @@ function* handleGoogleCodeVerify({
     const user: User = yield call(UserApiService.verifyGoogleCode, payload);
 
     yield put(verifyGoogleCode.success(user, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(verifyGoogleCode.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -558,7 +606,9 @@ function* handleGoogleAuthenticatorEnable({
     const qrCode: Blob = yield call(UserApiService.enableGoogleAuthenticator);
 
     yield put(enableGoogleAuthenticator.success(qrCode, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(enableGoogleAuthenticator.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -577,7 +627,9 @@ function* handlePasswordChangeEmailSend({
     yield call(AuthApiService.sendPasswordChangeEmail, payload);
 
     yield put(sendPasswordChangeEmail.success(undefined, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(sendPasswordChangeEmail.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -591,7 +643,9 @@ function* handleEmailUpdate({ payload, meta }: ReturnType<typeof updateEmail.req
     const user: User = yield call(AuthApiService.updateEmail, payload);
 
     yield put(updateEmail.success(user, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(updateEmail.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -608,7 +662,9 @@ function* handlePasswordChange({
     const token: UserReducerState['passwordToken'] = yield select(selectPasswordToken);
     yield call(AuthApiService.changePassword, { token, payload });
     yield put(changePassword.success(undefined, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(changePassword.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -638,8 +694,10 @@ function* handleSocketRoomJoin() {
     const user: User = yield select(selectUser);
 
     yield call(SocketService.joinRoom, user.id);
-  } catch (err:any) {
-    console.error('Socket room join error', err);
+  }
+  //@ts-ignore
+    catch (error: any) {
+    console.error('Socket room join error', error);
   }
 }
 
@@ -650,8 +708,10 @@ function* handleAPIUpdatesSubscribeOn({
     const user: User = yield call(UserApiService.subscribeToAPIUpdates);
 
     yield put(subscribeOnAPIUpdates.success(user, { isLeading: true, ...meta }));
-  } catch (err:any) {
-    yield put(subscribeOnAPIUpdates.failure(err, { isLeading: true, ...meta }));
+  }
+  //@ts-ignore
+    catch (error: any) {
+    yield put(subscribeOnAPIUpdates.failure(error, { isLeading: true, ...meta }));
   }
 }
 
@@ -662,8 +722,10 @@ function* handleAPIUpdatesUnsubscribeFrom({
     const user: User = yield call(UserApiService.unsubscribeFromAPIUpdates);
 
     yield put(unsubscribeFromAPIUpdates.success(user, { isLeading: true, ...meta }));
-  } catch (err:any) {
-    yield put(unsubscribeFromAPIUpdates.failure(err, { isLeading: true, ...meta }));
+  }
+  //@ts-ignore
+    catch (error: any) {
+    yield put(unsubscribeFromAPIUpdates.failure(error, { isLeading: true, ...meta }));
   }
 }
 
@@ -680,8 +742,10 @@ function* handleSignersAvatarsGet({
     const normalizedAvatars = lodash.keyBy(userAvatars, 'id');
 
     yield put(getSignersAvatars.success(normalizedAvatars, { isLeading: true, ...meta }));
-  } catch (err:any) {
-    yield put(getSignersAvatars.failure(err, { isLeading: true, ...meta }));
+  }
+  //@ts-ignore
+    catch (error: any) {
+    yield put(getSignersAvatars.failure(error, { isLeading: true, ...meta }));
   }
 }
 
@@ -698,7 +762,9 @@ function* handleSignUpPrepare({
     );
 
     yield put(signUpWithPlanPrepare.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signUpWithPlanPrepare.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {
@@ -720,7 +786,9 @@ function* handleSignUpWithConfrimCode({
     });
 
     yield put(signUpWithConfirmCode.success(res, { ...meta, isLeading: true }));
-  } catch (error:any) {
+  }
+              //@ts-ignore
+            catch (error:any) {
     yield put(signUpWithConfirmCode.failure(error, { ...meta, isLeading: true }));
   } finally {
     if (yield cancelled()) {

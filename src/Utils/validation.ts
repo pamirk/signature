@@ -66,7 +66,7 @@ export const password = <FieldValue extends string>(value?: FieldValue) => {
 
 export const confirmPassword = <FieldValue extends string>(
   value: FieldValue,
-  formValues: any,
+  formValues,
 ) =>
   formValues.password !== value
     ? 'Password and confirmation password do not match'
@@ -75,7 +75,7 @@ export const confirmPassword = <FieldValue extends string>(
 export const email = <FieldValue extends string>(value?: FieldValue) =>
   value && !emailRegExp.test(value) ? 'Invalid email address' : undefined;
 
-export const expirationDate = (value:any) => {
+export const expirationDate = value => {
   if (value && !expirationDateRegExp.test(value)) return 'Invalid date';
   if (value && dayjs(value, 'MM/YYYY').isBefore(dayjs())) {
     return 'Expiration date must be in future';

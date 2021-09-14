@@ -3,7 +3,7 @@ import { SigningUrlPayload } from 'Interfaces/Document';
 import { useCallback, useState } from 'react';
 import Toast from 'Services/Toast';
 import { isNotEmpty } from 'Utils/functions';
-import useSigningUrlGet from './useSigningUrlGet';
+import { useSigningUrlGet } from '.';
 
 export default () => {
   const [getSigningUrl, isLoading] = useSigningUrlGet();
@@ -29,7 +29,7 @@ export default () => {
             return;
           }
 
-          const response:any = await getSigningUrl({ documentId, userId });
+          const response = await getSigningUrl({ documentId, userId });
 
           if (!isNotEmpty(response)) {
             return Toast.error('Something went wrong. Please, try again.');

@@ -1,10 +1,9 @@
 import React, { ReactNode, useMemo } from 'react';
 import ReactSlider from 'react-slick';
-import 'Assets/styles/slick.css';
-import 'Assets/styles/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
-
-import ArrowButton from './components/Arrow/Arrow';
+import ArrowButton from './components/Arrow';
 
 interface SliderProps {
   children: ReactNode;

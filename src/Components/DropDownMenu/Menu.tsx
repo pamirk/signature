@@ -15,7 +15,7 @@ import FormsIcon from 'Assets/images/icons/forms-icon.svg';
 import { ReactSVG } from 'react-svg';
 import { useBeaconRemove, useBodyScrollStop } from 'Hooks/Common';
 import classNames from 'classnames';
-import AccountAvatar from 'Components/AccountAvatar/AccountAvatar';
+import AccountAvatar from 'Components/AccountAvatar';
 import { useSelector } from 'react-redux';
 import { User } from 'Interfaces/User';
 import { selectUser } from 'Utils/selectors';

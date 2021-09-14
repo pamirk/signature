@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import parsePath from 'path-parse';
 import { Field } from 'react-final-form';
 import { SignedUrlResponse, UploadStatuses } from 'Interfaces/Common';
@@ -11,7 +11,7 @@ import { useAvatarPut, useSignedPutAssetUrl } from 'Hooks/User';
 import Toast from 'Services/Toast';
 import { ProfileInfoPayload, UpdateEmailPayload } from 'Interfaces/Profile';
 import { useModal } from 'Hooks/Common';
-import CropModal from 'Components/CropModal/CropModal';
+import CropModal from 'Components/CropModal';
 import ChangeEmailForm from './ChangeEmailForm';
 import useEmailUpdate from 'Hooks/User/useEmailUpdate';
 import useIsMobile from 'Hooks/Common/useIsMobile';

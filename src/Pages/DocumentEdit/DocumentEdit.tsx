@@ -7,7 +7,7 @@ import { selectDocument } from 'Utils/selectors';
 import { Document, DocumentValues, DocumentTypes } from 'Interfaces/Document';
 
 import UISpinner from 'Components/UIComponents/UISpinner';
-import SignForm from 'Components/SignForm/SignForm';
+import SignForm from 'Components/SignForm';
 
 interface DocumentRouteParams {
   documentId: Document['id'];

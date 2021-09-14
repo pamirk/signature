@@ -1,6 +1,6 @@
 import { PlanChangePayload, planTerms } from 'Interfaces/Billing';
 import { GOOGLE_PIXEL_ID } from 'Utils/constants';
-import { AnalyticsEventsProvider } from './interfaces';
+import { AnalyticsEventsProvider } from './Interfaces';
 
 class FacebookPixel implements AnalyticsEventsProvider {
   constructor() {
@@ -19,11 +19,7 @@ class FacebookPixel implements AnalyticsEventsProvider {
     const planTerm = planTerms[plan.type][plan.duration];
     //@ts-ignore
     // eslint-disable-next-line no-undef
-    // fbq('track', 'Subscribe', {
-    //   value: `${(planTerm.cost as number).toPrecision(2)}`,
-    //   currency: 'USD',
-    //   predicted_ltv: '0.00',
-    // });
+    //fbq('track', 'Subscribe', {value: `${(planTerm.cost as number).toPrecision(2)}`, currency: 'USD', predicted_ltv: '0.00',});
   };
 }
 

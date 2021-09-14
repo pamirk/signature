@@ -16,13 +16,13 @@ export const BoxPicker = ({ onPick, onClose, accessToken }: BoxPickerProps) => {
       const filePicker = BoxContentPickerApi.show({
         accessToken: accessToken,
         onCancel: onClose,
-        onPick: (file:any) => {
+        onPick: file => {
           onPick && onPick(file);
 
           onClose && onClose();
         },
         extentions: Object.keys(MIME_TYPES).map(key => key.replace('.', '')),
-        onError: (message:any) => Toast.error(message),
+        onError: message => Toast.error(message),
       });
 
       return () => {

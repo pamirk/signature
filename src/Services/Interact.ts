@@ -45,7 +45,7 @@ class Interact {
     node.setAttribute('size-height', height.toString());
   };
 
-  static readonly dragMoveListener = (event: any, documentScale: number = 1) => {
+  static readonly dragMoveListener = (event, documentScale = 1) => {
     const { target, dx, dy } = event;
 
     const { x: coordX, y: coordY } = Interact.getNodeCoords(target);
@@ -58,7 +58,7 @@ class Interact {
     Interact.setNodeCoords(target, x, y);
   };
 
-  static readonly resizeMoveListener = (event: any, documentScale: number = 1) => {
+  static readonly resizeMoveListener = (event, documentScale = 1) => {
     const target = event.target as HTMLElement;
     const { left: dx, top: dy, width: dWidth, height: dHeight } = event.deltaRect;
     const { width: rectWidth, height: rectHeight } = event.rect;

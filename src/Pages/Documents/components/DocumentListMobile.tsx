@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import History from 'Services/History';
 import { SelectableDocument, Document } from 'Interfaces/Document';
 import { TablePaginationProps } from 'Interfaces/Common';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import UISpinner from '../../../Components/UIComponents/UISpinner';
-import DocumentItem from './DocumentItem/DocumentItem';
+import DocumentItem from './DocumentItem';
 import Toast from 'Services/Toast';
 
 interface DocumentsListMobileProps {

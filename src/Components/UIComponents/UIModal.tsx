@@ -2,7 +2,6 @@ import React from 'react';
 import { UIModalProps } from './interfaces/UIModal';
 import ReactModal from 'react-modal';
 import classNames from 'classnames';
-// @ts-ignore
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 import { ReactSVG } from 'react-svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';

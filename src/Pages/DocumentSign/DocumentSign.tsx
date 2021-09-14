@@ -10,7 +10,7 @@ import { useBeaconRemove, useModal } from 'Hooks/Common';
 import History from 'Services/History';
 import { isNotEmpty } from 'Utils/functions';
 import { Document, DocumentForSigners, SignerOption, Signer } from 'Interfaces/Document';
-import DocumentSignModal from 'Components/DocumentSignModal/DocumentSignModal';
+import DocumentSignModal from 'Components/DocumentSignModal';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { ConfirmCodeModal, DocumentSignView } from './components';
 import SignerSelectModal from './components/SignerSelectModal';

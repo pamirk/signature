@@ -33,16 +33,14 @@ const ReminderModal = ({
   const firstUnfinishedSigner = useMemo(() => {
     if (!isSignersOrdered) return null;
 
-    return orderedSigners.find(signer => !signer.isFinished);
+    return orderedSigners.find((signer:any) => !signer.isFinished);
   }, [orderedSigners, isSignersOrdered]);
-  const [selectableSigners, toggleSignerSelection, selectedSigners] = useSelectableItem(
-    orderedSigners,
-    'id',
-  );
+  // @ts-ignore
+  const [selectableSigners, toggleSignerSelection, selectedSigners] = useSelectableItem(orderedSigners, 'id',);
 
   const handleRemindersSend = useCallback(async () => {
     try {
-      const selectedSignersIds = selectedSigners.map(signer => signer.id);
+      const selectedSignersIds = selectedSigners.map((signer:any) => signer.id);
 
       await sendReminders({ signersIds: selectedSignersIds, documentId });
       onClose();
@@ -61,7 +59,7 @@ const ReminderModal = ({
         </p>
       </div>
       <div className={classNames('reminderModal__options', { mobile: isMobile })}>
-        {selectableSigners.map(selectableSigner => (
+        {selectableSigners.map((selectableSigner:any) => (
           <button
             disabled={
               selectableSigner.isFinished ||

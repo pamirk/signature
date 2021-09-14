@@ -18,7 +18,7 @@ import {selectDocument, selectUser} from 'Utils/selectors';
 import {RecursivePartial, RequestErrorTypes} from 'Interfaces/Common';
 
 import {SuccessSendModal, DocumentForm, ValidationModal} from 'Components/DocumentForm';
-import UpgradeModal from 'Components/UpgradeModal/UpgradeModal';
+import UpgradeModal from 'Components/UpgradeModal';
 
 interface SignFormProps {
     initialValues: DocumentValues;
@@ -73,7 +73,9 @@ function SignForm({initialValues}: SignFormProps) {
             await getAllTemplates({
                 withTeammateTemplates: true,
             });
-        } catch (error) {
+        }
+            //@ts-ignore
+        catch (error: any) {
             Toast.handleErrors(error);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,7 +152,10 @@ function SignForm({initialValues}: SignFormProps) {
                 await sendDocument({documentId: scopedDocument.id});
 
                 return openSuccessModal();
-            } catch (error: any) {
+            }
+                //@ts-ignore
+            catch (error: any) {
+
                 if (error.type === RequestErrorTypes.QUOTA_EXCEEDED) {
                     return openUpgradeModal();
                 }
@@ -174,6 +179,7 @@ function SignForm({initialValues}: SignFormProps) {
     );
 
 
+    // @ts-ignore
     return (
         <div className="signTemplate__wrapper">
             <h1 className="signTemplate__title">Prepare your document for signing</h1>
@@ -184,13 +190,9 @@ function SignForm({initialValues}: SignFormProps) {
                 mutators={{... arrayMutators}}
                 render={(renderProps: FormRenderProps<DocumentValues>) => (
                     // @ts-ignore
-                    <DocumentForm
-                        {... renderProps}
-                        onTemplateSelect={setSelectedTemplateId}
-                        onDocumentCreate={setDocumentId}
-                        document={document}
-                        isDocumentsLoading={isTemplatesLoading}
-                    />
+                    <DocumentForm {... renderProps} onTemplateSelect={setSelectedTemplateId}
+                                  onDocumentCreate={setDocumentId} document={document}
+                                  isDocumentsLoading={isTemplatesLoading}/>
                 )}
             />
         </div>

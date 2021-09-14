@@ -1,5 +1,5 @@
 import React from 'react';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import History from 'Services/History';
 import TeamIcon from 'Assets/images/icons/team-empty-icon.svg';
 

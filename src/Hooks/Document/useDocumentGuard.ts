@@ -6,7 +6,7 @@ import { selectDocument } from 'Utils/selectors';
 
 interface DocumentGuardParams {
   documentId?: Document['id'];
-  onFailure?: (error:any) => void;
+  onFailure?: (error) => void;
   onSuccess?: (document: Document) => void;
 }
 

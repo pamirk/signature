@@ -25,7 +25,7 @@ export default () => {
   return useAsyncAction(async ({ document, pickPreviews }: DocumentFilesGetPayload) => {
     const isDocumentCompleted = document.status === DocumentStatuses.COMPLETED;
 
-    let files:any;
+    let files;
 
     if (document.parts) {
       const sortedDocumentParts = _.orderBy(document.parts, 'order');

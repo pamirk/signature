@@ -1,4 +1,3 @@
-// @ts-ignore
 import loadScript from 'load-script';
 import Axios from 'axios';
 import { ONEDRIVE_SDK_URL, ONEDRIVE_APP_ID } from 'Utils/constants';
@@ -54,11 +53,11 @@ interface OneDriveOpenOptions {
   };
   success?: (result: OneDriveResult) => void;
   cancel?: () => void;
-  error?: (e:any) => void;
+  error?: (e) => void;
 }
 
 interface OneDrive {
-  open(options: OneDriveOpenOptions):any;
+  open(options: OneDriveOpenOptions);
 }
 
 interface LaunchOneDrivePickerParams {
@@ -71,7 +70,7 @@ loadScript(ONEDRIVE_SDK_URL);
 
 class OneDriveApi {
   launchOneDrivePicker = (options: LaunchOneDrivePickerParams) =>
-    new Promise((resolve:any, reject) => {
+    new Promise<void>((resolve, reject) => {
       //@ts-ignore
       const OneDrive: OneDrive = window.OneDrive;
 

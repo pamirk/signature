@@ -32,12 +32,12 @@ import { ApiKey } from 'Interfaces/ApiKey';
 import { RequestHistoryItem } from 'Interfaces/RequestsHistory';
 import { Contract } from 'Interfaces/Contract';
 interface Reselector<ReturnType> {
-  (state: any, props: any): ReturnType;
+  (state, props): ReturnType;
 }
 
 export const selectState = (state: RootState) => state;
 
-export const selectProps = (state: RootState, props:any) => props;
+export const selectProps = (state: RootState, props) => props;
 
 export const selectUser = (state: RootState): User => state.user;
 

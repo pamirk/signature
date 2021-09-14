@@ -18,7 +18,6 @@ import { checkIfDateOrText } from 'Utils/functions';
 import UISelect from 'Components/UIComponents/UISelect';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
 
-// @ts-ignore
 import RemoveIcon from 'Assets/images/icons/remove-icon.svg';
 import { UpdateDocumentField } from 'Hooks/DocumentFields/useDocumentFieldUpdate';
 import { DeleteDocumentField } from 'Hooks/DocumentFields/useDocumentFieldDelete';
@@ -162,7 +161,7 @@ const FieldItemOptions = ({
           <UITextArea
             value={field.placeholder}
             placeholder="Enter your custom placeholder here"
-            onChange={(event:any) => handlePlaceholderChange(event.target.value)}
+            onChange={event => handlePlaceholderChange(event.target.value)}
             onFocus={onStartPlaceholderTyping}
             onBlur={onStopPlaceholderTyping}
           />

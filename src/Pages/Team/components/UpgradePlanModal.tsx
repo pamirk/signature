@@ -3,7 +3,7 @@ import { Form } from 'react-final-form';
 import UIModal from 'Components/UIComponents/UIModal';
 import UIButton from 'Components/UIComponents/UIButton';
 import { CardFormValues, PlanDurations, PlanTypes } from 'Interfaces/Billing';
-import CardFields from 'Components/CardFields/CardFields';
+import CardFields from 'Components/CardFields';
 import { useCreateCard, usePlanChange } from 'Hooks/Billing';
 import { FacebookPixel, DataLayerAnalytics } from 'Services/Integrations';
 import Toast from 'Services/Toast';

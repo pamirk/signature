@@ -33,7 +33,7 @@ const TextField = (
     fieldColor,
     signer,
   }: TextFieldProps,
-  ref:any,
+  ref,
 ) => {
   const signerName = signer?.name || signer?.role;
 

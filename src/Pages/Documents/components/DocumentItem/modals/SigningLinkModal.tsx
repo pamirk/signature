@@ -8,7 +8,6 @@ import SignerItemLabel from '../../SignerItemLabel';
 import * as _ from 'lodash';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
-// @ts-ignore
 import CopyClipboardIcon from 'Assets/images/icons/download-icon.svg';
 
 interface SigningLinkModalProps {

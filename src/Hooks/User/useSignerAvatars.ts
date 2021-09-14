@@ -4,7 +4,7 @@ import { NormalizedEntity } from 'Interfaces/Common';
 import Toast from 'Services/Toast';
 import useSignersAvatarsGet from './useSignersAvatarsGet';
 
-export default (documentId:any) => {
+export default documentId => {
   const [userAvatars, setUserAvatars] = useState<NormalizedEntity<UserAvatar> | {}>({});
   const [getSignersAvatars, isLoading] = useSignersAvatarsGet();
 

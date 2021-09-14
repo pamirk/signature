@@ -19,7 +19,7 @@ import { selectUser } from 'Utils/selectors';
 import { User } from 'Interfaces/User';
 import { PlanTypes } from 'Interfaces/Billing';
 import { Avatar } from 'Components/Avatar/Avatar';
-import AccountAvatar from 'Components/AccountAvatar/AccountAvatar';
+import AccountAvatar from 'Components/AccountAvatar';
 
 export interface DropDownUserProps {
   handleLogout: () => void;

@@ -4,7 +4,6 @@ import { RequisiteType } from 'Interfaces/Requisite';
 
 import UISpinner from 'Components/UIComponents/UISpinner';
 
-// @ts-ignore
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 
 interface RequisiteModalDrawProps {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-// @ts-ignore
 import Logo from 'Assets/images/logo.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';

@@ -23,10 +23,9 @@ import { RequisiteModal, RequisiteAutoGenModal } from 'Components/RequisiteCompo
 import UIButton from 'Components/UIComponents/UIButton';
 import { UIAddButton } from 'Components/UIComponents/UIAddButton';
 import UIModal from 'Components/UIComponents/UIModal';
-import RequisiteTabItem from '../RequisiteTabItem/RequisiteTabItem';
-import RequisiteListItem from './RequisiteListItem/RequisiteListItem';
+import RequisiteTabItem from '../RequisiteTabItem';
+import RequisiteListItem from './RequisiteListItem';
 
-// @ts-ignore
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 
 interface RequisiteSelectModalProps {
@@ -63,10 +62,10 @@ const RequisiteSelectModal = ({
     () => (type === RequisiteType.SIGN ? selectSignatures : selectInitials),
     [type],
   );
-  const requisites: any = useSelector(requisitesSelector);
+  const requisites = useSelector(requisitesSelector);
 
   const filteredRequisites = useMemo(() => {
-    return requisites.filter((requisite:any) => requisite.valueType === activeTab);
+    return requisites.filter(requisite => requisite.valueType === activeTab);
   }, [requisites, activeTab]);
 
   const siblingRequisite = useSelector(state =>
@@ -236,7 +235,7 @@ const RequisiteSelectModal = ({
               )}
             >
               {filteredRequisites.length ? (
-                filteredRequisites.map((requisite:any) => (
+                filteredRequisites.map(requisite => (
                   <RequisiteListItem
                     key={requisite.id}
                     onItemClick={setSelectedRequisite}

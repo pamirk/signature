@@ -1,5 +1,5 @@
 import React from 'react';
-import ConfirmModal, { ConfirmModalProps } from 'Components/ConfirmModal/ConfirmModal';
+import ConfirmModal, { ConfirmModalProps } from 'Components/ConfirmModal';
 
 interface TermsModalProps
   extends Pick<ConfirmModalProps, 'onConfirm' | 'onCancel' | 'onClose'> {

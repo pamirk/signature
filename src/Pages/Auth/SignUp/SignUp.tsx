@@ -12,7 +12,7 @@ import {
   isUserResponseData,
 } from 'Utils/typeGuards';
 
-import SignUpForm from 'Components/AuthForm/SignUpForm/SignUpForm';
+import SignUpForm from 'Components/AuthForm/SignUpForm';
 import Slider from 'Components/Slider';
 import TestimonialItem, { TestimonialItemProps } from './components/TestimonialItem';
 

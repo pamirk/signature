@@ -29,7 +29,7 @@ import {
 } from 'Utils/formatters';
 import { OrderingDirection } from 'Interfaces/Common';
 import UIPaginator from 'Components/UIComponents/UIPaginator';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 import { DocumentSearch } from './components/DocumentSearch';
 import DocumentsListMobile from './components/DocumentListMobile';
 import DocumentsList from './components/DocumentsList';

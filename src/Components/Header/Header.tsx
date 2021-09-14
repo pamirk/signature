@@ -4,7 +4,7 @@ import { ReactSVG } from 'react-svg';
 import { Link } from 'react-router-dom';
 import Logo from 'Assets/images/logo.svg';
 import { useLogout } from 'Hooks/Auth';
-import DropDownUser from '../DropDownUser/DropDownUser';
+import DropDownUser from '../DropDownUser';
 import { useSelector } from 'react-redux';
 import { selectUser } from 'Utils/selectors';
 import { User } from 'Interfaces/User';
@@ -12,7 +12,7 @@ import { PlanTypes } from 'Interfaces/Billing';
 
 import UIButton from 'Components/UIComponents/UIButton';
 import HelpIcon from 'Assets/images/icons/help-icon.svg';
-import DropDownMenu from 'Components/DropDownMenu/DropDownMenu';
+import DropDownMenu from 'Components/DropDownMenu';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 
 export interface HeaderProps {

@@ -1,6 +1,6 @@
-import DebounceInput from 'Components/DebounceInput/DebounceInput';
+import DebounceInput from 'Components/DebounceInput';
 import UIButton from 'Components/UIComponents/UIButton';
-import UIDatePicker from 'Components/UIComponents/UIDatePicker/UIDatePicker';
+import UIDatePicker from 'Components/UIComponents/UIDatePicker';
 import UIPaginator from 'Components/UIComponents/UIPaginator';
 import { usePagination } from 'Hooks/Common';
 import React from 'react';

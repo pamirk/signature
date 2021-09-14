@@ -1,6 +1,5 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
-// @ts-ignore
 import ArrowIcon from 'Assets/images/icons/select-arrow-icon.svg';
 import classNames from 'classnames';
 

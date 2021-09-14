@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import { ReactSVG } from 'react-svg';
 import UITextInput from 'Components/UIComponents/UITextInput';
 import Toast from 'Services/Toast';
-// @ts-ignore
 import IconCopy from 'Assets/images/icons/copy-icon.svg';
 
 interface SigningLinkModalProps {

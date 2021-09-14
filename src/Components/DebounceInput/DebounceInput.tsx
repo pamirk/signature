@@ -4,7 +4,7 @@ import UITextInput from 'Components/UIComponents/UITextInput';
 
 interface DebounceInputProps {
   placeholder: string;
-  onChange: (value:any) => void;
+  onChange: (value) => void;
   icon?: string;
 }
 

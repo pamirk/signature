@@ -1,5 +1,5 @@
 import { createReducer } from 'typesafe-actions';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import { User } from 'Interfaces/User';
 import {
   signIn,

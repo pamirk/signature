@@ -8,7 +8,7 @@ import {
   RequisiteActionsDropdown,
   RequisiteItem,
 } from 'Components/RequisiteComponents';
-import { RequisiteActionTypes } from 'Components/RequisiteComponents/RequisiteActionsDropdown/RequisiteActionsDropdown';
+import { RequisiteActionTypes } from 'Components/RequisiteComponents/RequisiteActionsDropdown';
 
 interface RequisiteListItemProps {
   requisite: Requisite;

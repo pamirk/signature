@@ -31,7 +31,7 @@ export default (documentItem: Document) => {
         key: documentFileKey,
       })) as SignedUrlResponse;
 
-      let file:any = await downloadFile(signedUrl.result);
+      let file = await downloadFile(signedUrl.result);
       if (file.type !== 'application/pdf')
         file = file.slice(0, file.size, 'application/pdf');
 

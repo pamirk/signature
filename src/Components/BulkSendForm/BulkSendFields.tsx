@@ -64,7 +64,9 @@ const BulkSendFields = ({
         setUploadError(null);
         const parsedFileData = await parseFile(file, rowParsingLimit, columnParsingLimit);
         setParsedFileData(parsedFileData);
-      } catch (error:any) {
+      }
+      //@ts-ignore
+      catch (error:any) {
         setUploadError(error.message || 'Failed to upload');
         handleSignersChange(undefined);
         setParsedFileData(undefined);

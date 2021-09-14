@@ -12,7 +12,7 @@ import PasteIcon from 'Assets/images/icons/paste-icon.svg';
 import { DocumentActions } from 'Components/DocumentForm/DocumentForm';
 
 export interface ModalHeaderProps {
-  onScaleChange: (number:any) => void;
+  onScaleChange: (number) => void;
   handleSubmit: () => void;
   handleClose: () => void;
   documentScale: number;

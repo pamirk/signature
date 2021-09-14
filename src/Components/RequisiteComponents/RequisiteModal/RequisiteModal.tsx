@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { ReactSVG } from 'react-svg';
 import SignaturePad from 'signature_pad';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import Toast from 'Services/Toast';
 import {
   Requisite,
@@ -20,7 +20,7 @@ import {
 import { useToggler } from 'Hooks/Common';
 import { useRequisitePayloadGet } from 'Hooks/Requisite';
 
-import RequisiteTabItem from '../RequisiteTabItem/RequisiteTabItem';
+import RequisiteTabItem from '../RequisiteTabItem';
 import UIButton from 'Components/UIComponents/UIButton';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
 import {
@@ -29,7 +29,6 @@ import {
   RequisiteModalUpload,
 } from './components';
 
-// @ts-ignore
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';

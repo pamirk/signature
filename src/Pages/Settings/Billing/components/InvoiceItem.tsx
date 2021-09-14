@@ -2,7 +2,6 @@ import React from 'react';
 import { Invoice } from 'Interfaces/Billing';
 import { formatDate } from 'Utils/formatters';
 import { ReactSVG } from 'react-svg';
-// @ts-ignore
 import DownloadIcon from 'Assets/images/icons/download-icon.svg';
 
 interface InvoiceItemProps {

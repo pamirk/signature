@@ -34,7 +34,7 @@ export default <TItem, Key extends keyof TItem>(items: TItem[], idKey: Key) => {
     (targetItemId: TItem[Key]) => {
       const newItem = items.find(item => item[idKey] === targetItemId);
 
-      let newSelectedItems:any;
+      let newSelectedItems;
 
       const existsSelectedItems = selectedItems.filter(
         item => item[idKey] === targetItemId,
@@ -55,7 +55,7 @@ export default <TItem, Key extends keyof TItem>(items: TItem[], idKey: Key) => {
         targetItemIds.find(targetItemId => item[idKey] === targetItemId),
       );
 
-      let newSelectedItems:any;
+      let newSelectedItems;
 
       const isAllSelected = targetItemIds.every(targetItemId =>
         selectedItems.find(item => item[idKey] === targetItemId),

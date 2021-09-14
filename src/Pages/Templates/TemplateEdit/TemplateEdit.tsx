@@ -8,7 +8,7 @@ import { selectDocument } from 'Utils/selectors';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { useTemplateReplicate, useDocumentGuard } from 'Hooks/Document';
 import Toast from 'Services/Toast';
-import TemplateForm from 'Components/TemplateForm/TemplateForm';
+import TemplateForm from 'Components/TemplateForm';
 
 interface TemplateRouteParams {
   templateId: Document['id'];

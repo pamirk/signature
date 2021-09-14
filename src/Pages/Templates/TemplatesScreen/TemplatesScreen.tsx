@@ -19,7 +19,7 @@ import {
   useSelectableItem,
 } from 'Hooks/Common';
 import { OrderingDirection } from 'Interfaces/Common';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 import {
   formatDateStringToEndDay,
   formatDateStringToStartDay,
@@ -28,9 +28,9 @@ import {
 import UIButton from 'Components/UIComponents/UIButton';
 import History from 'Services/History';
 import IconSearch from 'Assets/images/icons/search.svg';
-import UIDatePicker from 'Components/UIComponents/UIDatePicker/UIDatePicker';
+import UIDatePicker from 'Components/UIComponents/UIDatePicker';
 import UIPaginator from 'Components/UIComponents/UIPaginator';
-import DebounceInput from 'Components/DebounceInput/DebounceInput';
+import DebounceInput from 'Components/DebounceInput';
 import { useDocumentsGet, useDocumentsDelete } from 'Hooks/Document';
 import { Document, DocumentStatuses, DocumentTypes } from 'Interfaces/Document';
 import { PlanTypes } from 'Interfaces/Billing';
@@ -97,7 +97,7 @@ const TemplatesScreen = ({ match }: RouteChildrenProps<statusType>) => {
   const handleDeleteTemplates = useCallback(
     async (templateIds?: Document['id'][]) => {
       const { from, to }:any = selectedDates || {};
-      const { key, direction } = orderingConfig;
+      const { key, direction }:any = orderingConfig;
       const orderingDirection = direction.toString().toUpperCase();
       templateIds = templateIds || selectedItems.map(item => item.id);
       try {
@@ -218,7 +218,7 @@ const TemplatesScreen = ({ match }: RouteChildrenProps<statusType>) => {
 
   const handleGetTemplates = useCallback(async () => {
     const { from, to }:any = selectedDates || {};
-    const { key, direction } = orderingConfig;
+    const { key, direction }:any = orderingConfig;
     const orderingDirection = direction.toString().toUpperCase();
 
     try {

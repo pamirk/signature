@@ -3,7 +3,6 @@ import useSendEmailConfirmation from 'Hooks/Auth/useSendConfirmationEmail';
 
 import { useBeaconRemove } from 'Hooks/Common';
 import { ReactSVG } from 'react-svg';
-// @ts-ignore
 import SignUpConfirmImg from 'Assets/images/bg/signUpConfirm.svg';
 import UIButton from 'Components/UIComponents/UIButton';
 import Toast from 'Services/Toast';

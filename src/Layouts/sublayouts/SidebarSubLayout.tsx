@@ -1,7 +1,7 @@
 import React from 'react';
 import { WrapperProps } from 'Interfaces/Common';
 
-import Sidebar from 'Components/Sidebar/Sidebar';
+import Sidebar from 'Components/Sidebar';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
 

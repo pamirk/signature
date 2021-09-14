@@ -53,7 +53,9 @@ function FileField({
 
         setUploadError(null);
         onUploadSuccess();
-      } catch (error:any) {
+      }
+      //@ts-ignore
+      catch (error:any) {
         setUploadError('Failed to upload');
         onUploadFailure(error);
       }

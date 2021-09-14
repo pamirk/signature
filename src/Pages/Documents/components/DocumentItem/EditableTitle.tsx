@@ -7,7 +7,7 @@ import { composeValidators } from 'Utils/functions';
 
 interface RenameTitleFormProps {
   documentTitle: string;
-  onSubmit: ({ title: string }:any) => OnSubmitReturnType;
+  onSubmit: ({ title: string }) => OnSubmitReturnType;
 }
 const EditableTitle = ({ documentTitle, onSubmit }: RenameTitleFormProps) => {
   return (

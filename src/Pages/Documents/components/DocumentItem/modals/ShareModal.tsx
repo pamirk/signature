@@ -13,7 +13,6 @@ import UIButton from 'Components/UIComponents/UIButton';
 import UITextInput from 'Components/UIComponents/UITextInput';
 import UISpinner from 'Components/UIComponents/UISpinner';
 
-// @ts-ignore
 import IconCopy from 'Assets/images/icons/copy-icon.svg';
 
 interface ShareModalProps {

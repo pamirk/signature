@@ -6,10 +6,10 @@ import { DocumentFieldShape, DocumentFieldTypes } from 'Interfaces/DocumentField
 import { capitalize } from 'Utils/formatters';
 
 export interface FieldBarItemProps {
-  handleSelectField: (string:any) => void;
+  handleSelectField: (string) => void;
   selectedFieldType?: string;
   fieldShape: DocumentFieldShape;
-  onCursorMove: (event:any, fieldType: DocumentFieldTypes) => void;
+  onCursorMove: (event, fieldType: DocumentFieldTypes) => void;
   disabled?: boolean;
 }
 

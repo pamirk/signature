@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import DayPicker, { RangeModifier, DateUtils } from 'react-day-picker';
 import { ReactSVG } from 'react-svg';
-// @ts-ignore
 import useDropdown from 'use-dropdown';
 import classNames from 'classnames';
 import ArrowIcon from 'Assets/images/icons/select-arrow-icon.svg';
@@ -90,12 +89,16 @@ const UIDatePicker = ({
     if (onCancel) onCancel();
   };
 
-  // @ts-ignore
-  const currentValue = value && (isDate(value) ? value.toLocaleDateString() : `${value.from.toLocaleDateString()} - ${value.to.toLocaleDateString()}`);
+  const currentValue =
+    value &&
+    (isDate(value)
+      ? value.toLocaleDateString()
+        //@ts-ignore
+      : `${value.from.toLocaleDateString()} - ${value.to.toLocaleDateString()}`);
   const rangeDays = selectedDateRange
     ? [selectedDateRange.from, selectedDateRange.to]
     : [selectedDate];
-  const modifiers:any = {
+  const modifiers: any = {
     highlighted: [...rangeDays],
     inRange: selectedDateRange,
     saturday: { daysOfWeek: [6] },

@@ -7,7 +7,7 @@ import { phoneNumberMaskedProps, phoneCodeMaskedProps } from 'Utils/formatters';
 import { composeValidators } from 'Utils/functions';
 
 export interface PhoneVerificationFieldMobileViewProps {
-  handleVerify:any;
+  handleVerify;
 }
 
 const PhoneVerificationFieldMobileView = ({

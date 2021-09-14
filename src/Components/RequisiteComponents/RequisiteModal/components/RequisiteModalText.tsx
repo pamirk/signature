@@ -8,7 +8,7 @@ import { useRequisiteTextRef } from 'Hooks/Requisite';
 
 interface RequisiteModalTextProps {
   fontFamilyType: string;
-  handleSelect: (string:any) => void;
+  handleSelect: (string) => void;
   handleOnChange: (
     requisiteType: RequisiteType,
   ) => (event: React.ChangeEvent<HTMLInputElement>) => void;

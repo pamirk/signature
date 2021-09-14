@@ -4,9 +4,8 @@ import History from 'Services/History';
 import { Document } from 'Interfaces/Document';
 import { selectSignToken, selectUser, selectDocument } from 'Utils/selectors';
 import { parseJwtToken } from 'Utils/functions';
-import LoginModal from './components/LoginModal/LoginModal';
-import SignUpModal from './components/SignUpModal/SignUpModal';
-import SuccessSendModal from 'Components/DocumentForm/SuccessSendModal';
+import { LoginModal, SignUpModal } from './components';
+import { SuccessSendModal } from 'Components/DocumentForm';
 
 enum ModalType {
   AUTHORIZED = 'Authorized',

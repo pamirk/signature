@@ -3,9 +3,7 @@ import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
 import { RequisiteType } from 'Interfaces/Requisite';
 
-// @ts-ignore
 import UploadIcon from 'Assets/images/icons/upload-icon.svg';
-// @ts-ignore
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 
 interface RequisiteModalUploadProps {

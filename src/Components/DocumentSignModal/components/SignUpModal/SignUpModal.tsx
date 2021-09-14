@@ -8,8 +8,7 @@ import {
 import { useDocumentDownload } from 'Hooks/Document';
 
 import UIModal from 'Components/UIComponents/UIModal';
-import PreviewDocumentSide from './components/PreviewDocumentSide/PreviewDocumentSide';
-import SignUpSide from './components/SignUpSide/SignUpSide';
+import { PreviewDocumentSide, SignUpSide } from './components';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
 

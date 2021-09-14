@@ -17,7 +17,7 @@ import {
   useSelectableItem,
 } from 'Hooks/Common';
 import { OrderingDirection } from 'Interfaces/Common';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 import {
   formatDateStringToEndDay,
   formatDateStringToStartDay,
@@ -25,12 +25,11 @@ import {
 } from 'Utils/formatters';
 import UIButton from 'Components/UIComponents/UIButton';
 import History from 'Services/History';
-// @ts-ignore
 import IconSearch from 'Assets/images/icons/search.svg';
-import UIDatePicker from 'Components/UIComponents/UIDatePicker/UIDatePicker';
+import UIDatePicker from 'Components/UIComponents/UIDatePicker';
 import UIPaginator from 'Components/UIComponents/UIPaginator';
 import UISelect from 'Components/UIComponents/UISelect';
-import DebounceInput from 'Components/DebounceInput/DebounceInput';
+import DebounceInput from 'Components/DebounceInput';
 import { useDocumentsGet, useDocumentsDelete } from 'Hooks/Document';
 import { DocumentStatuses, DocumentTypes } from 'Interfaces/Document';
 import { PlanTypes } from 'Interfaces/Billing';
@@ -38,7 +37,7 @@ import { TemplateUpgradeModal } from 'Components/UpgradeModal';
 import { User, UserRoles } from 'Interfaces/User';
 import { Billet } from 'Pages/Settings/Company/components';
 import { useSubscriptionDataGet } from 'Hooks/Billing';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import { Document } from 'Interfaces/Document';
 
 type selectedPage = { selected: number };

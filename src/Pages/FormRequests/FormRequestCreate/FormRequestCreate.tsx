@@ -3,7 +3,7 @@ import { DocumentTypes, DocumentStatuses } from 'Interfaces/Document';
 import { useSelector } from 'react-redux';
 import { selectUser, selectUserPlan } from 'Utils/selectors';
 import { PlanTypes } from 'Interfaces/Billing';
-import FormRequestForm from 'Components/FormRequestsForm/FormRequestForm';
+import FormRequestForm from 'Components/FormRequestsForm';
 import History from 'Services/History';
 import { User } from 'Interfaces/User';
 

@@ -11,8 +11,10 @@ import useAvailableSignersGet from "./useAvailableSignersGet";
 import useDocumentSigning from "./useDocumentSigning";
 import useSignatoryOpenedSend from "./useSignatoryOpenedSend";
 import useDocumentSignInit from "./useDocumentSignInit";
+import useSigningUrlGet from "./useSigningUrlGet";
 
 export {
+    useSigningUrlGet,
     useDocumentSignInit,
     useSignerDocumentGet,
     useAvailableSignersGet,

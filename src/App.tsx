@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { ModalProvider } from 'react-modal-hook';
 import { Helmet } from 'react-helmet';
 import AppRouter from 'Routes';
-import { store } from 'Store/store';
+import { store } from 'Store';
 import Modal from 'react-modal';
 import { ReactSVG } from 'react-svg';
 import IconClose from 'Assets/images/icons/close-icon.svg';

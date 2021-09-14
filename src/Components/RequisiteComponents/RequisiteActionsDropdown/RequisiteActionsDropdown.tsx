@@ -1,5 +1,4 @@
 import React from 'react';
-// @ts-ignore
 import useDropdown from 'use-dropdown';
 import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';

@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { FieldValidator, FORM_ERROR } from 'final-form';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import dayjs from 'dayjs';
 import { START_WATCH_PROMISIFIED_ACTION } from 'Store/actionTypes';
 import { Action, DatePipeOptions } from 'Interfaces/Common';
@@ -22,8 +22,8 @@ export const checkPermission = (
   userRole: UserRoles,
   allowedRoles?: Array<UserRoles> | UserRoles,
 ): boolean => {
-  return isArray(allowedRoles)
-    ? allowedRoles.includes(userRole)
+  // @ts-ignore
+  return isArray(allowedRoles) ? allowedRoles.includes(userRole)
     : allowedRoles === undefined || userRole === allowedRoles;
 };
 
@@ -57,7 +57,7 @@ export const parseCsvByStep = (file: File, rowLimit?: number, columnLimit?: numb
 
   return new Promise<string[][]>((resolve, reject) => {
     Papa.parse(file, {
-      step: (row:any, parser:any) => {
+      step: (row, parser) => {
         if (rowLimit && counter > rowLimit) {
           reject(new Error(`Maximum number of rows is ${rowLimit}`));
           parser.abort();
@@ -185,9 +185,9 @@ export const openPopupCenter = (
   ) as Window;
 };
 
-export const mapSubmissionErrors = (errors:any) => {
+export const mapSubmissionErrors = errors => {
   let result = {};
-  errors.forEach((error:any) => {
+  errors.forEach(error => {
     result = {
       ...result,
       [error.property]:
@@ -201,7 +201,7 @@ export const mapSubmissionErrors = (errors:any) => {
   return result;
 };
 
-export const processSubmissionErrors = (error:any) => {
+export const processSubmissionErrors = error => {
   if (error.errors && Array.isArray(error.errors)) {
     return mapSubmissionErrors(error.errors);
   }
@@ -245,7 +245,7 @@ export function createAutoCorrectedDatePipe(
     .split(/[^DMY]+/)
     .sort((a, b) => formatOrder.indexOf(a) - formatOrder.indexOf(b));
 
-  return function(conformedValue:any) {
+  return function(conformedValue) {
     const dateValue = dayjs(conformedValue);
     const todayDate = dayjs(dayjs(Date.now()).format(dateFormat));
 
@@ -253,7 +253,7 @@ export function createAutoCorrectedDatePipe(
       return false;
     }
 
-    const indexesOfPipedChars: number[] = [];
+    const indexesOfPipedChars = [];
     const maxValue = { DD: 31, MM: 12, YY: maxYY, YYYY: maxYYYY };
     const minValue = { DD: 1, MM: 1, YY: minYY, YYYY: minYYYY };
     const conformedValueArr = conformedValue.split('');

@@ -44,7 +44,7 @@ const BillingPlanTableMobileView = ({
       <div className="billing__plan-info table__row billing__table-row--borderless settings__text settings__text--bold settings__text--default-size">
         Plan Information
       </div>
-      {planInformationItems.map((item:any) => (
+      {planInformationItems.map(item => (
         <div key={item.name} className="billing__table-row table__row">
           <div className="billing__table-column billing__table-column--name">
             {item.name}

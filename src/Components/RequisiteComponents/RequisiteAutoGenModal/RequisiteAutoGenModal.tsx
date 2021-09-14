@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { ReactSVG } from 'react-svg';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import { fontFamilyByValue } from 'Services/Fonts';
 import Toast from 'Services/Toast';
 import {
@@ -15,7 +15,6 @@ import { useRequisitesCreate, useRequisitesPayloadCreation } from 'Hooks/Requisi
 import UICheckbox from 'Components/UIComponents/UICheckbox';
 import UIButton from 'Components/UIComponents/UIButton';
 
-// @ts-ignore
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 
 const textFontSize = 300;

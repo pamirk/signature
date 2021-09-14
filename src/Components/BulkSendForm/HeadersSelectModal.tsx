@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import ConfirmModal from '../ConfirmModal';
+import ConfirmModal from 'Components/ConfirmModal';
 import UISelect from 'Components/UIComponents/UISelect';
 import { BulkSendSigner, SignerColumnIndexes } from 'Interfaces/Document';
 

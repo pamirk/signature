@@ -40,7 +40,7 @@ const FieldItemView = (
     isFilled = false,
     ...restProps
   }: FieldItemViewProps,
-  ref:any,
+  ref,
 ) => {
   const fieldColorClassName = useMemo(
     () =>

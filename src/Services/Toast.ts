@@ -1,10 +1,10 @@
-import { toast, Id as ToastId, ToastOptions, ToastContent, } from 'react-toastify';
+import { toast, ToastId, ToastOptions, ToastContent } from 'react-toastify';
 import { HttpStatus } from 'Interfaces/HttpStatusEnum';
 
 class Toast {
   success = (message: ToastContent) => toast.success(message);
 
-  handleErrors = (error:any) => {
+  handleErrors = error => {
     if (error.statusCode === HttpStatus.UNAUTHORIZED) return;
 
     return this.error(error.message);

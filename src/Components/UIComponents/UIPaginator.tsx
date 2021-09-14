@@ -2,7 +2,7 @@ import React from 'react';
 import ReactPaginate from 'react-paginate';
 
 interface PaginatorProps {
-  onPageChange?: (any:any) => void;
+  onPageChange?: (any) => void;
   initialPage?: number;
   pageCount?: number;
 }

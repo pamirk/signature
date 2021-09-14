@@ -35,7 +35,7 @@ import { User, UserRoles } from 'Interfaces/User';
 import DropDownSigners from './DropDownSigners';
 import DocumentItemMobileView from './DocumentItemMobileView';
 import useIsMobile from 'Hooks/Common/useIsMobile';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 
 interface DocumentItemProps {
   document: Document;

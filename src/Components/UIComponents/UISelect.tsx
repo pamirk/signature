@@ -46,12 +46,12 @@ function UISelect<TValue>({
 
   const { label } = selectedOption;
 
-  const addItem = (item:any) => {
+  const addItem = item => {
     handleSelect(item.value);
     close();
   };
 
-  const onClear = (e:any) => {
+  const onClear = e => {
     e.stopPropagation();
     handleSelect(undefined);
   };

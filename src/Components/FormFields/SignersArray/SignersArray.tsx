@@ -19,7 +19,7 @@ interface IsDepetablePredicateArgument {
 }
 
 interface SignersArrayProps extends FieldArrayRenderProps<Partial<Signer>, HTMLElement> {
-  renderFields?: (name: any, index: any) => any;
+  renderFields?: (name, index) => any;
   addLabel?: string;
   isItemDeletablePredicate?: (arg: IsDepetablePredicateArgument) => boolean;
   isOrdered?: boolean;
@@ -68,7 +68,7 @@ function SignersArray({
       <div>
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="signers">
-            {(droppableProvided:any) => (
+            {droppableProvided => (
               <ul
                 ref={droppableProvided.innerRef}
                 className="signers__list"
@@ -87,7 +87,7 @@ function SignersArray({
                       key={name}
                       isDragDisabled={!isOrdered || !fields.length || fields.length <= 1}
                     >
-                      {(draggableProvided:any, snapshot:any) => (
+                      {(draggableProvided, snapshot) => (
                         <li
                           className="signers__item"
                           ref={draggableProvided.innerRef}

@@ -3,7 +3,7 @@ import { ReactSVG } from 'react-svg';
 import { DataLayerAnalytics, FacebookPixel } from 'Services/Integrations';
 import Toast from 'Services/Toast';
 import { useSignUp } from 'Hooks/Auth';
-import SignUpForm from 'Components/AuthForm/SignUpForm/SignUpForm';
+import SignUpForm from 'Components/AuthForm/SignUpForm';
 
 import Logo from 'Assets/images/logoWhite.svg';
 import {
@@ -26,7 +26,7 @@ const SignUpSide = ({ onClose, onSignInClick }: SignUpSide) => {
   const signUp = useCallback(
     async values => {
       try {
-        const response:any = await callSignUp(values);
+        const response = await callSignUp(values);
         FacebookPixel.fireRegistrationEvent();
         Bing.fireRegistrationEvent();
 

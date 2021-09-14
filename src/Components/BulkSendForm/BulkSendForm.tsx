@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux';
 import { Form, FormRenderProps } from 'react-final-form';
 import Toast from 'Services/Toast';
 import { Document, DocumentBulkSendValues, CsvEmailError } from 'Interfaces/Document';
-import {useAllDocumentsGet, useDocumentBulkSend, DocumentValidators,} from 'Hooks/Document';
+import {
+  useAllDocumentsGet,
+  useDocumentBulkSend,
+  DocumentValidators,
+} from 'Hooks/Document';
 import { selectDocument } from 'Utils/selectors';
 import BulkSendFields from './BulkSendFields';
 import { useModal } from 'Hooks/Common';

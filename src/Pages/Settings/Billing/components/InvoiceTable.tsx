@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { ReactSVG } from 'react-svg';
-// @ts-ignore
 import IconSort from 'Assets/images/icons/sort.svg';
 import InvoiceItem from './InvoiceItem';
 import { Invoice } from 'Interfaces/Billing';

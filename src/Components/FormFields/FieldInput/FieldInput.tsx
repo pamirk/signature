@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import FormError from 'Components/UIComponents/FormError';
 import { FieldRenderProps } from 'react-final-form';
 interface RenderFieldInputProps extends FieldRenderProps<string | number> {
-  renderInput: (inputProps:any) => React.ReactNode;
+  renderInput: (inputProps) => React.ReactNode;
 }
 
 function FieldInput(props: RenderFieldInputProps) {

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useModal } from 'Hooks/Common';
 import { RequisiteModal } from 'Components/RequisiteComponents';
 import UIButton from 'Components/UIComponents/UIButton';
-import SignatureItem from './SignatureItem/SignatureItem';
+import SignatureItem from './SignatureItem';
 import Toast from 'Services/Toast';
 import { useRequisitesGet } from 'Hooks/Requisite';
 import { useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import classNames from 'classnames';
 
 const SignaturePage = () => {
   const [getRequisites] = useRequisitesGet();
-  const signatures:any = useSelector(selectSignatures);
+  const signatures = useSelector(selectSignatures);
   const isMobile = useIsMobile();
 
   const handleGetRequisites = useCallback(async () => {
@@ -47,7 +47,7 @@ const SignaturePage = () => {
     <div className="settingsSignature__wrapper">
       <p className="settingsSignature__title">Saved Signatures</p>
       <ul className="settingsSignature__list">
-        {signatures.map((signature:any) => (
+        {signatures.map(signature => (
           <SignatureItem key={signature.id} signatureItem={signature} />
         ))}
       </ul>

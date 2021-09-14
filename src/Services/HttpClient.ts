@@ -2,7 +2,7 @@ import axios from 'axios';
 import StorageService from 'Services/Storage';
 import { API_URL } from 'Utils/constants';
 
-export default async (accessToken:any, optHeaders = {}) => {
+export default async (accessToken, optHeaders = {}) => {
   const token = accessToken || (await StorageService.getAccessToken());
   let headers = {};
 

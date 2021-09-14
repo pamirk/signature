@@ -6,6 +6,7 @@ import { SigningUrlGetPayload } from 'Interfaces/Document';
 export default () => {
   const dispatch = useDispatch();
 
-  // @ts-ignore
-  return useAsyncAction((payload: SigningUrlGetPayload) => $actions.documentSign.getSigningUrl(dispatch, payload),);
+  return useAsyncAction((payload: SigningUrlGetPayload) =>
+    $actions.documentSign.getSigningUrl(dispatch, payload),
+  );
 };

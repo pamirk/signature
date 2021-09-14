@@ -1,4 +1,4 @@
-import CardFields from 'Components/CardFields/CardFields';
+import CardFields from 'Components/CardFields';
 import { FieldTextInput } from 'Components/FormFields';
 import UIButton from 'Components/UIComponents/UIButton';
 import UIRadioBtn from 'Components/UIComponents/UIRadioBtn';
@@ -97,7 +97,7 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
       try {
         const { name, email, password, ...creditCard } = values;
 
-        const response:any = await prepareSignUp({
+        const response = await prepareSignUp({
           name,
           email,
           password,
@@ -124,7 +124,7 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
   const handleResendCode = useCallback(async () => {
     try {
       if (user) {
-        const response:any = await prepareSignUp({ ...user });
+        const response = await prepareSignUp({ ...user });
 
         if (!isNotEmpty(response)) {
           return Toast.error('Something went wrong. Please try again.');
@@ -145,7 +145,7 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
     async confirmCode => {
       try {
         if (user) {
-          const response:any = await sendConfrimCode({ userId: user.id, confirmCode });
+          const response = await sendConfrimCode({ userId: user.id, confirmCode });
 
           if (!isNotEmpty(response)) {
             return Toast.error('Something went wrong. Please try again.');

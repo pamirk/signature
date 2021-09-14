@@ -8,7 +8,6 @@ import { FieldColorNames } from 'Hooks/DocumentFields/useDocumentFieldColor';
 import { DocumentField } from 'Interfaces/DocumentFields';
 import { DateFormats } from 'Interfaces/User';
 
-// @ts-ignore
 import DateIcon from 'Assets/images/icons/date-icon.svg';
 import { DatePipeOptions } from 'Interfaces/Common';
 

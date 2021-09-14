@@ -1,8 +1,8 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
-// @ts-ignore
 import useDropdown from 'use-dropdown';
 import TooltipBlock, { TooltipBlockProps } from './TooltipBlock';
+
 import TooltipIcon from 'Assets/images/icons/tooltip-icon.svg';
 
 interface TooltipProps extends TooltipBlockProps {

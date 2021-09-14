@@ -2,7 +2,7 @@ import React from 'react';
 import { formatDate, formatDocumentName } from 'Utils/formatters';
 import { Document, DocumentStatuses } from 'Interfaces/Document';
 import { User } from 'Interfaces/User';
-import DropDownOptions from 'Components/DropDownOptions/DropDownOptions';
+import DropDownOptions from 'Components/DropDownOptions';
 
 interface TemplateItemMobileViewProps {
   template: Document;

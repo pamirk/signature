@@ -13,7 +13,7 @@ import { AppSumoStatus, PlanTypes } from 'Interfaces/Billing';
 import { OrderingDirection } from 'Interfaces/Common';
 
 import UIButton from 'Components/UIComponents/UIButton';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 import UIModal from 'Components/UIComponents/UIModal';
 import { TeamMembersAddModal, TeamMembersList } from './components';
 import UpgradePlanModal from './components/UpgradePlanModal';
@@ -87,6 +87,7 @@ const TeamScreen = () => {
 
   const [showDeleteModal, hideDeleteModal, isDeleteModalOpen] = useModal(
     () => (
+        //@ts-ignore
       <DeleteModal
         onClose={hideDeleteModal}
         onConfirm={() => {

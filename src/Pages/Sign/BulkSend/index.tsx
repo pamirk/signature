@@ -1,5 +1,5 @@
 import React from 'react';
-import BulkSendForm from 'Components/BulkSendForm/BulkSendForm';
+import BulkSendForm from 'Components/BulkSendForm';
 
 const BulkSend = () => <BulkSendForm />;
 

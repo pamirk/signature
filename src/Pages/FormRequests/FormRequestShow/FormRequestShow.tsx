@@ -20,7 +20,7 @@ import useDocumentCreateFromFormRequest from 'Hooks/Document/useDocumentCreateFr
 import { useAttachmentDownload } from 'Hooks/Common';
 import useFormRequestGet from 'Hooks/Document/useFormRequestGet';
 import useFormRequestGuard from 'Hooks/Document/useFormRequestGuard';
-import ThanksMessage from './components/ThanksMessage/ThanksMessage';
+import ThanksMessage from './components/ThanksMessage';
 import Logo from 'Assets/images/logo.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';

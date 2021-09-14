@@ -1,5 +1,4 @@
 import React from 'react';
-// @ts-ignore
 import { Accordion, AccordionItem } from 'react-sanfona';
 import { ReactSVG } from 'react-svg';
 import { NavLink } from 'react-router-dom';
@@ -9,7 +8,6 @@ import SelectIcon from 'Assets/images/icons/select-arrow-icon.svg';
 import { useSelector } from 'react-redux';
 import { selectUserPlan } from 'Utils/selectors';
 import { User } from 'Interfaces/User';
-
 import { PlanTypes } from 'Interfaces/Billing';
 
 export interface SidebarProps {

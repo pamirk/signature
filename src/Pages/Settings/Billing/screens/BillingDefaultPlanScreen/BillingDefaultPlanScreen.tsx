@@ -1,25 +1,37 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {ReactSVG} from 'react-svg';
 import Toggler from 'react-toggle';
 import 'react-toggle/style.css';
 import Toast from 'Services/Toast';
-import {DataLayerAnalytics, FacebookPixel} from 'Services/Integrations';
+import {FacebookPixel, DataLayerAnalytics} from 'Services/Integrations';
 import {useModal} from 'Hooks/Common';
-import {useCardGet, useCreateCard, usePlanChange} from 'Hooks/Billing';
-import {selectCardFormValues, selectIsCompanyRedirect, selectUser, selectUserPlan,} from 'Utils/selectors';
-import {CardFormValues, Plan, PlanChangePayload, PlanDurations, PlanTypes,} from 'Interfaces/Billing';
+import {usePlanChange, useCreateCard, useCardGet} from 'Hooks/Billing';
+import {
+    selectIsCompanyRedirect,
+    selectUserPlan,
+    selectCardFormValues,
+    selectUser,
+} from 'Utils/selectors';
+import {
+    Plan,
+    PlanTypes,
+    CardFormValues,
+    PlanDurations,
+    PlanChangePayload,
+} from 'Interfaces/Billing';
 import {HttpStatus} from 'Interfaces/HttpStatusEnum';
 import {
     headerItems,
-    planAnnuallyInformationItems,
     PlanFieldTypes,
     planMonthlyInformationItems,
+    planAnnuallyInformationItems,
 } from './planTableItems';
 
 import UIButton from 'Components/UIComponents/UIButton';
 import ConfirmModal from 'Components/ConfirmModal';
 import {BillingPlansSlider, PayModal} from '../../components';
+
 import ArrowCircleIcon from 'Assets/images/icons/arrow-circle.svg';
 import PaymentSurveyModal from '../../components/modals/PaymentSurveyModal';
 import {User} from 'Interfaces/User';
@@ -93,7 +105,9 @@ const BillingDefaultPlanScreen = () => {
 
                 DataLayerAnalytics.firePlanChangeEvent(payload);
                 Toast.success('Plan has been successfully changed.');
-            } catch (error) {
+            }
+                //@ts-ignore
+            catch (error: any) {
                 Toast.handleErrors(error);
             }
         },
@@ -147,7 +161,10 @@ const BillingDefaultPlanScreen = () => {
 
                 await createCard(values);
                 await handleClickChangePlan({type, duration});
-            } catch (error) {
+            }
+                //@ts-ignore
+            catch (error: any) {
+
                 Toast.handleErrors(error);
             }
         },
@@ -228,7 +245,10 @@ const BillingDefaultPlanScreen = () => {
     const handleGetCard = useCallback(async () => {
         try {
             await getCard(undefined);
-        } catch (error:any) {
+        }
+            //@ts-ignore
+        catch (error: any) {
+
             if (error.statusCode !== HttpStatus.NOT_FOUND) {
                 Toast.handleErrors(error);
             }

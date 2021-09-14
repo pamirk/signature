@@ -6,7 +6,6 @@ import React, {
   useRef,
   useLayoutEffect,
 } from 'react';
-// @ts-ignore
 import useDropdown from 'use-dropdown';
 import classNames from 'classnames';
 import interact from 'interactjs';

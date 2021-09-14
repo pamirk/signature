@@ -12,7 +12,7 @@ import Toast from 'Services/Toast';
 import { Company } from 'Interfaces/User';
 import useCompanyInfoUpdate from 'Hooks/User/useCompanyInfoUpdate';
 import { useModal } from 'Hooks/Common';
-import UpgradeModal from 'Components/UpgradeModal/UpgradeModal';
+import UpgradeModal from 'Components/UpgradeModal';
 import { useCompanyLogoPut, useSignedPutAssetUrl } from 'Hooks/User';
 import { SignedUrlResponse, UploadStatuses } from 'Interfaces/Common';
 import { resizeFile } from 'Utils/functions';

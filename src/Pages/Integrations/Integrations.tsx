@@ -14,9 +14,6 @@ import BoxIcon from 'Assets/images/integtationsExampleIcons/box-icon.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
 
-
-
-
 enum IntegrationActivationStatuses {
   SUCCESS = 'success',
   ERROR = 'error',
@@ -49,7 +46,7 @@ export const integrationsList: Omit<IntegrationItemProps, 'isActivate'>[] = [
   },
 ];
 
-export const Integrations = ({ location }: RouteChildrenProps<any>) => {
+const Integrations = ({ location }: RouteChildrenProps<any>) => {
   const userIntegrations: Integration[] = useSelector(selectUserIntegrations);
   const isMobile = useIsMobile();
 

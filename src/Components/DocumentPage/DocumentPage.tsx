@@ -8,8 +8,8 @@ export interface DocumentPageProps {
   page: string;
   style?: React.CSSProperties;
   className?: string;
-  onTap?: (event:any) => void;
-  onDrop?: (event:any) => void;
+  onTap?: (event) => void;
+  onDrop?: (event) => void;
   onLoad?: () => void;
 }
 
@@ -25,7 +25,7 @@ const DocumentPage = ({
   const pageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let interactable:any;
+    let interactable;
 
     if (pageRef.current)
       interactable = interact(pageRef.current)

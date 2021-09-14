@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { UITextFieldProps } from './interfaces/UITextField';
 
-interface UITextAreaProps extends UITextFieldProps {
+interface UITextAreaProps extends UITextFieldProps<HTMLTextAreaElement> {
   maxLength?: number;
   height?: string | number;
   className?: string;
@@ -21,7 +21,7 @@ function UITextArea(
     disabled = false,
     className,
   }: UITextAreaProps,
-  ref:any,
+  ref,
 ) {
   return (
     <textarea

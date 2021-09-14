@@ -3,7 +3,7 @@ import { StaticContext } from 'react-router';
 import { RouteComponentProps } from 'react-router-dom';
 import History from 'Services/History';
 import UIButton from 'Components/UIComponents/UIButton';
-import AboutDashboardItem from './components/AboutDashboardItem';
+import { AboutDashboardItem } from './components';
 import CollaborationIcon from 'Assets/images/aboutSignaturelyIcons/collaboration-icon.svg';
 import TimeSaveIcon from 'Assets/images/aboutSignaturelyIcons/time-save-icon.svg';
 import LegalIcon from 'Assets/images/aboutSignaturelyIcons/legal-icon.svg';

@@ -150,7 +150,7 @@ function UIMultiUploader({
                   disabled={disabled}
                   integrated={
                     !!userIntegrations.find(
-                      (integration:any) => integration.type === serviceType,
+                      integration => integration.type === serviceType,
                     ) || serviceType === IntegrationTypes.DROPBOX
                   }
                   key={serviceType}

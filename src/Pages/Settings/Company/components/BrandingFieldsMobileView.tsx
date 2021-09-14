@@ -10,16 +10,16 @@ import LogoField from './LogoField';
 
 interface BrandingFieldsMobileViewProps {
   disabled: boolean;
-  handleBusinessPlanCheck:any;
-  handleFileUpload:any;
-  handleUploadCancel:any;
-  handleFileUploadFailure:any;
-  companyLogoName:any;
-  isLogoProcessed:any;
-  companyLogoFormValue:any;
-  isCropCancelled:any;
-  isPageFieldEnabled:any;
-  handleCheckboxClick:any;
+  handleBusinessPlanCheck;
+  handleFileUpload;
+  handleUploadCancel;
+  handleFileUploadFailure;
+  companyLogoName;
+  isLogoProcessed;
+  companyLogoFormValue;
+  isCropCancelled;
+  isPageFieldEnabled;
+  handleCheckboxClick;
 }
 
 const BrandingFieldsMobileView = ({

@@ -1,9 +1,8 @@
 import React from 'react';
-import DebounceInput from 'Components/DebounceInput/DebounceInput';
-// @ts-ignore
+import DebounceInput from 'Components/DebounceInput';
 import IconSearch from 'Assets/images/icons/search.svg';
 import UISelect from 'Components/UIComponents/UISelect';
-import UIDatePicker from 'Components/UIComponents/UIDatePicker/UIDatePicker';
+import UIDatePicker from 'Components/UIComponents/UIDatePicker';
 import { RangeModifier } from 'react-day-picker';
 import { DocumentStatuses, SearchTypeEnum } from 'Interfaces/Document';
 import useIsMobile from 'Hooks/Common/useIsMobile';

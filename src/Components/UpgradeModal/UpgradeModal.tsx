@@ -5,7 +5,7 @@ import History from 'Services/History';
 import UIButton from 'Components/UIComponents/UIButton';
 import UIModal from 'Components/UIComponents/UIModal';
 import { useModal } from 'Hooks/Common';
-import PlanChangeModal from 'Components/PlanChangeModal/PlanChangeModal';
+import PlanChangeModal from 'Components/PlanChangeModal';
 
 import { selectUser } from 'Utils/selectors';
 import { PlanDurations, PlanTypes } from 'Interfaces/Billing';

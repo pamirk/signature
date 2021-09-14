@@ -6,6 +6,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+//    "prestart": "npm-link-shared ./node_modules/use-dropdown/node_modules . react",
+
+
 ### `npm start`
 
 Runs the app in the development mode.\

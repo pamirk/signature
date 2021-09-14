@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { WrapperProps } from 'Interfaces/Common';
 
-// @ts-ignore
 import Logo from 'Assets/images/logo.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';

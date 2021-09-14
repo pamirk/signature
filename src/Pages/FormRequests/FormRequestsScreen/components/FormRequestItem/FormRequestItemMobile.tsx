@@ -4,7 +4,7 @@ import Toast from 'Services/Toast';
 import { formatDate, formatDocumentName } from 'Utils/formatters';
 import { useDocumentUpdate } from 'Hooks/Document';
 import { Document, DocumentStatuses } from 'Interfaces/Document';
-import DropDownOptions from 'Components/DropDownOptions/DropDownOptions';
+import DropDownOptions from 'Components/DropDownOptions';
 import EditableTitle from './EditableTitle';
 
 interface TemplateItemProps {

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import UIModal from 'Components/UIComponents/UIModal';
 import UIButton from 'Components/UIComponents/UIButton';
 import { Plan, CardFormValues, ApiPlan } from 'Interfaces/Billing';
-import CardFields from 'Components/CardFields/CardFields';
+import CardFields from 'Components/CardFields';
 import { Form } from 'react-final-form';
 import { OnSubmitReturnType } from 'Interfaces/FinalForm';
 import useIsMobile from 'Hooks/Common/useIsMobile';

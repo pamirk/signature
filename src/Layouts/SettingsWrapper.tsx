@@ -1,7 +1,7 @@
 import React from 'react';
 import { WrapperProps } from 'Interfaces/Common';
 
-import SettingsNavigation from 'Components/SettingsNavigation/SettingsNavigation';
+import SettingsNavigation from 'Components/SettingsNavigation';
 
 function SettingsWrapper({ children, location }: WrapperProps) {
   return (

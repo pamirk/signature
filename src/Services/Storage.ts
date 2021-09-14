@@ -6,11 +6,11 @@ const SessionStorage = window.sessionStorage;
 const ACCESS_TOKEN_NAME = 'accessToken';
 
 class StorageService {
-  getItem = (key: string) => {
+  getItem = key => {
     const item = LocalStorage.getItem(key);
     return item;
   };
-  setItem = (key: string, value:any) => {
+  setItem = (key: string, value) => {
     LocalStorage.setItem(key, value.toString());
   };
   removeItem = (key: string) => {
@@ -22,7 +22,7 @@ class StorageService {
     SessionStorage.removeItem(ACCESS_TOKEN_NAME);
   };
 
-  setAccessToken = (value:any) => {
+  setAccessToken = value => {
     LocalStorage.setItem(ACCESS_TOKEN_NAME, value.toString());
     SessionStorage.setItem(ACCESS_TOKEN_NAME, value.toString());
   };

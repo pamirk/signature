@@ -6,7 +6,7 @@ import { EmailRecipient } from 'Interfaces/Document';
 import { required, email } from 'Utils/validation';
 import { composeValidators } from 'Utils/functions';
 
-import RecipientEmail from './RecipientFields/RecipientEmail';
+import { RecipientEmail } from './RecipientFields';
 import { UIAddButton } from 'Components/UIComponents/UIAddButton';
 
 interface IsDepetablePredicateArgument {

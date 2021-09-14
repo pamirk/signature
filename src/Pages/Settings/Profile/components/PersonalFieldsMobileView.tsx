@@ -10,11 +10,11 @@ import ChangeEmailForm from './ChangeEmailForm';
 interface PersonalFieldsMobileViewProps {
   isUser: boolean;
   isReadOnlyField: boolean;
-  setReadOnlyField:any;
-  handleFileUpload:any;
-  handleAvatarDelete:any;
+  setReadOnlyField;
+  handleFileUpload;
+  handleAvatarDelete;
   isAvatarUploading: boolean;
-  avatarUrl:any;
+  avatarUrl;
 }
 
 const PersonalFieldsMobileView = ({

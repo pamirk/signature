@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-// @ts-ignore
 import useDropdown from 'use-dropdown';
 import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
-// @ts-ignore
 import IconSelectArrow from 'Assets/images/icons/select-arrow-icon.svg';
 import { findOffsetParent } from 'Utils/functions';
 

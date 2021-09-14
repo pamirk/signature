@@ -11,7 +11,7 @@ import { useTeamMembersDelete, useToAdminUpgrade, useToUserDowngrade } from 'Hoo
 import Toast from 'Services/Toast';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { useModal } from 'Hooks/Common';
-import DeleteModal from 'Components/DeleteModal/DeleteModal';
+import DeleteModal from 'Components/DeleteModal';
 
 interface TeamMemberItemMobileProps {
   teamMember: TeamMember;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from 'Utils/selectors';
-import AppSumoActiveScreen from '../AppSumoActiveScreen/AppSumoActiveScreen';
-import BillingDefaultPlanScreen from '../BillingDefaultPlanScreen/BillingDefaultPlanScreen';
+import AppSumoActiveScreen from '../AppSumoActiveScreen';
+import BillingDefaultPlanScreen from '../BillingDefaultPlanScreen';
 import { User } from 'Interfaces/User';
 
 const BillingPlan = () => {

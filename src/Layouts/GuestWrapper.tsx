@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom';
 import className from 'classnames';
 import { WrapperProps } from 'Interfaces/Common';
 import UIButton from 'Components/UIComponents/UIButton';
-import Footer from 'Components/Footer/Footer';
+import Footer from 'Components/Footer';
 
-// @ts-ignore
 import Logo from 'Assets/images/logo.svg';
-// @ts-ignore
 import LogoMobile from 'Assets/images/logoMobile.svg';
 
 interface GuestWrapperProps extends WrapperProps {

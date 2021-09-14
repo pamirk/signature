@@ -1,10 +1,10 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
 import { TablePaginationProps } from 'Interfaces/Common';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import IconSort from 'Assets/images/icons/sort.svg';
 import ApiIcon from 'Assets/images/icons/api-icon.svg';
-import ApiKeyItem from './ApiKeyItem/ApiKeyItem';
+import ApiKeyItem from './ApiKeyItem';
 import { ApiKey } from 'Interfaces/ApiKey';
 import UISpinner from 'Components/UIComponents/UISpinner';
 

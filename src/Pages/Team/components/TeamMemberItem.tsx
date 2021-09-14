@@ -5,7 +5,7 @@ import { TeamMember } from 'Interfaces/Team';
 import { UserRoles } from 'Interfaces/User';
 
 import UICheckbox from 'Components/UIComponents/UICheckbox';
-import DropDownOptions from 'Components/DropDownOptions/DropDownOptions';
+import DropDownOptions from 'Components/DropDownOptions';
 
 import KeyIcon from 'Assets/images/icons/key-icon.svg';
 import { useToAdminUpgrade, useToUserDowngrade } from 'Hooks/Team';

@@ -1,6 +1,6 @@
 import { AppSumoStatus } from 'Interfaces/Billing';
 import React from 'react';
-import CodeInput from '../CodeInput';
+import { CodeInput } from '..';
 
 interface AppSumoBillingSliderProps {
   userAppSumoStatus: AppSumoStatus;

@@ -35,7 +35,7 @@ const sizes = {
   pageMarginBottom: 20,
 };
 
-export const DocumentPreview = ({ match }: RouteChildrenProps<DocumentParams>) => {
+const DocumentPreview = ({ match }: RouteChildrenProps<DocumentParams>) => {
   const documentId = useMemo(() => match?.params.documentId, [match]);
   const currentDocument = useSelector(state => selectDocument(state, { documentId }));
   const [downloadDocument, isDownloadingDocument] = useDocumentDownload();

@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { ReactSVG } from 'react-svg';
 import { FieldColorNames } from 'Hooks/DocumentFields/useDocumentFieldColor';
 
-// @ts-ignore
 import ArrowCheck from 'Assets/images/icons/checkbox-arrow-document.svg';
 
 interface CheckboxFieldProps {

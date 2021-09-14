@@ -17,22 +17,22 @@ import {
 import { sleep } from 'Utils/functions';
 
 export class DocumentApi extends Api {
-  getDocuments = (params: AxiosRequestConfig['params'], config?: AxiosRequestConfig) =>
+  getDocuments:any = (params: AxiosRequestConfig['params'], config?: AxiosRequestConfig) =>
     this.request.get()('documents', { params, ...config });
 
-  getDocument = (payload: DocumentIdPayload) =>
+  getDocument:any = (payload: DocumentIdPayload) =>
     this.request.get()<Document>(`documents/${payload.documentId}`);
 
-  createDocument = (values: DocumentValues) =>
+  createDocument:any = (values: DocumentValues) =>
     this.request.post()<Document>('documents', values);
 
-  createTemplate = (values: DocumentValues) =>
+  createTemplate:any = (values: DocumentValues) =>
     this.request.post()<Document>('documents/templates', values);
 
-  createForm = (values: DocumentValues) =>
+  createForm:any = (values: DocumentValues) =>
     this.request.post()<Document>('documents/form-requests', values);
 
-  uploadDocument = (id: Document['id'], file: File, config?: AxiosRequestConfig) => {
+  uploadDocument:any = (id: Document['id'], file: File, config?: AxiosRequestConfig) => {
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -48,27 +48,27 @@ export class DocumentApi extends Api {
   cleanFileData = (payload: DocumentPartIdPayload) =>
     this.request.post()<Document>(`documents/${payload.documentId}/file_clean`, payload);
 
-  updateDocument = (values: DocumentUpdate, params?: DocumentUpdateQuery) => {
+  updateDocument:any = (values: DocumentUpdate, params?: DocumentUpdateQuery) => {
     const { documentId, ...payload } = values;
 
     return this.request.patch()<Document>(`documents/${documentId}`, payload, { params });
   };
 
-  activateTemplate = (documentId: Document['id'], status = DocumentStatuses.ACTIVE) =>
+  activateTemplate:any = (documentId: Document['id'], status = DocumentStatuses.ACTIVE) =>
     this.request.patch()<Document>(`documents/templates/${documentId}/activate`, {
       status,
     });
 
-  addTemplateToApi = (documentId: Document['id']) =>
+  addTemplateToApi:any = (documentId: Document['id']) =>
     this.request.post()<Document>(`documents/templates/${documentId}/to-api`);
 
-  removeTemplateFromApi = (documentId: Document['id']) =>
+  removeTemplateFromApi:any = (documentId: Document['id']) =>
     this.request.delete()<Document>(`documents/templates/${documentId}/to-api`);
 
-  revertDocument = (documentId: Document['id']) =>
+  revertDocument:any = (documentId: Document['id']) =>
     this.request.patch()<Document>(`documents/${documentId}/revert`);
 
-  updateTemplate = (values: DocumentUpdate, params:any) => {
+  updateTemplate:any = (values: DocumentUpdate, params) => {
     const { documentId, ...payload } = values;
 
     return this.request.patch()<Document>(`documents/templates/${documentId}`, payload, {
@@ -76,7 +76,7 @@ export class DocumentApi extends Api {
     });
   };
 
-  updateForm = (values: DocumentUpdate, params:any) => {
+  updateForm:any = (values: DocumentUpdate, params) => {
     const { documentId, ...payload } = values;
 
     return this.request.patch()<Document>(
@@ -88,60 +88,60 @@ export class DocumentApi extends Api {
     );
   };
 
-  deleteDocuments = (documentIds: string[]) => {
+  deleteDocuments:any = (documentIds: string[]) => {
     return this.request.delete()(`documents`, {
       data: { ids: documentIds },
     });
   };
 
-  sendReminder = async (userIds: string[]) => {
+  sendReminder:any = async (userIds: string[]) => {
     await sleep(5000);
     return userIds;
   };
 
-  getAllDocuments = (payload:any) =>
+  getAllDocuments:any = payload =>
     this.request.get()<Document[]>('documents/all', {
       params: payload,
     });
 
-  copyDocument = (payload: DocumentIdPayload) =>
+  copyDocument:any = (payload: DocumentIdPayload) =>
     this.request.post()<Document[]>(`documents/templates/${payload.documentId}/copy`);
 
-  replicateTemplate = (payload: DocumentIdPayload) =>
+  replicateTemplate:any = (payload: DocumentIdPayload) =>
     this.request.get()<Document>(`documents/templates/${payload.documentId}/replica`);
 
-  mergeTemplate = (payload: TemplateMergePayload) =>
+  mergeTemplate:any = (payload: TemplateMergePayload) =>
     this.request.post()<Document>(
       `documents/templates/${payload.sourceTemplateId}/replica/${payload.templateId}/merge`,
     );
 
-  getDocumentConvertionData = (payload: DocumentIdPayload) =>
+  getDocumentConvertionData:any = (payload: DocumentIdPayload) =>
     this.request.get()<DocumentConvertionData>(
       `documents/${payload.documentId}/convertion_data`,
     );
 
-  getDocumentActivities = (payload: DocumentIdPayload) =>
+  getDocumentActivities:any = (payload: DocumentIdPayload) =>
     this.request.get()<DocumentActivity[]>(`documents/${payload.documentId}/activities`);
 
-  createFormRequestDocument = (values: FormRequestDocumentValues) =>
+  createFormRequestDocument:any = (values: FormRequestDocumentValues) =>
     this.request.post()<Document>(
       `document_sign/form-requests/${values.templateId}/create-document`,
       { ...values, type: DocumentTypes.FORM_REQUEST },
     );
 
-  getFormRequestContracts:any = (payload: { documentId: string }) =>
+  getFormRequestContracts :any= (payload: { documentId: string }) =>
     this.request.get()(`documents/form-requests/${payload.documentId}/contracts`);
 
-  disableFormRequest = (payload: { documentId: string }) =>
+  disableFormRequest:any = (payload: { documentId: string }) =>
     this.request.post()(`documents/form-requests/${payload.documentId}/disable`);
 
-  enableFormRequest = (payload: { documentId: string }) =>
+  enableFormRequest:any = (payload: { documentId: string }) =>
     this.request.post()(`documents/form-requests/${payload.documentId}/enable`);
 
-  getFormRequest = (payload: { documentId: string }) =>
+  getFormRequest:any = (payload: { documentId: string }) =>
     this.request.get()(`document_sign/form-requests/${payload.documentId}`);
 
-  getAllTemplates = (payload:any) =>
+  getAllTemplates:any = payload =>
     this.request.get()<Document[]>('documents/all/templates', {
       params: payload,
     });

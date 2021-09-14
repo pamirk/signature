@@ -5,7 +5,7 @@ import { useSignedGetUrl } from 'Hooks/User';
 import { SignedUrlResponse } from 'Interfaces/Common';
 import { Requisite } from 'Interfaces/Requisite';
 
-import OverlaySpinner from 'Components/OverlaySpinner/OverlaySpinner';
+import OverlaySpinner from 'Components/OverlaySpinner';
 import { UISpinnerProps } from 'Components/UIComponents/UISpinner';
 
 interface RequisiteItemProps {

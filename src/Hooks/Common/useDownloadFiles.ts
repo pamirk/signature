@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
-// @ts-ignore
 import JSZipUtils from 'jszip-utils';
 import { isEmpty } from 'lodash';
 import { $actions } from 'Store/ducks';
@@ -52,7 +51,9 @@ export default <TItem>({ fileExtractor }: DownloadPayload<TItem>) => {
           const blob = await zip.generateAsync({ type: 'blob' });
           saveAs(blob, 'signaturely.zip');
           Toast.success('Files successfully downloaded!');
-        } catch (error:any) {
+        }
+         //@ts-ignore
+            catch (error: any) {
           Toast.error(error.message);
         }
       } else {

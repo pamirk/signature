@@ -1,4 +1,4 @@
-import Avatar from 'Components/Avatar/Avatar';
+import Avatar from 'Components/Avatar';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectAvatarInfo } from 'Utils/selectors';

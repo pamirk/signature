@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
-import ModalHeader from '../ModalHeader/ModalHeader';
+import ModalHeader from '../ModalHeader';
 import { usePrimarySignIn } from 'Hooks/Auth';
 import UIModal from 'Components/UIComponents/UIModal';
-import LoginForm from 'Components/AuthForm/LoginForm/LoginForm';
+import LoginForm from 'Components/AuthForm/LoginForm';
 import Toast from 'Services/Toast';
 import History from 'Services/History';
 import {
@@ -23,8 +23,9 @@ const LoginModal = ({ onClose, onSignUpClick }: LoginModalProps) => {
 
   const handleSignIn = useCallback(
     async values => {
+
       try {
-        const response:any = await callSignIn(values);
+        const response = await callSignIn(values);
 
         if (!isNotEmpty(response)) {
           return;
@@ -42,7 +43,9 @@ const LoginModal = ({ onClose, onSignUpClick }: LoginModalProps) => {
           DataLayerAnalytics.fireGoogleRegistrationEvent();
           Toast.success('Your account has been created.');
         }
-      } catch (error:any) {
+      }
+      // @ts-ignore
+      catch (error:any) {
         Toast.error(error.message);
       }
     },

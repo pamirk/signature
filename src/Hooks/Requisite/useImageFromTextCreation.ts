@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-// @ts-ignore
 import trimCanvas from 'trim-canvas';
 import { fontFamilyByValue } from 'Services/Fonts';
 import { base64ToFile } from 'Utils/functions';

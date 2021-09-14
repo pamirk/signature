@@ -3,7 +3,7 @@ import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
 import History from 'Services/History';
 import { TablePaginationProps, SelectableItem } from 'Interfaces/Common';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import IconSort from 'Assets/images/icons/sort.svg';
 import TeamMemberItem from './TeamMemberItem';

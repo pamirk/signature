@@ -4,11 +4,11 @@ import classNames from 'classnames';
 import History from 'Services/History';
 import { SelectableDocument } from 'Interfaces/Document';
 import { TablePaginationProps } from 'Interfaces/Common';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import IconDownload from 'Assets/images/icons/download-icon.svg';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import IconSort from 'Assets/images/icons/sort.svg';
-import DocumentItem from './DocumentItem/DocumentItem';
+import DocumentItem from './DocumentItem';
 import UISpinner from '../../../Components/UIComponents/UISpinner';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
 

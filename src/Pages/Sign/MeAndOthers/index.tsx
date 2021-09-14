@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from 'Utils/selectors';
 import { DocumentTypes } from 'Interfaces/Document';
 
-import SignForm from 'Components/SignForm/SignForm';
+import SignForm from 'Components/SignForm';
 
 function MeAndOthers() {
   const { email, name } = useSelector(selectUser);

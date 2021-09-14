@@ -82,7 +82,9 @@ const ApiPlansSection = () => {
   const handleInvoicesGet = useCallback(async () => {
     try {
       await getInvoices(InvoiceTypes.API);
-    } catch (error) {
+    }
+    //@ts-ignore
+    catch (error:any) {
       Toast.handleErrors(error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,7 +94,9 @@ const ApiPlansSection = () => {
     try {
       await removeApiPLan(undefined);
       Toast.success('Subscription successfully removed');
-    } catch (error) {
+    }
+    //@ts-ignore
+    catch (error:any) {
       Toast.handleErrors(error);
     }
   }, [removeApiPLan]);
@@ -101,7 +105,9 @@ const ApiPlansSection = () => {
     async (payload: ApiPlanChangePayload) => {
       try {
         await changeApiPlan(payload);
-      } catch (error) {
+      }
+      //@ts-ignore
+      catch (error:any) {
         Toast.handleErrors(error);
       }
     },
@@ -115,7 +121,9 @@ const ApiPlansSection = () => {
 
         await createCard(values);
         await handleChangePlan({ type, duration });
-      } catch (error) {
+      }
+      //@ts-ignore
+      catch (error:any) {
         Toast.handleErrors(error);
       }
     },
@@ -190,7 +198,9 @@ const ApiPlansSection = () => {
   const handleGetCard = useCallback(async () => {
     try {
       await getCard(undefined);
-    } catch (error:any) {
+    }
+    //@ts-ignore
+    catch (error:any) {
       if (error.statusCode !== HttpStatus.NOT_FOUND) {
         Toast.handleErrors(error);
       }

@@ -3,7 +3,7 @@ import { FieldRenderProps } from 'react-final-form';
 import { useToggler } from 'Hooks/Common';
 import EyeIcon from 'Assets/images/icons/eye.svg';
 import CrossedEyeIcon from 'Assets/images/icons/crossed-eye.svg';
-import { FieldInput } from '../FieldInput';
+import { FieldInput } from '..';
 import UITextInput from 'Components/UIComponents/UITextInput';
 import { ReactSVG } from 'react-svg';
 

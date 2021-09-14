@@ -1,7 +1,7 @@
 import React from 'react';
 
-import TemplateItem from './TemplateItem/TemplateItem';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import TemplateItem from './TemplateItem';
+import EmptyTable from 'Components/EmptyTable';
 import { TablePaginationProps } from 'Interfaces/Common';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { SelectableDocument } from 'Interfaces/Document';

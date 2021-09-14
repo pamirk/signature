@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import ReactModal from 'react-modal';
 import interact from 'interactjs';
 import classNames from 'classnames';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import { minBy } from 'lodash';
 import Interact from 'Services/Interact';
 import Toast from 'Services/Toast';
@@ -62,7 +62,6 @@ import DocumentNavigationItem from './components/DocumentNavigationItem';
 import FieldItem from './components/FieldItem';
 import { DocumentActions } from 'Components/DocumentForm/DocumentForm';
 import History from 'Services/History';
-// @ts-ignore
 import { UnregisterCallback } from 'history';
 import * as _ from 'lodash';
 import MeOptionModal from './components/MeOptionModal';
@@ -205,8 +204,7 @@ function InteractModal({
   }, [documentId, cancelDocumentUpdate]);
 
   useEffect(() => {
-    // @ts-ignore
-      const callback = History.block('All changes will be lost');
+    const callback = History.block('All changes will be lost');
     unblockHistoryCallback.current = callback;
 
     return () => {

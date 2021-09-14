@@ -1,8 +1,8 @@
 import React from 'react';
 import { WrapperProps } from 'Interfaces/Common';
 
-import Header from 'Components/Header/Header';
-import Footer from 'Components/Footer/Footer';
+import Header from 'Components/Header';
+import Footer from 'Components/Footer';
 import IdleTimer from 'react-idle-timer';
 import { useLogout } from 'Hooks/Auth';
 import { IDLE_TIMEOUT_MINUTES } from 'Utils/constants';

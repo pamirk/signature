@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { TablePaginationProps } from 'Interfaces/Common';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { SelectableDocument } from 'Interfaces/Document';
-import FormRequestItem from './FormRequestItem/FormRequestItem';
+import FormRequestItem from './FormRequestItem';
 import { Document } from 'Interfaces/Document';
 
 interface TemplatesProps {

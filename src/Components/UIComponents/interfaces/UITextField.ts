@@ -1,5 +1,5 @@
 
-export interface UITextFieldProps {
+export interface UITextFieldProps<HTMLInputElement> {
     onBlur?: () => void;
     onFocus?: () => void;
     onKeyUp?: () => void;

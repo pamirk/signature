@@ -1,6 +1,6 @@
 import React from 'react';
 import UITextInput from 'Components/UIComponents/UITextInput';
-import { FieldInput } from '../FieldInput';
+import { FieldInput } from '..';
 import { FieldRenderProps } from 'react-final-form';
 
 const FieldTextInput = (props: FieldRenderProps<string>) => (

@@ -135,7 +135,10 @@ const TemplateForm = ({initialValues, sourceTemplateId}: TemplateFormProps) => {
                 });
 
                 return openSuccessModal();
-            } catch (error: any) {
+            }
+                //@ts-ignore
+            catch (error: any) {
+
                 if (error.type === RequestErrorTypes.QUOTA_EXCEEDED) {
                     return openUpgradeModal();
                 }
@@ -175,7 +178,6 @@ const TemplateForm = ({initialValues, sourceTemplateId}: TemplateFormProps) => {
         } as DocumentValues;
     }, [initialValues, document]);
 
-    // @ts-ignore
     return (
         <div className="signTemplate__wrapper">
             <h1 className="signTemplate__title">Create New Template</h1>
@@ -185,7 +187,7 @@ const TemplateForm = ({initialValues, sourceTemplateId}: TemplateFormProps) => {
                 onSubmit={onSubmit}
                 mutators={{... arrayMutators}}
                 render={(renderProps: FormRenderProps<DocumentValues>) => (
-                    // @ts-ignore
+                    //@ts-ignore
                     <DocumentForm
                         {... renderProps}
                         onDocumentCreate={setDocumentId}

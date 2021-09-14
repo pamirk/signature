@@ -1,9 +1,9 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
 import { TablePaginationProps } from 'Interfaces/Common';
-import EmptyTable from 'Components/EmptyTable/EmptyTable';
+import EmptyTable from 'Components/EmptyTable';
 import IconSort from 'Assets/images/icons/sort.svg';
-import RequestHistoryTableItem from './RequestHistoryTableItem/RequestHistoryTableItem';
+import RequestHistoryTableItem from './RequestHistoryTableItem';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { RequestHistoryItem } from 'Interfaces/RequestsHistory';
 import History from 'Services/History';

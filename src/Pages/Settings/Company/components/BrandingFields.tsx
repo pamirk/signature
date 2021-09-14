@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import {v4 as uuid} from 'uuid';
+import uuid from 'uuid/v4';
 import { FormApi } from 'final-form';
 import parsePath from 'path-parse';
 import { Company, User } from 'Interfaces/User';
@@ -17,9 +17,9 @@ import LogoField from './LogoField';
 import { useSelector } from 'react-redux';
 import { selectUser, selectUserPlan } from 'Utils/selectors';
 
-import Tooltip from 'Components/Tooltip/Tooltip';
+import Tooltip from 'Components/Tooltip';
 import { PlanTypes } from 'Interfaces/Billing';
-import CropModal from 'Components/CropModal/CropModal';
+import CropModal from 'Components/CropModal';
 import { useModal } from 'Hooks/Common';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import BrandingFieldsMobileView from './BrandingFieldsMobileView';

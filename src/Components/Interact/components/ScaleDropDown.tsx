@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
-// @ts-ignore
 import useDropdown from 'use-dropdown';
 import { scaleOptions } from '../common/scaleOptions';
 import { ReactSVG } from 'react-svg';
 
-// @ts-ignore
 import ArrowIcon from 'Assets/images/icons/select-arrow-icon.svg';
 
 export interface ScaleDropDownProps {
-  changeScale: (number:any) => void;
+  changeScale: (number) => void;
   documentScale: number;
 }
 
@@ -23,7 +21,7 @@ function ScaleDropDown({ changeScale, documentScale }: ScaleDropDownProps) {
     }
   }, [isOpen, open, close]);
 
-  const onScale = ({ value }:any) => {
+  const onScale = ({ value }) => {
     changeScale(value);
     close();
   };

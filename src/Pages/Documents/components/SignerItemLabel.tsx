@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Avatar from 'Components/Avatar/Avatar';
+import Avatar from 'Components/Avatar';
 import { AvatarUrl } from 'Interfaces/User';
 import React from 'react';
 

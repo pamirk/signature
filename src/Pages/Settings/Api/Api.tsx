@@ -13,7 +13,7 @@ import {
 import ApiKeyModal from './components/ApiKeyModal/ApiKeyModal';
 import ApiKeysList from './components/ApiKeysList';
 import UIPaginator from 'Components/UIComponents/UIPaginator';
-import ApiPlansSection from 'Components/ApiPlansSection/ApiPlansSection';
+import ApiPlansSection from 'Components/ApiPlansSection';
 import { useApiSubscriptionGet } from 'Hooks/Billing';
 import UISpinner from 'Components/UIComponents/UISpinner';
 
@@ -87,10 +87,8 @@ const Api = () => {
 
   const [openGenerateApiKeyModal, closeGenerateApiKeyModal] = useModal(
     () => (
-      <ApiKeyModal
-        onSuccessGenerate={handleGetApiKeysFromFirstPage}
-        onClose={closeGenerateApiKeyModal}
-      />
+        //@ts-ignore
+      <ApiKeyModal onSuccessGenerate={handleGetApiKeysFromFirstPage} onClose={closeGenerateApiKeyModal}/>
     ),
     [],
   );

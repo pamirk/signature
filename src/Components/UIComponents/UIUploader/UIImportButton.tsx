@@ -81,7 +81,7 @@ const UIImportButton = ({ type, onPick, disabled, integrated }: UIImportButtonPr
         return;
       }
 
-      const tokenPayload:any = await getAuthToken({ type });
+      const tokenPayload = await getAuthToken({ type });
 
       if (!isNotEmpty(tokenPayload)) {
         return;
