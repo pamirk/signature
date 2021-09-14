@@ -53,6 +53,7 @@
     "socket.io-client": "^4.2.0",
     "trim-canvas": "^0.1.2",
     "typesafe-actions": "^5.1.0",
+    "typescript": "^4.4.3",
     "use-dropdown": "^1.0.0",
     "uuid": "^3.3.3",
     "web-vitals": "^2.1.0"
