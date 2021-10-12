@@ -90,10 +90,10 @@ function LoginForm({
                 />
               )}
             </div>
-            <div className="common__or">OR</div>
+           {/* <div className="common__or">OR</div>
             <div className="auth__googleButton-wrapper">
               <GoogleLoginForm onSubmit={onSubmit} buttonLabel="Log in with Google" />
-            </div>
+            </div>*/}
             <hr className="auth__hr" />
             <div className="auth__check-account">
               Don’t have an account?&nbsp;

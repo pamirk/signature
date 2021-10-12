@@ -37,20 +37,20 @@ function Header({ location }: HeaderProps) {
           <img src={Logo} alt="Signaturely" />
         </Link>
 
-        {!isMobile && isSignaturesLimited && (
-          <div className="header__month-wrapper">
-            <div className="header__counter-wrapper">
-              <p className="header__month-counter">
-                {`${freeDocumentsUsed} of ${freeDocumentsUsedLimit} signature requests`}
-                <span className="header__left-month-text">this month</span>
-              </p>
-            </div>
+        {/*{!isMobile && isSignaturesLimited && (*/}
+        {/*  <div className="header__month-wrapper">*/}
+        {/*    <div className="header__counter-wrapper">*/}
+        {/*      <p className="header__month-counter">*/}
+        {/*        {`${freeDocumentsUsed} of ${freeDocumentsUsedLimit} signature requests`}*/}
+        {/*        <span className="header__left-month-text">this month</span>*/}
+        {/*      </p>*/}
+        {/*    </div>*/}
 
-            <Link to="/settings/billing/plan">
-              <UIButton priority="primary" title="Upgrade" />
-            </Link>
-          </div>
-        )}
+        {/*    <Link to="/settings/billing/plan">*/}
+        {/*      <UIButton priority="primary" title="Upgrade" />*/}
+        {/*    </Link>*/}
+        {/*  </div>*/}
+        {/*)}*/}
         <div className="header__action-wrapper">
           {isMobile ? (
             <DropDownMenu
@@ -61,14 +61,14 @@ function Header({ location }: HeaderProps) {
           ) : (
             <>
               <DropDownUser location={location} handleLogout={logout} />
-              <a
+              {/*<a
                 href={'https://help.signaturely.com/'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`header__help header__help--stroke`}
               >
                 <ReactSVG src={HelpIcon} className="header__help-icon" />
-              </a>
+              </a>*/}
             </>
           )}
         </div>

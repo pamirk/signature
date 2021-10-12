@@ -13,11 +13,11 @@ function SimplifiedWrapper({ children }: WrapperProps) {
     <div className="login-layout">
       <div className={classNames('login-layout__header', { mobile: isMobile })}>
         <Link to="/">
-          <img src={Logo} alt="Signaturely" />
+          <img src={Logo} alt="E-sign" />
         </Link>
       </div>
       <div className="login-layout__content">{children}</div>
-      <div className="login-layout__footer">
+      {/*<div className="login-layout__footer">
         © 2021 Signaturely |&nbsp;
         <a
           className="login-layout__link"
@@ -27,7 +27,7 @@ function SimplifiedWrapper({ children }: WrapperProps) {
         >
           Terms and Conditions
         </a>
-      </div>
+      </div>*/}
     </div>
   );
 }

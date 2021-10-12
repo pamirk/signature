@@ -27,18 +27,18 @@ export interface DropDownUserProps {
 }
 
 const LINKS = [
-  {
-    label: 'Company',
-    url: '/settings/company',
-    className: 'dropDownUser__item--fill',
-    icon: CompanyIcon,
-  },
-  {
-    label: 'Profile',
-    url: '/settings/profile',
-    className: 'dropDownUser__item--stroke',
-    icon: TeamIcon,
-  },
+  // {
+  //   label: 'Company',
+  //   url: '/settings/company',
+  //   className: 'dropDownUser__item--fill',
+  //   icon: CompanyIcon,
+  // },
+  // {
+  //   label: 'Profile',
+  //   url: '/settings/profile',
+  //   className: 'dropDownUser__item--stroke',
+  //   icon: TeamIcon,
+  // },
   /*   {
     label: 'API',
     url: '/settings/api',
@@ -51,13 +51,13 @@ const LINKS = [
     className: 'dropDownUser__item--stroke',
     icon: EditIcon,
   },
-  {
-    label: 'Billing',
-    url: '/settings/billing',
-    freeUrl: '/settings/billing/plan',
-    className: 'dropDownUser__item--stroke',
-    icon: BillingIcon,
-  },
+  // {
+  //   label: 'Billing',
+  //   url: '/settings/billing',
+  //   freeUrl: '/settings/billing/plan',
+  //   className: 'dropDownUser__item--stroke',
+  //   icon: BillingIcon,
+  // },
 ];
 
 const REDIRECT_LINK = [
@@ -97,7 +97,7 @@ function DropDownUser({ handleLogout, location }: DropDownUserProps) {
       {isOpen && (
         <div className="dropDownUser__list">
           {LINKS.map(link => {
-            const url = (user.plan.type === PlanTypes.FREE && link.freeUrl) || link.url;
+            const url = (user.plan.type === PlanTypes.FREE) || link.url;
 
             return (
               <Link
@@ -110,7 +110,7 @@ function DropDownUser({ handleLogout, location }: DropDownUserProps) {
               </Link>
             );
           })}
-          {REDIRECT_LINK.map(link => (
+        {/*  {REDIRECT_LINK.map(link => (
             <a
               key={link.label}
               href={link.url}
@@ -122,7 +122,7 @@ function DropDownUser({ handleLogout, location }: DropDownUserProps) {
               <ReactSVG src={link.icon} className="dropDownUser__item-icon" />
               {link.label}
             </a>
-          ))}
+          ))}*/}
 
           <div
             onClick={handleLogout}

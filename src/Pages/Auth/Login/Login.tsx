@@ -55,8 +55,8 @@ const Login = () => {
     return (
         <div className="auth">
             <Helmet>
-                <meta name="description" content="Log in to Signaturely."/>
-                <title>Log In | Signaturely</title>
+                <meta name="description" content="Log in to E-Sign."/>
+                <title>Log In | E-Sign</title>
             </Helmet>
             <h1 className={classNames('auth__title', {mobile: isMobile})}>
                 Login to your account

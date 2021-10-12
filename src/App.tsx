@@ -18,7 +18,7 @@ const App = () => {
     <Provider store={store}>
       <Helmet>
         <meta name="description" content="Web site created using create-react-app" />
-        <title>Signaturely</title>
+        <title>E-Sign</title>
       </Helmet>
       <ToastContainer
         closeButton={<ReactSVG src={IconClose} />}

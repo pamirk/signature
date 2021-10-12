@@ -64,10 +64,10 @@ const AboutSignaturely = ({
       <div className="about-signaturely">
         <div className="about-signaturely__info">
           <div className="about-signaturely__info-title">
-            What Signaturely can do for you?
+            What E-sign can do for you?
           </div>
           <div className="about-signaturely__info-text">
-            Did you enjoy the experience of signing with Signaturely? Sign like
+            Did you enjoy the experience of signing with E-sign? Sign like
             <br />
             that everytime. Create a free account today and enjoy all these great
             benefits.

@@ -122,10 +122,10 @@ function SignUpForm({
               />
             )}
           </div>
-          <div className="common__or auth__separator">OR</div>
+          {/*<div className="common__or auth__separator">OR</div>
           <div className="auth__googleButton-wrapper">
             <GoogleLoginForm onSubmit={onSubmit} buttonLabel="Sign up with Google" />
-          </div>
+          </div>*/}
           {isShowFooter && (
             <>
               <hr className="auth__hr" />

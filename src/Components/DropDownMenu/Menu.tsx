@@ -86,7 +86,7 @@ const LINKS = [
     className: 'dropDownMenu__item--stroke',
     icon: FormsIcon,
   },
-  {
+ /* {
     label: 'Team',
     url: '/team',
     freeUrl: '/settings/billing/plan',
@@ -99,8 +99,8 @@ const LINKS = [
     freeUrl: '/settings/billing/plan',
     className: 'dropDownMenu__item--stroke',
     icon: IntegrationsIcon,
-  },
-  {
+  },*/
+ /* {
     label: 'Settings',
     url: '/settings/profile',
     freeUrl: '/settings/billing/plan',
@@ -128,10 +128,11 @@ const LINKS = [
         icon: BillingIcon,
       },
     ],
-  },
+  },*/
 ];
 
-const LabelsWithArrow = ['Sign', 'Documents', 'Settings'];
+// const LabelsWithArrow = ['Sign', 'Documents', 'Settings'];
+const LabelsWithArrow = ['Sign', 'Documents',];
 
 interface MenuParams {
   handleLogout: () => void;

@@ -104,7 +104,7 @@ export const sidebarItems: SideBarItem[] = [
       },
     ],
   },
-  {
+/*  {
     path: '/team',
     classNameMod: 'stroke',
     label: 'Team',
@@ -137,10 +137,10 @@ export const sidebarItems: SideBarItem[] = [
         subPath: '/settings/profile',
         label: 'Profile',
       },
-      /*       {
+      /!*       {
         subPath: '/settings/api',
         label: 'API',
-      }, */
+      }, *!/
       {
         subPath: '/settings/edit-signature',
         label: 'Edit Signature',
@@ -161,5 +161,5 @@ export const sidebarItems: SideBarItem[] = [
         externalUrl: 'https://refer.signaturely.com/',
       },
     ],
-  },
+  },*/
 ];

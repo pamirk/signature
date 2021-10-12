@@ -140,7 +140,7 @@ const SignUp = ({ location }: RouteChildrenProps) => {
             />
           </div>
         </div>
-        <div className="sign-up__footer">
+       {/* <div className="sign-up__footer">
           © 2021 Signaturely |&nbsp;
           <a
             className="sign-up__link"
@@ -150,9 +150,9 @@ const SignUp = ({ location }: RouteChildrenProps) => {
           >
             Terms and Conditions
           </a>
-        </div>
+        </div>*/}
       </div>
-      <div className="sign-up__right-side">
+     {/* <div className="sign-up__right-side">
         <div className="sign-up--top-layer">
           <div className="sign-up__title">What People Are Saying</div>
           <Slider>
@@ -161,7 +161,7 @@ const SignUp = ({ location }: RouteChildrenProps) => {
             ))}
           </Slider>
         </div>
-      </div>
+      </div>*/}
     </div>
   );
 };

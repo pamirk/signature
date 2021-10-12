@@ -12,7 +12,7 @@ interface NavItem {
 }
 
 export const settingsNavItems: NavItem[] = [
-  {
+ /* {
     path: '/settings/company',
     label: 'Company',
     icon: CompanyIcon,
@@ -29,17 +29,17 @@ export const settingsNavItems: NavItem[] = [
     label: 'API',
     icon: IntegrationsIcon,
     classNameMod: 'stroke',
-  },
+  },*/
   {
     path: '/settings/edit-signature',
     label: 'Edit Signature',
     icon: EditIcon,
     classNameMod: 'stroke',
   },
-  {
+/*  {
     path: '/settings/billing',
     label: 'Billing',
     icon: BillingIcon,
     classNameMod: 'stroke',
-  },
+  },*/
 ];
