@@ -10,7 +10,7 @@ import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 import EndOfYearBanner from 'Components/Header/EndOfYearBanner';
 import { CURRENT_YEAR } from 'Utils/constants';
 
-function SimplifiedWrapper({ children }: WrapperProps) {
+function LifeTimeDealWrapper({ children }: WrapperProps) {
   const isMobile = useIsMobile();
 
   return (
@@ -22,7 +22,11 @@ function SimplifiedWrapper({ children }: WrapperProps) {
           <img src={Logo} alt="Signaturely" />
         </Link>
       </div>
-      <div className="login-layout__content">{children}</div>
+      <div className="login-layout__content">
+        <div className="lifeTimeDeal__common-wrapper">
+          <div className="lifeTimeDeal__common-wrapper__content">{children}</div>
+        </div>
+      </div>
       <div className="login-layout__footer">
         © {CURRENT_YEAR} Signaturely |&nbsp;
         <a
@@ -38,4 +42,4 @@ function SimplifiedWrapper({ children }: WrapperProps) {
   );
 }
 
-export default SimplifiedWrapper;
+export default LifeTimeDealWrapper;

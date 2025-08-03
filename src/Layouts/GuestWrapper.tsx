@@ -1,8 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import className from 'classnames';
 import { WrapperProps } from 'Interfaces/Common';
-import UIButton from 'Components/UIComponents/UIButton';
 import Footer from 'Components/Footer';
 
 import Logo from 'Assets/images/logo.svg';
