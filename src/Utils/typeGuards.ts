@@ -6,10 +6,15 @@ import {
   SignUpWithPlanResponseData,
   CodeConfirmationData,
 } from 'Interfaces/Auth';
-import { DocumentForSigners } from 'Interfaces/Document';
+import {
+  DocumentForSigners,
+  DocumentForSigning,
+  DocumentStatuses,
+} from 'Interfaces/Document';
+import { isNotEmpty } from './functions';
 
 export const isUserResponseData = (data: AuthResponseData): data is UserResponseData => {
-  return (data as UserResponseData).accessToken !== undefined;
+  return (data as UserResponseData).user !== undefined;
 };
 
 export const isEmailConfirmationData = (
@@ -35,3 +40,21 @@ export const isDocumentAccessRequired = (
 ): data is DocumentForSigners => {
   return (data as DocumentForSigners).isNeedCodeAccess !== undefined;
 };
+
+export const isDocumentWithSingleSigners = (
+  data: DocumentForSigning | {},
+): data is DocumentForSigning =>
+  isNotEmpty(data) && isNotEmpty(data.signers) && data.signers.length === 1;
+
+export const isDocumentWithMultipleSigners = (
+  data: DocumentForSigning | {},
+): data is DocumentForSigning =>
+  isNotEmpty(data) && isNotEmpty(data.signers) && data.signers.length > 1;
+
+export const shouldOpenDocumentSignersModal = (
+  data: DocumentForSigning | {},
+): data is DocumentForSigning =>
+  isDocumentWithMultipleSigners(data) &&
+  data.status !== DocumentStatuses.COMPLETED &&
+  (data.status !== DocumentStatuses.AWAITING ||
+    !data.signers.every(signer => signer.isFinished));

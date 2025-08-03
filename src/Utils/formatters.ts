@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
-import * as _ from 'lodash';
 import { DateFormats } from 'Interfaces/User';
+import { capitalize } from 'lodash';
+import { emptyCharactersRegExp } from './validation';
+import { PlanTypes } from 'Interfaces/Billing';
 
 const monthNames = [
   'Jan',
@@ -30,10 +32,11 @@ export const trim = value => value && value.trim();
 
 export const toLowerCase = value => value && value.toLowerCase();
 
-export const capitalize = (str: string) => {
-  if (!str) return str;
-  return str[0].toUpperCase() + str.slice(1);
-};
+export const removeEmptyCharacters = value =>
+  value && value.replace(emptyCharactersRegExp, '');
+
+export const toLowerCaseAndRemoveEmptyCharacters = value =>
+  removeEmptyCharacters(toLowerCase(value));
 
 export const cardNumberMaskedProps = {
   mask: [
@@ -118,6 +121,7 @@ export const postalCodeMask = [
 export const dateFormatMasks = {
   [DateFormats.DD_MM_YYYY]: [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/],
   [DateFormats.MM_DD_YYYY]: [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/],
+  [DateFormats.YYYY_MM_DD]: [/\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/],
   [DateFormats.DD_MM_YY]: [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/],
   [DateFormats.MM_DD_YY]: [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/],
 };
@@ -138,8 +142,18 @@ export const formatDateToIsoString = (date?: Date) => {
   if (date) return dayjs(date).toISOString();
 };
 
-export const formatDateToHumanString = (date?: string) => {
+export const formatDateToHumanString = (date?: string, onlyDate?: boolean) => {
+  if (date && onlyDate) return dayjs(date).format('DD-MM-YY');
   if (date) return dayjs(date).format('MM-DD-YYYY HH-mm-ss');
+};
+
+export const formatDateToStringForTrialInfo = (date?: string) => {
+  if (date) return dayjs(date).format('MMMM DD, YYYY');
+};
+
+export const daysToDate = (date?: string) => {
+  const currentDate = new Date();
+  if (date) return dayjs(date).diff(currentDate, 'day');
 };
 
 export const getHourFromDateString = (date: string) => {
@@ -149,10 +163,12 @@ export const getHourFromDateString = (date: string) => {
 export const formatDocumentName = (name: string, type: 'document' | 'template') =>
   name || `No name ${capitalize(type)}`;
 
+export const formatFolderName = (name: string) => name || `No name folder`;
+
 export const byteToMB = (bytes: number) => bytes / 10 ** 6;
 
 export const getFirstCapital = (string?: string) => {
-  return _.capitalize(string)?.charAt(0);
+  return capitalize(string)?.charAt(0);
 };
 
 export const getInitials = (name?: string) => {
@@ -163,4 +179,35 @@ export const getInitials = (name?: string) => {
 
 export const getAvatarContent = (name?: string, email?: string) => {
   return getInitials(name) || getFirstCapital(email);
+};
+
+export const formatFileName = (fileName: string) => {
+  const forbidden = [
+    '+',
+    '=',
+    '[',
+    ']',
+    ':',
+    ';',
+    '«',
+    ',',
+    '/',
+    '\\',
+    '|',
+    '>',
+    '<',
+    '?',
+    '»',
+    '"',
+    '*',
+  ];
+  return fileName
+    .split('')
+    .filter(char => !forbidden.includes(char))
+    .join('');
+};
+
+export const planTypeToName = {
+  [PlanTypes.PERSONAL]: 'Personal',
+  [PlanTypes.BUSINESS]: 'Business',
 };

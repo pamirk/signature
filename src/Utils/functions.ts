@@ -1,15 +1,32 @@
 import { Dispatch } from 'redux';
 import { FieldValidator, FORM_ERROR } from 'final-form';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 import { START_WATCH_PROMISIFIED_ACTION } from 'Store/actionTypes';
 import { Action, DatePipeOptions } from 'Interfaces/Common';
-import { AsyncActionCreator } from 'Interfaces/ActionCreators';
+import { AsyncActionCreator } from '@/Interfaces/ActionCreators.ts';
 import { isEmpty, isArray } from 'lodash';
 import { DocumentFieldTypes } from 'Interfaces/DocumentFields';
 import Papa from 'papaparse';
-import { User, UserRoles } from 'Interfaces/User';
+import { User, UserRoles, WorkflowVersions } from 'Interfaces/User';
 import { DocumentBulkSendValues } from 'Interfaces/Document';
+import {
+  DISABLE_SALE_PLAN_DURATIONS,
+  DISABLE_SALE_PLAN_TYPES,
+  FRONTEND_URL,
+  FRONTEND_URL_VERSION_B,
+  NODE_ENV,
+  WORKFLOW_PREFIX,
+} from './constants';
+import { ApiPlanTypes, PlanDurations, PlanTypes } from 'Interfaces/Billing';
+import { slashAgnostic } from 'Utils/slash-agnostic';
+
+const FrontendUrlByWorkflowVersionMap: {
+  [T in WorkflowVersions]: string;
+} = {
+  [WorkflowVersions.A]: FRONTEND_URL,
+  [WorkflowVersions.B]: FRONTEND_URL_VERSION_B,
+};
 
 export const fakeRequest = <T>(data: T, delay = 1500) =>
   new Promise<T>(resolve => {
@@ -22,8 +39,8 @@ export const checkPermission = (
   userRole: UserRoles,
   allowedRoles?: Array<UserRoles> | UserRoles,
 ): boolean => {
-  // @ts-ignore
-  return isArray(allowedRoles) ? allowedRoles.includes(userRole)
+  return isArray(allowedRoles)
+    ? allowedRoles.includes(userRole)
     : allowedRoles === undefined || userRole === allowedRoles;
 };
 
@@ -219,7 +236,9 @@ export const maxLengthArray = <T1, T2>(arrayA: T1[], arrayB: T2[]) =>
 export const getCurrentDate = (format = 'MM/DD/YYYY') => dayjs().format(format);
 
 export const checkIfDateOrText = (type: DocumentFieldTypes) =>
-  [DocumentFieldTypes.Text, DocumentFieldTypes.Date].includes(type);
+  [DocumentFieldTypes.Name, DocumentFieldTypes.Text, DocumentFieldTypes.Date].includes(
+    type,
+  );
 
 export const isCheckbox = (type: DocumentFieldTypes) =>
   type === DocumentFieldTypes.Checkbox;
@@ -352,3 +371,58 @@ export const resizeFile = (
 
     img.src = url;
   });
+
+export const getFrontendUrlStaticPath = (path: string) =>
+  new URL(slashAgnostic(WORKFLOW_PREFIX, path), FRONTEND_URL).href;
+
+export const getWorkflowVersion = (options?: {
+  enableExperimentation: boolean;
+}): WorkflowVersions => {
+  if (options?.enableExperimentation) {
+    return WorkflowVersions.B;
+  }
+
+  const currentUrl = window.location.href;
+  const prefix = WORKFLOW_PREFIX === '/' ? '' : WORKFLOW_PREFIX.split('/')[1];
+
+  const match = currentUrl.match(`(?:http(s)?://)[a-zA-Z.0-9-:]+/${prefix}`);
+  const referrerHost = match && match[0];
+
+  return referrerHost === FRONTEND_URL_VERSION_B
+    ? WorkflowVersions.B
+    : WorkflowVersions.A;
+};
+
+export const redirectToUserWorkflowVersion = (userWorkflowVersion?: WorkflowVersions) => {
+  const currectWorkflowVersion = getWorkflowVersion();
+
+  if (
+    NODE_ENV === 'development' ||
+    !userWorkflowVersion ||
+    userWorkflowVersion === currectWorkflowVersion
+  ) {
+    return;
+  }
+
+  const { pathname, search } = window.location;
+  const route = pathname.slice(WORKFLOW_PREFIX.length, pathname.length);
+
+  window.location.href = `${FrontendUrlByWorkflowVersionMap[userWorkflowVersion]}/${route}${search}`;
+};
+
+export const isNewTrialUser = (user: User) =>
+  user.plan.type === PlanTypes.FREE && !user.teamId && user.showTrialStep;
+
+export const disabledSalePlanTypes = DISABLE_SALE_PLAN_TYPES
+  ? (DISABLE_SALE_PLAN_TYPES.split(',') as PlanTypes[])
+  : [];
+export const disabledSalePlanDurations = DISABLE_SALE_PLAN_DURATIONS
+  ? (DISABLE_SALE_PLAN_DURATIONS.split(',') as PlanDurations[])
+  : [];
+
+export const isAvailablePlanForSale = (
+  type: PlanTypes | ApiPlanTypes,
+  duration: PlanDurations,
+) =>
+  !disabledSalePlanTypes.includes(type as PlanTypes) &&
+  !disabledSalePlanDurations.includes(duration);

@@ -1,15 +1,15 @@
 import { RootState } from 'typesafe-actions';
-import { values, orderBy, isEmpty } from 'lodash';
+import { isEmpty, orderBy, values } from 'lodash';
 import { createSelector } from 'reselect';
 import { UserReducerState } from 'Store/ducks/user/reducer';
 import {
   Document,
-  Signer,
-  DocumentTypes,
   DocumentStatuses,
+  DocumentTypes,
   DocumentWithCompany,
+  Signer,
 } from 'Interfaces/Document';
-import { User, Company } from 'Interfaces/User';
+import { Company, User } from 'Interfaces/User';
 import { PaginationData, SelectableOption } from 'Interfaces/Common';
 import { DocumentField, DocumentFieldsState } from 'Interfaces/DocumentFields';
 import { AuthStatuses, TwoFactorTypes } from 'Interfaces/Auth';
@@ -20,6 +20,7 @@ import {
   BillingData,
   CardFormValues,
   Invoice,
+  LtdTier,
   PlanDetails,
   PlanDurations,
   SubscriptionInfo,
@@ -31,6 +32,10 @@ import { ProfileInfo } from 'Interfaces/Profile';
 import { ApiKey } from 'Interfaces/ApiKey';
 import { RequestHistoryItem } from 'Interfaces/RequestsHistory';
 import { Contract } from 'Interfaces/Contract';
+import { FolderInfo, FolderTypes } from 'Interfaces/Folder';
+import { GridItem } from 'Interfaces/Grid';
+import { tierNumberById } from 'Pages/Settings/Billing/screens/LifeTimeDealScreen/planTableItems';
+
 interface Reselector<ReturnType> {
   (state, props): ReturnType;
 }
@@ -54,6 +59,7 @@ export const selectProfileInfo = (state: RootState) => {
     timezone,
     isReceivingReminders,
     isSendingToAllPartiesInOrderedDocument,
+    isSubscribedOnProcessingToAwaitingConvert,
     isReceivingSignerSigned,
     dateFormat,
     isReceivingSigned,
@@ -68,6 +74,7 @@ export const selectProfileInfo = (state: RootState) => {
     timezone,
     isReceivingReminders,
     isSendingToAllPartiesInOrderedDocument,
+    isSubscribedOnProcessingToAwaitingConvert,
     isReceivingSignerSigned,
     dateFormat,
     isReceivingSigned,
@@ -87,6 +94,9 @@ export const selectAvatarInfo = (state: RootState) => {
 export const selectSignToken = (state: RootState): UserReducerState['signToken'] =>
   state.user.signToken;
 
+export const selectEmbedToken = (state: RootState): UserReducerState['embedToken'] =>
+  state.user.embedToken;
+
 export const selectEmailToken = (state: RootState): UserReducerState['emailToken'] =>
   state.user.emailToken;
 
@@ -100,9 +110,15 @@ export const selectPasswordToken = (
 
 export const selectAuthStatus = (state: RootState): AuthStatuses => state.user.authStatus;
 
+export const selectShowTrialSuccessPage = (state: RootState): boolean =>
+  state.user.showTrialSuccessPage;
+
+export const selectIsSecondStepCompleted = (state: RootState): boolean =>
+  state.user.isSecondStepCompleted;
+
 export const selectUserPlan = (state: RootState) => state.user.plan as PlanDetails;
 
-export const selectSubsciptionInfo = (state: RootState): SubscriptionInfo => {
+export const selectSubscriptionInfo = (state: RootState): SubscriptionInfo => {
   const { subscriptionData } = state.billing;
 
   if (isEmpty(subscriptionData)) return {} as SubscriptionInfo;
@@ -113,15 +129,35 @@ export const selectSubsciptionInfo = (state: RootState): SubscriptionInfo => {
     : {};
 
   const { amount, quantity: userQuantity } = addOn;
-  const { amount: discountAmount, quantity: discountQuantity } = discount;
+  const {
+    amount: discountAmount,
+    quantity: discountQuantity,
+    percent: discountPercent,
+  } = discount;
 
   return {
     amount,
     discountAmount: discountAmount || 0,
     discountQuantity: discountQuantity || 0,
+    discountPercent: discountPercent || 0,
     userQuantity,
     nextBillingDate: subscriptionData.nextBillingDate,
+    neverExpires: subscriptionData.neverExpires,
+    trialEnd: subscriptionData.trialEnd ? subscriptionData.trialEnd : undefined,
   };
+};
+
+export const selectLtdTier = (state: RootState): LtdTier => {
+  const { ltdTier } = state.billing;
+
+  if (isEmpty(ltdTier)) return {} as LtdTier;
+
+  const tierNumber = tierNumberById[ltdTier.id];
+
+  return {
+    ...ltdTier,
+    tierNumber,
+  } as LtdTier;
 };
 
 export const selectApiSubscriptionInfo = (
@@ -143,6 +179,10 @@ export const selectApiPlan = (state: RootState): ApiPlanInfo => {
     : {
         type: ApiPlanTypes.FREE,
         duration: PlanDurations.MONTHLY,
+        requestLimit: 0,
+        templateLimit: 0,
+        name: '',
+        title: ''
       };
 };
 
@@ -153,6 +193,9 @@ export const selectDocuments = (state: RootState): Document[] => {
 
 export const selectInvoices = (state: RootState): Invoice[] =>
   values(state.billing.invoices) || [];
+
+export const selectInvoicesPaginationData = (state: RootState): PaginationData =>
+  state.meta.invoices;
 
 export const selectRequisites = (state: RootState): Requisite[] =>
   values(state.requisite) || [];
@@ -185,21 +228,27 @@ export const selectDocumentSigner = createSelector(
 );
 
 export const selectDocumentSignerOptions = createSelector(
-  [selectDocument, selectUser],
-  (document, user: User): SelectableOption<Signer['id']>[] => {
+  [selectDocument, selectUser, selectProps],
+  (
+    document,
+    user: User,
+    props: { isPreparerSigner?: boolean },
+  ): SelectableOption<Signer['id']>[] => {
     if (document) {
-      return document.signers.map(signer => ({
-        value: signer.id,
-        label:
-          document.type === DocumentTypes.TEMPLATE ||
-          document.type === DocumentTypes.FORM_REQUEST
-            ? (signer.role as string)
-            : `${signer.name}${
-                signer.email === user.email && !signer.isPreparer
-                  ? ' (Send via email)'
-                  : ''
-              }`,
-      }));
+      return document.signers
+        .filter(signer => props.isPreparerSigner || !signer.isPreparer)
+        .map(signer => ({
+          value: signer.id,
+          label:
+            document.type === DocumentTypes.TEMPLATE ||
+            document.type === DocumentTypes.FORM_REQUEST
+              ? (signer.role as string)
+              : `${signer.name}${
+                  signer.email === user.email && !signer.isPreparer
+                    ? ' (Send via email)'
+                    : ''
+                }`,
+        }));
     }
 
     return [];
@@ -264,8 +313,11 @@ export const selectCompanyData = (state: RootState): Company => {
     industry,
     redirectionPage,
     signatureTypesPreferences,
-    enableSignerAccessCodes,
-  } = state.user;
+    signerAccessCodesPreferences,
+    enableDownloadOriginalDocumentForSigners,
+    enableIndependentRequests,
+    enableIndependentActivity,
+  } = state.company;
 
   return {
     tagline,
@@ -276,7 +328,10 @@ export const selectCompanyData = (state: RootState): Company => {
     industry,
     redirectionPage,
     signatureTypesPreferences,
-    enableSignerAccessCodes,
+    signerAccessCodesPreferences,
+    enableDownloadOriginalDocumentForSigners,
+    enableIndependentRequests,
+    enableIndependentActivity,
   };
 };
 
@@ -285,7 +340,7 @@ export const selectAvailableSignatureTypes = (state: RootState): RequisiteValueT
     isDrawnSignaturesAvailable,
     isTypedSignaturesAvailable,
     isUploadedSignaturesAvailable,
-  } = state.user.signatureTypesPreferences;
+  } = state.company.signatureTypesPreferences;
 
   const availableSignatureTypes = [
     isTypedSignaturesAvailable && RequisiteValueType.TEXT,
@@ -302,14 +357,13 @@ export const selectCardFormValues = (state: RootState): CardFormValues | undefin
   const { card } = state.billing;
 
   if (isNotEmpty(card)) {
-    const { expirationDate, cardholderName, last4 } = card;
+    const { expirationDate, number } = card;
 
     return {
-      number: `************${last4}`,
+      number,
       cvv: '****',
       postalCode: '*****',
       expirationDate,
-      cardholderName,
     } as CardFormValues;
   }
 };
@@ -384,3 +438,34 @@ export const selectCommonTemplatesCount = createSelector(
 );
 
 export const selectIsEmailConfirmed = (state: RootState) => state.meta.isEmailConfirmed;
+
+export const selectFolderInfo = createSelector(
+  [selectState, selectProps],
+  (state: RootState, props: { folderId: string }): FolderInfo | undefined => {
+    const folderId = props.folderId;
+
+    return state.folder[folderId];
+  },
+) as Reselector<FolderInfo | undefined>;
+
+export const selectFolders = (state: RootState) => values(state.folder) || [];
+
+export const selectFoldersByType = (type: FolderTypes) =>
+  createSelector(selectFolders, folders =>
+    folders.filter(folder => folder.type === type),
+  );
+
+export const selectGrid = (state: RootState): GridItem[] => {
+  return values(state.grid) || [];
+};
+
+export const selectGridPaginationData = (state: RootState): PaginationData =>
+  state.meta.grid;
+
+export const selectCurrentFolderId = (state: RootState): string | undefined =>
+  state.meta.currentFolderId;
+
+export const selectGridChildren = (gridId?: string) => (state: RootState) =>
+  values(state.grid).filter(value =>
+    gridId ? value.parentId === gridId : value.parentId === null,
+  );
