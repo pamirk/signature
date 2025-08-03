@@ -3,7 +3,7 @@ import interact from 'interactjs';
 import classnames from 'classnames';
 import { useIsMobile, useIsTablet, useToggler } from 'Hooks/Common';
 import OverlayLoader from 'Components/UIComponents/UIOverlayLoader';
-import { Page, pdfjs } from 'react-pdf';
+// import { Page, pdfjs } from 'react-pdf';
 // import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 type RenderMode = 'canvas' | 'custom' | 'none';
@@ -61,7 +61,7 @@ const DocumentPage = ({
 
       const isSomeImage = operatorList.fnArray.some(
         // fn => fn === pdfjs.OPS.paintImageXObject || fn === pdfjs.OPS.paintJpegXObject,
-        fn => fn === pdfjs.OPS.paintImageXObject || fn === pdfjs.OPS.paintInlineImageXObject,
+        // fn => fn === pdfjs.OPS.paintImageXObject || fn === pdfjs.OPS.paintInlineImageXObject,
       );
 
       if (isSomeImage) {
@@ -78,15 +78,15 @@ const DocumentPage = ({
     <div className={classnames('documentPage', className)} style={style} ref={pageRef}>
       <div className="documentPage__inner">
         {isLoading && <OverlayLoader />}
-        <Page
-          className="documentPage__inner-pdf_page"
-          pageNumber={pageNumber}
-          scale={scale}
-          onLoadSuccess={handleLoad}
-          renderAnnotationLayer={renderAnnotationLayer}
-          renderTextLayer={false}
-          renderMode={renderMode}
-        />
+        {/*<Page*/}
+        {/*  className="documentPage__inner-pdf_page"*/}
+        {/*  pageNumber={pageNumber}*/}
+        {/*  scale={scale}*/}
+        {/*  onLoadSuccess={handleLoad}*/}
+        {/*  renderAnnotationLayer={renderAnnotationLayer}*/}
+        {/*  renderTextLayer={false}*/}
+        {/*  renderMode={renderMode}*/}
+        {/*/>*/}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useToggler } from 'Hooks/Common';
 import { DocumentField, DocumentFieldTypes } from 'Interfaces/DocumentFields';
-import { Page } from 'react-pdf';
+// import { Page } from 'react-pdf';
 
 import OverlayLoader from 'Components/UIComponents/UIOverlayLoader';
 import { useSelector } from 'react-redux';
@@ -103,13 +103,13 @@ function DocumentNavigationItem({
           labelClassName="overlayLoader__text--preview"
         />
       )}
-      <Page
-        pageNumber={pageNumber}
-        onLoadSuccess={toggleIsLoading}
-        width={(pageWidth || 0) * fieldsXScale}
-        height={(pageHeight || 0) * fieldsYScale}
-        renderAnnotationLayer={false}
-      />
+      {/*<Page*/}
+      {/*  pageNumber={pageNumber}*/}
+      {/*  onLoadSuccess={toggleIsLoading}*/}
+      {/*  width={(pageWidth || 0) * fieldsXScale}*/}
+      {/*  height={(pageHeight || 0) * fieldsYScale}*/}
+      {/*  renderAnnotationLayer={false}*/}
+      {/*/>*/}
       {fields.map(field => (
         <DocumentFieldPreviewItem
           key={field.id}

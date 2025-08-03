@@ -32,7 +32,7 @@ import useDocumentSeparateDownload from 'Hooks/Document/useDocumentSeparateDownl
 import useDocumentActivitiesSeparateSign from 'Hooks/Document/useDocumentActivitiesSeparateSign';
 import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 import ScaleDropDown from 'Components/Interact/components/ScaleDropDown';
-import { pdfjs } from 'react-pdf';
+// import { pdfjs } from 'react-pdf';
 
 interface DocumentParams {
   documentId: Document['id'];
@@ -223,7 +223,7 @@ const DocumentPreview = ({ match }: RouteChildrenProps<DocumentParams>) => {
   );
 
   const handlePdfLoadSuccess = useCallback(
-    (pdfDocumentProxy: pdfjs.PDFDocumentProxy, fileUrl: string) => {
+    (pdfDocumentProxy: any, fileUrl: string) => {
       setPages(prev => {
         prev[fileUrl] = pdfDocumentProxy.numPages;
         return prev;
