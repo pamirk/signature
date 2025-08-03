@@ -6,6 +6,7 @@ import {
   SignerDocumentIdPayload,
   Document,
   DocumentForSigners,
+  DocumentForSigning,
   DocumentSubmitPayload,
   RemindersSendPayload,
   DocumentPreviewPagesPayload,
@@ -14,11 +15,13 @@ import {
   CodeAccessPayload,
   SigningUrlGetPayload,
   SigningUrlPayload,
+  SigningRemindersUnlinkPayload,
 } from 'Interfaces/Document';
-import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
+import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
 import {
   AvailableSignersOptionsGetTypes,
   SignerDocumentGetTypes,
+  SigningDocumentGetTypes,
   DocumentSigningInitType,
   DocumentSigningFinishType,
   SubmitSignedDocumentTypes,
@@ -31,6 +34,10 @@ import {
   DocumentConvertionStatusActionTypes,
   DocumentSendCodeAccessActionTypes,
   SigningUrlGetActionTypes,
+  SigningRemindersUnlinkTypes,
+  EmbedDocumentSendOutTypes,
+  EmbedDocumentPreviewPagesGetActionTypes,
+  DeclineSigningRequestTypes,
 } from './actionTypes';
 import { TokenPayload } from 'Interfaces/User';
 import { SignedUrlResponse } from 'Interfaces/Common';
@@ -70,6 +77,20 @@ export const getSignerDocument = createAsyncAction(
 
 export const $getSignerDocument = promisifyAsyncAction(getSignerDocument);
 
+export const getSigningDocument = createAsyncAction(
+  SigningDocumentGetTypes.request,
+  SigningDocumentGetTypes.success,
+  SigningDocumentGetTypes.failure,
+  SigningDocumentGetTypes.cancel,
+)<
+  [DocumentIdPayload, PromisifiedActionMeta],
+  [DocumentForSigning, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getSigningDocument = promisifyAsyncAction(getSigningDocument);
+
 export const getAvailableSignersOptions = createAsyncAction(
   AvailableSignersOptionsGetTypes.request,
   AvailableSignersOptionsGetTypes.success,
@@ -99,6 +120,20 @@ export const submitSignedDocument = createAsyncAction(
 >();
 
 export const $submitSignedDocument = promisifyAsyncAction(submitSignedDocument);
+
+export const declineSigningRequest = createAsyncAction(
+  DeclineSigningRequestTypes.request,
+  DeclineSigningRequestTypes.success,
+  DeclineSigningRequestTypes.failure,
+  DeclineSigningRequestTypes.cancel,
+)<
+  [SignerDocumentIdPayload, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $declineSigningRequest = promisifyAsyncAction(declineSigningRequest);
 
 export const sendReminders = createAsyncAction(
   RemindersSendActionTypes.request,
@@ -213,3 +248,47 @@ export const getSigningUrl = createAsyncAction(
 >();
 
 export const $getSigningUrl = promisifyAsyncAction(getSigningUrl);
+
+export const unlinkSigningReminders = createAsyncAction(
+  SigningRemindersUnlinkTypes.request,
+  SigningRemindersUnlinkTypes.success,
+  SigningRemindersUnlinkTypes.failure,
+  SigningRemindersUnlinkTypes.cancel,
+)<
+  [SigningRemindersUnlinkPayload, PromisifiedActionMeta],
+  [SigningRemindersUnlinkPayload, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $unlinkSigningReminders = promisifyAsyncAction(unlinkSigningReminders);
+
+export const sendOutEmbedDocument = createAsyncAction(
+  EmbedDocumentSendOutTypes.request,
+  EmbedDocumentSendOutTypes.success,
+  EmbedDocumentSendOutTypes.failure,
+  EmbedDocumentSendOutTypes.cancel,
+)<
+  [DocumentIdPayload, PromisifiedActionMeta],
+  [Document, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $sendOutEmbedDocument = promisifyAsyncAction(sendOutEmbedDocument);
+
+export const getEmbedDocumentPreviewPages = createAsyncAction(
+  EmbedDocumentPreviewPagesGetActionTypes.request,
+  EmbedDocumentPreviewPagesGetActionTypes.success,
+  EmbedDocumentPreviewPagesGetActionTypes.failure,
+  EmbedDocumentPreviewPagesGetActionTypes.cancel,
+)<
+  [DocumentIdPayload, PromisifiedActionMeta],
+  [DocumentPreviewPagesPayload, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getEmbedDocumentPreviewPages = promisifyAsyncAction(
+  getEmbedDocumentPreviewPages,
+);

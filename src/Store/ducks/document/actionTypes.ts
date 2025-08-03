@@ -5,11 +5,25 @@ export enum DocumentCreateActionTypes {
   cancel = 'document/CREATE/CANCEL',
 }
 
-export enum DocumentsGetActionTypes {
-  request = 'document/GET_DOCUMENTS/REQUEST',
-  success = 'document/GET_DOCUMENTS/SUCCESS',
-  failure = 'document/GET_DOCUMENTS/FAILURE',
-  cancel = 'document/GET_DOCUMENTS/CANCEL',
+export enum DocumentCreateByExistTemplateTypes {
+  request = 'document/CREATE_DOCUMENT_BY_EXIST_TEMPLATE/REQUEST',
+  success = 'document/CREATE_DOCUMENT_BY_EXIST_TEMPLATE/SUCCESS',
+  failure = 'document/CREATE_DOCUMENT_BY_EXIST_TEMPLATE/FAILURE',
+  cancel = 'document/CREATE_DOCUMENT_BY_EXIST_TEMPLATE/CANCEL',
+}
+
+export enum DocumentUpdateByExistTemplateTypes {
+  request = 'document/UPDATE_DOCUMENT_BY_EXIST_TEMPLATE/REQUEST',
+  success = 'document/UPDATE_DOCUMENT_BY_EXIST_TEMPLATE/SUCCESS',
+  failure = 'document/UPDATE_DOCUMENT_BY_EXIST_TEMPLATE/FAILURE',
+  cancel = 'document/UPDATE_DOCUMENT_BY_EXIST_TEMPLATE/CANCEL',
+}
+
+export enum FormRequestsGetActionTypes {
+  request = 'document/GET_FORM_REQUESTS/REQUEST',
+  success = 'document/GET_FORM_REQUESTS/SUCCESS',
+  failure = 'document/GET_FORM_REQUESTS/FAILURE',
+  cancel = 'document/GET_FORM_REQUESTS/CANCEL',
 }
 
 export enum DocumentsDeleteActionTypes {
@@ -24,6 +38,13 @@ export enum DocumentGetActionTypes {
   success = 'document/GET_DOCUMENT/SUCCESS',
   failure = 'document/GET_DOCUMENT/FAILURE',
   cancel = 'document/GET_DOCUMENT/CANCEL',
+}
+
+export enum DocumentGetByHashActionTypes {
+  request = 'document/GET_DOCUMENT_BY_HASH/REQUEST',
+  success = 'document/GET_DOCUMENT_BY_HASH/SUCCESS',
+  failure = 'document/GET_DOCUMENT_BY_HASH/FAILURE',
+  cancel = 'document/GET_DOCUMENT_BY_HASH/CANCEL',
 }
 
 export enum DocumentUploadActionTypes {
@@ -183,3 +204,63 @@ export enum GetAllTemplatesActionTypes {
   failure = 'document/GET_ALL_TAMPLTES/FAILURE',
   cancel = 'document/GET_ALL_TAMPLTES/CANCEL',
 }
+
+export enum DocumentActivitiesUrlGetActionTypes {
+  request = 'document/GET_DOCUMENT_ACTIVITIES_DOWNLOAD_URL/REQUEST',
+  success = 'document/GET_DOCUMENT_ACTIVITIES_DOWNLOAD_URL/SUCCESS',
+  failure = 'document/GET_DOCUMENT_ACTIVITIES_DOWNLOAD_URL/FAILURE',
+  cancel = 'document/GET_DOCUMENT_ACTIVITIES_DOWNLOAD_URL/CANCEL',
+}
+
+export enum DocumentSeparateSignActionTypes {
+  request = 'document/SIGN_DOCUMENT/REQUEST',
+  success = 'document/SIGN_DOCUMENT/SUCCESS',
+  failure = 'document/SIGN_DOCUMENT/FAILURE',
+  cancel = 'document/SIGN_DOCUMENT/CANCEL',
+}
+
+export enum DocumentSeparateDownloadUrlGetActionTypes {
+  request = 'document/GET_SEPARATE_DOCUMENT_DOWNLOAD_URL/REQUEST',
+  success = 'document/GET_SEPARATE_DOCUMENT_DOWNLOAD_URL/SUCCESS',
+  failure = 'document/GET_SEPARATE_DOCUMENT_DOWNLOAD_URL/FAILURE',
+  cancel = 'document/GET_SEPARATE_DOCUMENT_DOWNLOAD_URL/CANCEL',
+}
+
+export enum DocumentActivitiesSeparateSignActionTypes {
+  request = 'document/SIGN_DOCUMENT_ACTIVITIES/REQUEST',
+  success = 'document/SIGN_DOCUMENT_ACTIVITIES/SUCCESS',
+  failure = 'document/SIGN_DOCUMENT_ACTIVITIES/FAILURE',
+  cancel = 'document/SIGN_DOCUMENT_ACTIVITIES/CANCEL',
+}
+
+export enum DocumentDeleteActionTypes {
+  request = 'document/DELETE_DOCUMENT/REQUEST',
+  success = 'document/DELETE_DOCUMENT/SUCCESS',
+  failure = 'document/DELETE_DOCUMENT/FAILURE',
+  cancel = 'document/DELETE_DOCUMENT/CANCEL',
+}
+
+export enum EmbedDocumentGetActionTypes {
+  request = 'document/GET_EMBED_DOCUMENT/REQUEST',
+  success = 'document/GET_EMBED_DOCUMENT/SUCCESS',
+  failure = 'document/GET_EMBED_DOCUMENT/FAILURE',
+  cancel = 'document/GET_EMBED_DOCUMENT/CANCEL',
+}
+
+export enum EmbedDocumentUpdateActionTypes {
+  request = 'document/UPDATE_EMBED_DOCUMENT/REQUEST',
+  success = 'document/UPDATE_EMBED_DOCUMENT/SUCCESS',
+  failure = 'document/UPDATE_EMBED_DOCUMENT/FAILURE',
+  cancel = 'document/UPDATE_EMBED_DOCUMENT/CANCEL',
+}
+
+export enum GetReportByEmailActionTypes {
+  request = 'document/GET_REPORT_BY_EMAIL/REQUEST',
+  success = 'document/GET_REPORT_BY_EMAIL/SUCCESS',
+  failure = 'document/GET_REPORT_BY_EMAIL/FAILURE',
+  cancel = 'document/GET_REPORT_BY_EMAIL/CANCEL',
+}
+
+export const EmbedDocumentTokenInitType = 'document/INIT_EMBED_DOCUMENT_INTERACT';
+
+export const EmbedDocumentTokenRemoveType = 'document/FINISH_EMBED_DOCUMENT_INTERACT';

@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
+import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
 import {
   ApiKey,
   ApiKeyCreatePayload,

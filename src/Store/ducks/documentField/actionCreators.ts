@@ -7,6 +7,7 @@ import {
   DocumentFieldsCRUDPayload,
   DocumentFieldHistoryActionItem,
   DocumentFieldHistory,
+  EmbedDocumentFieldHistoryActionItem,
 } from 'Interfaces/DocumentFields';
 import { NormalizedEntity } from 'Interfaces/Common';
 import {
@@ -19,6 +20,13 @@ import {
   DocumentFieldCreateActionTypes,
   DocumentFieldUpdateActionTypes,
   DocumentFieldDeleteActionTypes,
+  EmbedDocumentFieldCreateActionTypes,
+  EmbedDocumentFieldUpdateActionTypes,
+  EmbedDocumentFieldDeleteActionTypes,
+  EmbedDocumentFieldHistoryPushType,
+  EmbedDocumentFieldMetaActionTypes,
+  EmbedDocumentFieldHistoryUndoType,
+  EmbedDocumentFieldHistoryRedoType,
 } from './actionTypes';
 
 export const updateDocumentFieldLocally = createAction(
@@ -115,4 +123,90 @@ export const CRUDSuccessCreatorsByRequests = {
   [DocumentFieldCreateActionTypes.request]: createDocumentField.success,
   [DocumentFieldUpdateActionTypes.request]: updateDocumentField.success,
   [DocumentFieldDeleteActionTypes.request]: deleteDocumentField.success,
+};
+
+export const changeEmbedDocumentFieldsMeta = {
+  set: createAction(
+    DocumentFieldMetaActionTypes.set,
+    (payload: Partial<DocumentFieldsState['meta']>) => payload,
+  )(),
+  clear: createAction(EmbedDocumentFieldMetaActionTypes.clear)(),
+};
+
+export const pushToEmbedDocumentFieldsHistory = createAction(
+  EmbedDocumentFieldHistoryPushType,
+  (payload: EmbedDocumentFieldHistoryActionItem) => payload,
+)();
+
+export const undoEmbedDocumentFieldsHistory = {
+  request: createAction(
+    EmbedDocumentFieldHistoryUndoType.request,
+    (payload: EmbedDocumentFieldHistoryActionItem) => payload,
+  )(),
+  success: createAction(
+    EmbedDocumentFieldHistoryUndoType.success,
+    (payload: DocumentFieldHistory) => payload,
+  )(),
+};
+
+export const redoEmbedDocumentFieldsHistory = {
+  request: createAction(
+    EmbedDocumentFieldHistoryRedoType.request,
+    (payload: EmbedDocumentFieldHistoryActionItem) => payload,
+  )(),
+  success: createAction(
+    EmbedDocumentFieldHistoryRedoType.success,
+    (payload: DocumentFieldHistory) => payload,
+  )(),
+};
+
+export const createEmbedDocumentField = {
+  request: createAction(
+    EmbedDocumentFieldCreateActionTypes.request,
+    ({ payload }: DocumentFieldsCRUDPayload<DocumentField>) => payload,
+    ({ meta }: DocumentFieldsCRUDPayload<DocumentField>) => meta,
+  )(),
+  success: createAction(
+    EmbedDocumentFieldCreateActionTypes.success,
+    ({ payload }: DocumentFieldsCRUDPayload<DocumentField>) => payload,
+    ({ meta }: DocumentFieldsCRUDPayload<DocumentField>) => meta,
+  )(),
+};
+
+export const updateEmbedDocumentField = {
+  request: createAction(
+    EmbedDocumentFieldUpdateActionTypes.request,
+    ({ payload }: DocumentFieldsCRUDPayload<DocumentFieldUpdatePayload>) => payload,
+    ({ meta }: DocumentFieldsCRUDPayload<DocumentFieldUpdatePayload>) => meta,
+  )(),
+  success: createAction(
+    EmbedDocumentFieldUpdateActionTypes.success,
+    ({ payload }: DocumentFieldsCRUDPayload<DocumentFieldUpdatePayload>) => payload,
+    ({ meta }: DocumentFieldsCRUDPayload<DocumentFieldUpdatePayload>) => meta,
+  )(),
+};
+
+export const deleteEmbedDocumentField = {
+  request: createAction(
+    EmbedDocumentFieldDeleteActionTypes.request,
+    ({ payload }: DocumentFieldsCRUDPayload<DocumentFieldDeletePayload>) => payload,
+    ({ meta }: DocumentFieldsCRUDPayload<DocumentFieldDeletePayload>) => meta,
+  )(),
+  success: createAction(
+    EmbedDocumentFieldDeleteActionTypes.success,
+    ({ payload }: DocumentFieldsCRUDPayload<DocumentFieldDeletePayload>) => payload,
+    ({ meta }: DocumentFieldsCRUDPayload<DocumentFieldDeletePayload>) => meta,
+  )(),
+};
+
+export const CRUDEmbedRequestActionCreatorsByTypes = {
+  [EmbedDocumentFieldCreateActionTypes.request]: createEmbedDocumentField.request,
+  [EmbedDocumentFieldUpdateActionTypes.request]: updateEmbedDocumentField.request,
+  [EmbedDocumentFieldDeleteActionTypes.request]: deleteEmbedDocumentField.request,
+};
+
+export const CRUDEmbedSuccessCreatorsByRequests = {
+  [EmbedDocumentFieldCreateActionTypes.request]: createEmbedDocumentField.success,
+  [EmbedDocumentFieldUpdateActionTypes.request]: updateEmbedDocumentField.success,
+  [EmbedDocumentFieldDeleteActionTypes.request]: deleteEmbedDocumentField.success,
 };

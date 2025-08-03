@@ -1,5 +1,4 @@
 import { createReducer, getType } from 'typesafe-actions';
-import * as _ from 'lodash';
 import {
   DocumentFieldsState,
   DocumentField,
@@ -7,6 +6,8 @@ import {
   DocumentFieldHistoryActionItem,
   DocumentFieldDeletePayload,
   DocumentFieldHistoryItem,
+  EmbedDocumentFieldHistoryActionItem,
+  EmbedDocumentFieldHistoryItem,
 } from 'Interfaces/DocumentFields';
 import {
   createDocumentField,
@@ -18,6 +19,13 @@ import {
   pushToDocumentFieldsHistory,
   undoDocumentFieldsHistory,
   redoDocumentFieldsHistory,
+  createEmbedDocumentField,
+  updateEmbedDocumentField,
+  pushToEmbedDocumentFieldsHistory,
+  deleteEmbedDocumentField,
+  changeEmbedDocumentFieldsMeta,
+  undoEmbedDocumentFieldsHistory,
+  redoEmbedDocumentFieldsHistory,
 } from './actionCreators';
 
 const getFieldValueKeyByType = (fieldType: DocumentFieldTypes) => {
@@ -26,6 +34,7 @@ const getFieldValueKeyByType = (fieldType: DocumentFieldTypes) => {
     case DocumentFieldTypes.Signature: {
       return 'requisiteId';
     }
+    case DocumentFieldTypes.Name:
     case DocumentFieldTypes.Date:
     case DocumentFieldTypes.Text: {
       return 'text';
@@ -44,13 +53,16 @@ const initialState = {
 } as DocumentFieldsState;
 
 export default createReducer(initialState)
-  .handleAction(changeDocumentFieldsMeta.set, (state, action) => ({
-    ...state,
-    meta: {
-      ...state.meta,
-      ...action.payload,
-    },
-  }))
+  .handleAction(
+    [changeDocumentFieldsMeta.set, changeEmbedDocumentFieldsMeta.set],
+    (state, action) => ({
+      ...state,
+      meta: {
+        ...state.meta,
+        ...action.payload,
+      },
+    }),
+  )
   .handleAction(
     [undoDocumentFieldsHistory.success, redoDocumentFieldsHistory.success],
     (state, action) => {
@@ -60,13 +72,28 @@ export default createReducer(initialState)
           ...state.meta,
           history: action.payload,
         },
-      };
+      } as DocumentFieldsState;
     },
   )
-  .handleAction(changeDocumentFieldsMeta.clear, state => ({
-    ...state,
-    meta: initialState.meta,
-  }))
+  .handleAction(
+    [undoEmbedDocumentFieldsHistory.success, redoEmbedDocumentFieldsHistory.success],
+    (state, action) => {
+      return {
+        ...state,
+        meta: {
+          ...state.meta,
+          history: action.payload,
+        },
+      } as DocumentFieldsState;
+    },
+  )
+  .handleAction(
+    [changeDocumentFieldsMeta.clear, changeEmbedDocumentFieldsMeta.clear],
+    state => ({
+      ...state,
+      meta: initialState.meta,
+    }),
+  )
   .handleAction(setDocumentFields, (state, action) => ({
     ...state,
     fields: action.payload,
@@ -75,6 +102,8 @@ export default createReducer(initialState)
     [
       createDocumentField.success,
       updateDocumentField.success,
+      createEmbedDocumentField.success,
+      updateEmbedDocumentField.success,
       updateDocumentFieldLocally,
     ],
     (state, action) => {
@@ -101,15 +130,18 @@ export default createReducer(initialState)
       };
     },
   )
-  .handleAction(deleteDocumentField.success, (state, action) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { [action.payload.id]: deletedField, ...newState } = state.fields;
+  .handleAction(
+    [deleteDocumentField.success, deleteEmbedDocumentField.success],
+    (state, action) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [action.payload.id]: deletedField, ...newState } = state.fields;
 
-    return {
-      ...state,
-      fields: newState,
-    };
-  })
+      return {
+        ...state,
+        fields: newState,
+      };
+    },
+  )
   .handleAction(pushToDocumentFieldsHistory, (state, action) => {
     const { payload } = action;
     const { history } = state.meta;
@@ -143,8 +175,10 @@ export default createReducer(initialState)
       }
     }
 
-    // @ts-ignore
-    const historyItem = {next, prev,} as DocumentFieldHistoryItem;
+    const historyItem = {
+      next,
+      prev,
+    } as DocumentFieldHistoryItem;
 
     return {
       ...state,
@@ -161,4 +195,58 @@ export default createReducer(initialState)
         },
       },
     };
+  })
+  .handleAction(pushToEmbedDocumentFieldsHistory, (state, action) => {
+    const { payload } = action;
+    const { history } = state.meta;
+    const next = payload;
+    let prev: EmbedDocumentFieldHistoryActionItem;
+
+    switch (payload.actionType) {
+      case getType(createEmbedDocumentField.request): {
+        prev = {
+          actionType: getType(deleteEmbedDocumentField.request),
+          actionPayload: { id: payload.actionPayload.id } as DocumentFieldDeletePayload,
+        } as EmbedDocumentFieldHistoryActionItem;
+
+        break;
+      }
+      case getType(updateEmbedDocumentField.request): {
+        prev = {
+          actionType: getType(updateEmbedDocumentField.request),
+          actionPayload: state.fields[payload.actionPayload.id],
+        } as EmbedDocumentFieldHistoryActionItem;
+
+        break;
+      }
+      case getType(deleteEmbedDocumentField.request): {
+        prev = {
+          actionType: getType(createEmbedDocumentField.request),
+          actionPayload: state.fields[payload.actionPayload.id],
+        } as EmbedDocumentFieldHistoryActionItem;
+
+        break;
+      }
+    }
+
+    const historyItem = {
+      next,
+      prev,
+    } as EmbedDocumentFieldHistoryItem;
+
+    return {
+      ...state,
+      meta: {
+        ...state.meta,
+        history: {
+          cursor: 0,
+          actions: [
+            historyItem,
+            ...(history.cursor === 0
+              ? history.actions
+              : history.actions.slice(history.cursor)),
+          ],
+        },
+      },
+    } as DocumentFieldsState;
   });

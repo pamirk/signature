@@ -4,18 +4,24 @@ import {
   EmailConfirmationData,
   EmailPayload,
   PasswordChangeData,
+  SignUpData,
+  SignUpWithConfirmCodeTemporary,
   SignUpWithConfrimCode,
   SignUpWithPlanResponseData,
+  TemporaryUserResponseData,
+  TwillioEmailConfirmData,
+  UpdateGoogleClientId,
   UserResponseData,
 } from 'Interfaces/Auth';
 import { createAsyncAction, createAction } from 'typesafe-actions';
-import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
+import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
 import { promisifyAsyncAction } from 'Utils/functions';
 import {
   SignUpActionTypes,
   LogoutActionType,
   ApplyAppSumoLinkType,
   SignedGetUrlActionTypes,
+  SignedGetUrlActionTypesHash,
   SignedPutUrlActionTypes,
   SocketConnectActionType,
   SocketDisconnectActionType,
@@ -60,6 +66,19 @@ import {
   SignUpWithPlanPrepareActionTypes,
   UpdateEmailActionTypes,
   SetEmailConfirmedActionType,
+  InitAccessTokenType,
+  InitAccessTokenFinishType,
+  UpdateGoogleClientIdActionTypes,
+  SignOutActionTypes,
+  EmbedSignedUrlBulkGetActionTypes,
+  ClearIntegrationDataType,
+  СompatibleSignedGetUrlActionTypes,
+  ConfirmEmailByTwilioActionTypes,
+  LtdSignUpActionTypes,
+  SignUpTemporaryActionTypes,
+  SignUpFromTemporaryActionTypes,
+  ConfirmTemporaryActionTypes,
+  ClearShowTrialSuccessPageType,
 } from './actionTypes';
 
 import {
@@ -73,12 +92,14 @@ import {
 import { TokenPayload } from 'Interfaces/User';
 import {
   SignedUrlPayload,
+  SignedUrlHashPayload,
   SignedUrlResponse,
   SocketConnectPayload,
   UploadStatuses,
   BulkSignedUrlPayload,
   BulkSignedUrlResponse,
   NormalizedEntity,
+  CompatibleSignedUrlPayload,
 } from 'Interfaces/Common';
 import { FilePutPayload } from 'Services/AWS';
 import {
@@ -94,6 +115,20 @@ import { DocumentIdPayload } from 'Interfaces/Document';
 
 export const signIn = createAction(SignInActionType, (payload: User) => payload)();
 
+export const signOut = createAsyncAction(
+  SignOutActionTypes.request,
+  SignOutActionTypes.success,
+  SignOutActionTypes.failure,
+  SignOutActionTypes.cancel,
+)<
+  [undefined, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $signOut = promisifyAsyncAction(signOut);
+
 export const setTwoFactor = createAction(
   TwoFactorStepActionType,
   (payload: TwoFactorResponseData) => payload,
@@ -103,6 +138,13 @@ export const setIsEmailConfirmed = createAction(
   SetEmailConfirmedActionType,
   (payload: boolean) => payload,
 )();
+
+export const initAccessToken = createAction(
+  InitAccessTokenType,
+  (payload: TokenPayload) => payload,
+)();
+
+export const finishInitAccessToken = createAction(InitAccessTokenFinishType)();
 
 export const signInPrimary = createAsyncAction(
   PrimarySignInActionTypes.request,
@@ -246,6 +288,62 @@ export const signUp = createAsyncAction(
 
 export const $signUp = promisifyAsyncAction(signUp);
 
+export const signUpTemporary = createAsyncAction(
+  SignUpTemporaryActionTypes.request,
+  SignUpTemporaryActionTypes.success,
+  SignUpTemporaryActionTypes.failure,
+  SignUpTemporaryActionTypes.cancel,
+)<
+  [undefined, PromisifiedActionMeta],
+  [TemporaryUserResponseData, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $signUpTemporary = promisifyAsyncAction(signUpTemporary);
+
+export const signUpFromTemporary = createAsyncAction(
+  SignUpFromTemporaryActionTypes.request,
+  SignUpFromTemporaryActionTypes.success,
+  SignUpFromTemporaryActionTypes.failure,
+  SignUpFromTemporaryActionTypes.cancel,
+)<
+  [SignUpData, PromisifiedActionMeta],
+  [TemporaryUserResponseData, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $signUpFromTemporary = promisifyAsyncAction(signUpFromTemporary);
+
+export const confirmTemporary = createAsyncAction(
+  ConfirmTemporaryActionTypes.request,
+  ConfirmTemporaryActionTypes.success,
+  ConfirmTemporaryActionTypes.failure,
+  ConfirmTemporaryActionTypes.cancel,
+)<
+  [SignUpWithConfirmCodeTemporary, PromisifiedActionMeta],
+  [User, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $confirmTemporary = promisifyAsyncAction(confirmTemporary);
+
+export const ltdSignUp = createAsyncAction(
+  LtdSignUpActionTypes.request,
+  LtdSignUpActionTypes.success,
+  LtdSignUpActionTypes.failure,
+  LtdSignUpActionTypes.cancel,
+)<
+  [SignUpActionPayload, PromisifiedActionMeta],
+  [AuthResponseData, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $ltdSignUp = promisifyAsyncAction(ltdSignUp);
+
 export const getCurrentUser = createAsyncAction(
   CurrentUserGetActionTypes.request,
   CurrentUserGetActionTypes.success,
@@ -273,6 +371,34 @@ export const getSignedGetUrl = createAsyncAction(
 >();
 
 export const $getSignedGetUrl = promisifyAsyncAction(getSignedGetUrl);
+
+export const getCompatibleSignedGetUrl = createAsyncAction(
+  СompatibleSignedGetUrlActionTypes.request,
+  СompatibleSignedGetUrlActionTypes.success,
+  СompatibleSignedGetUrlActionTypes.failure,
+  СompatibleSignedGetUrlActionTypes.cancel,
+)<
+  [CompatibleSignedUrlPayload, PromisifiedActionMeta],
+  [SignedUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getCompatibleSignedGetUrl = promisifyAsyncAction(getCompatibleSignedGetUrl);
+
+export const getSignedGetUrlHash = createAsyncAction(
+  SignedGetUrlActionTypesHash.request,
+  SignedGetUrlActionTypesHash.success,
+  SignedGetUrlActionTypesHash.failure,
+  SignedGetUrlActionTypesHash.cancel,
+)<
+  [SignedUrlHashPayload, PromisifiedActionMeta],
+  [SignedUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getSignedGetUrlHash = promisifyAsyncAction(getSignedGetUrlHash);
 
 export const getSignedGetUrlBulk = createAsyncAction(
   SignedGetUrlBulkActionTypes.request,
@@ -447,12 +573,26 @@ export const confirmEmail = createAsyncAction(
   ConfirmEmailActionTypes.cancel,
 )<
   [undefined, PromisifiedActionMeta],
-  [undefined, PromisifiedActionMeta],
+  [AuthResponseData, PromisifiedActionMeta],
   [ActionError, PromisifiedActionMeta],
   [undefined, PromisifiedActionMeta]
 >();
 
 export const $confirmEmail = promisifyAsyncAction(confirmEmail);
+
+export const confirmEmailByTwilio = createAsyncAction(
+  ConfirmEmailByTwilioActionTypes.request,
+  ConfirmEmailByTwilioActionTypes.success,
+  ConfirmEmailByTwilioActionTypes.failure,
+  ConfirmEmailByTwilioActionTypes.cancel,
+)<
+  [TwillioEmailConfirmData, PromisifiedActionMeta],
+  [AuthResponseData, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $confirmEmailByTwilio = promisifyAsyncAction(confirmEmailByTwilio);
 
 export const sendConformationEmail = createAsyncAction(
   SendEmailConfirmationActionTypes.request,
@@ -564,6 +704,34 @@ export const signUpWithConfirmCode = createAsyncAction(
 
 export const $signUpWithConfirmCode = promisifyAsyncAction(signUpWithConfirmCode);
 
+export const updateGoogleClientId = createAsyncAction(
+  UpdateGoogleClientIdActionTypes.request,
+  UpdateGoogleClientIdActionTypes.success,
+  UpdateGoogleClientIdActionTypes.failure,
+  UpdateGoogleClientIdActionTypes.cancel,
+)<
+  [UpdateGoogleClientId, PromisifiedActionMeta],
+  [User, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const getEmbedSignedUrlBulk = createAsyncAction(
+  EmbedSignedUrlBulkGetActionTypes.request,
+  EmbedSignedUrlBulkGetActionTypes.success,
+  EmbedSignedUrlBulkGetActionTypes.failure,
+  EmbedSignedUrlBulkGetActionTypes.cancel,
+)<
+  [BulkSignedUrlPayload, PromisifiedActionMeta],
+  [BulkSignedUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getEmbedSignedUrlBulk = promisifyAsyncAction(getEmbedSignedUrlBulk);
+
+export const $updateGoogleClientId = promisifyAsyncAction(updateGoogleClientId);
+
 export const $unsubscribeFromAPIUpdates = promisifyAsyncAction(unsubscribeFromAPIUpdates);
 
 export const $putRequisite = promisifyAsyncAction(putRequisite);
@@ -580,6 +748,11 @@ export const logout = createAction(LogoutActionType)();
 export const setEmailConfirmationData = createAction(
   setEmailConfirmationDataType,
   (payload: EmailConfirmationData) => payload,
+)();
+
+export const clearIntegrationData = createAction(
+  ClearIntegrationDataType,
+  (payload: IntegrationActionPayload) => payload,
 )();
 
 export const connectSocket = createAction(
@@ -606,3 +779,5 @@ export const clearEmailToken = createAction(ClearEmailTokenType)();
 export const joinSocketRoom = createAction(SocketJoinRoom)();
 
 export const applyAppSumoLink = createAction(ApplyAppSumoLinkType)();
+
+export const clearShowTrialSuccessPage = createAction(ClearShowTrialSuccessPageType)();

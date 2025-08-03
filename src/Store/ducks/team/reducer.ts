@@ -1,5 +1,5 @@
 import { createReducer } from 'typesafe-actions';
-import * as _ from 'lodash';
+import { omit } from 'lodash';
 import { NormalizedEntity } from 'Interfaces/Common';
 import { TeamMember } from 'Interfaces/Team';
 import {
@@ -14,7 +14,7 @@ export default createReducer({} as NormalizedEntity<TeamMember>)
     ...action.payload.teamMembers,
   }))
   .handleAction(deleteTeamMembers.success, (state, action) => {
-    const newState = _.omit(state, action.payload.teamMembersIds);
+    const newState = omit(state, action.payload.teamMembersIds);
 
     return newState;
   })

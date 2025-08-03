@@ -1,12 +1,13 @@
 import { takeEvery, put } from 'redux-saga/effects';
 import { Action, PayloadMetaActionCreator } from 'typesafe-actions';
-import { PromisifiedActionMeta } from 'Interfaces/ActionCreators';
+import { PromisifiedActionMeta } from '@/Interfaces/ActionCreators.ts';
 import { HttpStatus } from 'Interfaces/HttpStatusEnum';
 import {
+  CurrentUserGetActionTypes,
   PrimarySignInActionTypes,
   SignInAppSumoUserActionTypes,
 } from 'Store/ducks/user/actionTypes';
-import { setUnauthorized, signInPrimary } from 'Store/ducks/user/actionCreators';
+import { setUnauthorized } from 'Store/ducks/user/actionCreators';
 
 const failureRegex = /\/FAILURE/;
 
@@ -25,7 +26,8 @@ export function* handleFailureAction({ payload, type }: FailureActionType) {
   if (
     payload.statusCode === HttpStatus.UNAUTHORIZED &&
     type !== PrimarySignInActionTypes.failure &&
-    type !== SignInAppSumoUserActionTypes.failure
+    type !== SignInAppSumoUserActionTypes.failure &&
+    type !== CurrentUserGetActionTypes.failure
   ) {
     yield put(setUnauthorized());
   }

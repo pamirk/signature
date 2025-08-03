@@ -1,10 +1,10 @@
 import { createAsyncAction, createAction } from 'typesafe-actions';
-import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
+import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
 import {
   Document,
   DocumentValuesPayload,
   DocumentsData,
-  DocumentsGetPayload,
+  FormRequestsGetPayload,
   DocumentUpdatePayload,
   DocumentIdPayload,
   DocumentUploadPayload,
@@ -19,13 +19,24 @@ import {
   TemplateActivatePayload,
   DocumentDisableRemindersPayload,
   TemplatesAllGetPayload,
+  DocumentActivitiesDownloadPayload,
+  DocumentSeparateSignPayload,
+  DocumentIdHashPayload,
+  DocumentFileUploadResponse,
+  DocumentDeletePayload,
+  GetReportByEmailPayload,
 } from 'Interfaces/Document';
-import { NormalizedEntity, SignedUrlResponse } from 'Interfaces/Common';
+import {
+  NormalizedEntity,
+  SignedPartDocumentActivityUrlResponse,
+  SignedPartDocumentUrlResponse,
+  SignedUrlResponse,
+} from 'Interfaces/Common';
 import { promisifyAsyncAction } from 'Utils/functions';
 import {
   DocumentCreateActionTypes,
   DocumentGetActionTypes,
-  DocumentsGetActionTypes,
+  FormRequestsGetActionTypes,
   DocumentUploadActionTypes,
   DocumentsDeleteActionTypes,
   DocumentBulkSendActionTypes,
@@ -50,7 +61,22 @@ import {
   FormRequestEnableActionTypes,
   ToggleEmailNotificationActionTypes,
   GetAllTemplatesActionTypes,
+  DocumentCreateByExistTemplateTypes,
+  DocumentActivitiesUrlGetActionTypes,
+  DocumentSeparateSignActionTypes,
+  DocumentSeparateDownloadUrlGetActionTypes,
+  DocumentActivitiesSeparateSignActionTypes,
+  DocumentDeleteActionTypes,
+  DocumentGetByHashActionTypes,
+  EmbedDocumentGetActionTypes,
+  EmbedDocumentUpdateActionTypes,
+  EmbedDocumentTokenInitType,
+  EmbedDocumentTokenRemoveType,
+  DocumentUpdateByExistTemplateTypes,
+  GetReportByEmailActionTypes,
 } from './actionTypes';
+import { GridItem } from 'Interfaces/Grid';
+import { TokenPayload } from 'Interfaces/User';
 
 export const createDocument = createAsyncAction(
   DocumentCreateActionTypes.request,
@@ -66,19 +92,51 @@ export const createDocument = createAsyncAction(
 
 export const $createDocument = promisifyAsyncAction(createDocument);
 
-export const getDocuments = createAsyncAction(
-  DocumentsGetActionTypes.request,
-  DocumentsGetActionTypes.success,
-  DocumentsGetActionTypes.failure,
-  DocumentsGetActionTypes.cancel,
+export const createDocumentByExistTemplate = createAsyncAction(
+  DocumentCreateByExistTemplateTypes.request,
+  DocumentCreateByExistTemplateTypes.success,
+  DocumentCreateByExistTemplateTypes.failure,
+  DocumentCreateByExistTemplateTypes.cancel,
 )<
-  [DocumentsGetPayload, PromisifiedActionMeta],
+  [DocumentValuesPayload, PromisifiedActionMeta],
+  [Document, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $createDocumentByExistTemplate = promisifyAsyncAction(
+  createDocumentByExistTemplate,
+);
+
+export const updateDocumentByExistTemplate = createAsyncAction(
+  DocumentUpdateByExistTemplateTypes.request,
+  DocumentUpdateByExistTemplateTypes.success,
+  DocumentUpdateByExistTemplateTypes.failure,
+  DocumentUpdateByExistTemplateTypes.cancel,
+)<
+  [DocumentValuesPayload, PromisifiedActionMeta],
+  [Document, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $updateDocumentByExistTemplate = promisifyAsyncAction(
+  updateDocumentByExistTemplate,
+);
+
+export const getFormRequests = createAsyncAction(
+  FormRequestsGetActionTypes.request,
+  FormRequestsGetActionTypes.success,
+  FormRequestsGetActionTypes.failure,
+  FormRequestsGetActionTypes.cancel,
+)<
+  [FormRequestsGetPayload, PromisifiedActionMeta],
   [DocumentsData, PromisifiedActionMeta],
   [ActionError, PromisifiedActionMeta],
   [undefined, PromisifiedActionMeta]
 >();
 
-export const $getDocuments = promisifyAsyncAction(getDocuments);
+export const $getFormRequests = promisifyAsyncAction(getFormRequests);
 
 export const getDocument = createAsyncAction(
   DocumentGetActionTypes.request,
@@ -94,6 +152,20 @@ export const getDocument = createAsyncAction(
 
 export const $getDocument = promisifyAsyncAction(getDocument);
 
+export const getDocumentByHash = createAsyncAction(
+  DocumentGetByHashActionTypes.request,
+  DocumentGetByHashActionTypes.success,
+  DocumentGetByHashActionTypes.failure,
+  DocumentGetByHashActionTypes.cancel,
+)<
+  [DocumentIdHashPayload, PromisifiedActionMeta],
+  [Document, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getDocumentByHash = promisifyAsyncAction(getDocumentByHash);
+
 export const uploadDocument = createAsyncAction(
   DocumentUploadActionTypes.request,
   DocumentUploadActionTypes.success,
@@ -101,7 +173,7 @@ export const uploadDocument = createAsyncAction(
   DocumentUploadActionTypes.cancel,
 )<
   [DocumentUploadPayload, PromisifiedActionMeta],
-  [Document, PromisifiedActionMeta],
+  [DocumentFileUploadResponse, PromisifiedActionMeta],
   [ActionError, PromisifiedActionMeta],
   [undefined, PromisifiedActionMeta]
 >();
@@ -222,6 +294,22 @@ export const getDocumentDownloadUrl = createAsyncAction(
 >();
 
 export const $getDocumentDownloadUrl = promisifyAsyncAction(getDocumentDownloadUrl);
+
+export const getDocumentActivitiesDownloadUrl = createAsyncAction(
+  DocumentActivitiesUrlGetActionTypes.request,
+  DocumentActivitiesUrlGetActionTypes.success,
+  DocumentActivitiesUrlGetActionTypes.failure,
+  DocumentActivitiesUrlGetActionTypes.cancel,
+)<
+  [DocumentActivitiesDownloadPayload, PromisifiedActionMeta],
+  [SignedUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getDocumentActivitiesDownloadUrl = promisifyAsyncAction(
+  getDocumentActivitiesDownloadUrl,
+);
 
 export const activateTemplate = createAsyncAction(
   TemplateActivateActionTypes.request,
@@ -412,7 +500,7 @@ export const toggleEmailNotification = createAsyncAction(
   ToggleEmailNotificationActionTypes.cancel,
 )<
   [DocumentDisableRemindersPayload, PromisifiedActionMeta],
-  [Document, PromisifiedActionMeta],
+  [GridItem, PromisifiedActionMeta],
   [ActionError, PromisifiedActionMeta],
   [undefined, PromisifiedActionMeta]
 >();
@@ -432,3 +520,112 @@ export const getAllTemplates = createAsyncAction(
 >();
 
 export const $getAllTemplates = promisifyAsyncAction(getAllTemplates);
+
+export const signSeparateDocument = createAsyncAction(
+  DocumentSeparateSignActionTypes.request,
+  DocumentSeparateSignActionTypes.success,
+  DocumentSeparateSignActionTypes.failure,
+  DocumentSeparateSignActionTypes.cancel,
+)<
+  [DocumentSeparateSignPayload, PromisifiedActionMeta],
+  [SignedPartDocumentUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $signSeparateDocument = promisifyAsyncAction(signSeparateDocument);
+
+export const getSeparateDocumentDownloadUrl = createAsyncAction(
+  DocumentSeparateDownloadUrlGetActionTypes.request,
+  DocumentSeparateDownloadUrlGetActionTypes.success,
+  DocumentSeparateDownloadUrlGetActionTypes.failure,
+  DocumentSeparateDownloadUrlGetActionTypes.cancel,
+)<
+  [DocumentSeparateSignPayload, PromisifiedActionMeta],
+  [SignedUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getSeparateDocumentDownloadUrl = promisifyAsyncAction(
+  getSeparateDocumentDownloadUrl,
+);
+
+export const signSeparateDocumentActivities = createAsyncAction(
+  DocumentActivitiesSeparateSignActionTypes.request,
+  DocumentActivitiesSeparateSignActionTypes.success,
+  DocumentActivitiesSeparateSignActionTypes.failure,
+  DocumentActivitiesSeparateSignActionTypes.cancel,
+)<
+  [DocumentSeparateSignPayload, PromisifiedActionMeta],
+  [SignedPartDocumentActivityUrlResponse, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $signSeparateDocumentActivities = promisifyAsyncAction(
+  signSeparateDocumentActivities,
+);
+
+export const deleteDocument = createAsyncAction(
+  DocumentDeleteActionTypes.request,
+  DocumentDeleteActionTypes.success,
+  DocumentDeleteActionTypes.failure,
+  DocumentDeleteActionTypes.cancel,
+)<
+  [DocumentDeletePayload, PromisifiedActionMeta],
+  [DocumentDeletePayload, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $deleteDocument = promisifyAsyncAction(deleteDocument);
+
+export const getEmbedDocument = createAsyncAction(
+  EmbedDocumentGetActionTypes.request,
+  EmbedDocumentGetActionTypes.success,
+  EmbedDocumentGetActionTypes.failure,
+  EmbedDocumentGetActionTypes.cancel,
+)<
+  [DocumentIdPayload, PromisifiedActionMeta],
+  [Document, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getEmbedDocument = promisifyAsyncAction(getEmbedDocument);
+
+export const updateEmbedDocument = createAsyncAction(
+  EmbedDocumentUpdateActionTypes.request,
+  EmbedDocumentUpdateActionTypes.success,
+  EmbedDocumentUpdateActionTypes.failure,
+  EmbedDocumentUpdateActionTypes.cancel,
+)<
+  [DocumentUpdatePayload, PromisifiedActionMeta],
+  [Document, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $updateEmbedDocument = promisifyAsyncAction(updateEmbedDocument);
+
+export const initEmbedDocumentToken = createAction(
+  EmbedDocumentTokenInitType,
+  (payload: TokenPayload) => payload,
+)();
+
+export const removeEmbedDocumenToken = createAction(EmbedDocumentTokenRemoveType)();
+
+export const getReportByEmail = createAsyncAction(
+  GetReportByEmailActionTypes.request,
+  GetReportByEmailActionTypes.success,
+  GetReportByEmailActionTypes.failure,
+  GetReportByEmailActionTypes.cancel,
+)<
+  [GetReportByEmailPayload, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta],
+  [ActionError, PromisifiedActionMeta],
+  [undefined, PromisifiedActionMeta]
+>();
+
+export const $getReportByEmail = promisifyAsyncAction(getReportByEmail);

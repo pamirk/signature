@@ -4,6 +4,10 @@ export const TwoFactorStepActionType = 'user/TWO_FACTOR_STEP';
 
 export const SetEmailConfirmedActionType = 'user/SET_EMAIL_CONFIRMED';
 
+export const InitAccessTokenType = 'user/INIT_ACCESS_TOKEN';
+
+export const InitAccessTokenFinishType = 'user/INIT_ACCESS_TOKEN_FINISH';
+
 export enum PrimarySignInActionTypes {
   request = 'user/SIGN_IN_PRIMARY/REQUEST',
   success = 'user/SIGN_IN_PRIMARY/SUCCESS',
@@ -53,11 +57,53 @@ export enum SignUpActionTypes {
   cancel = 'user/SIGN_UP/CANCEL',
 }
 
+export enum SignUpTemporaryActionTypes {
+  request = 'user/SIGN_UP_TEMPORARY/REQUEST',
+  success = 'user/SIGN_UP_TEMPORARY/SUCCESS',
+  failure = 'user/SIGN_UP_TEMPORARY/FAILURE',
+  cancel = 'user/SIGN_UP_TEMPORARY/CANCEL',
+}
+
+export enum SignUpFromTemporaryActionTypes {
+  request = 'user/SIGN_UP_FROM_TEMPORARY/REQUEST',
+  success = 'user/SIGN_UP_FROM_TEMPORARY/SUCCESS',
+  failure = 'user/SIGN_UP_FROM_TEMPORARY/FAILURE',
+  cancel = 'user/SIGN_UP_FROM_TEMPORARY/CANCEL',
+}
+
+export enum ConfirmTemporaryActionTypes {
+  request = 'user/CONFIRM_TEMPORARY/REQUEST',
+  success = 'user/CONFIRM_TEMPORARY/SUCCESS',
+  failure = 'user/CONFIRM_TEMPORARY/FAILURE',
+  cancel = 'user/CONFIRM_TEMPORARY/CANCEL',
+}
+
+export enum LtdSignUpActionTypes {
+  request = 'user/LTD_SIGN_UP/REQUEST',
+  success = 'user/LTD_SIGN_UP/SUCCESS',
+  failure = 'user/LTD_SIGN_UP/FAILURE',
+  cancel = 'user/LTD_SIGN_UP/CANCEL',
+}
+
 export enum SignedGetUrlActionTypes {
   request = 'document/SIGNED_GET_URL/REQUEST',
   success = 'document/SIGNED_GET_URL/SUCCESS',
   failure = 'document/SIGNED_GET_URL/FAILURE',
   cancel = 'document/SIGNED_GET_URL/CANCEL',
+}
+
+export enum СompatibleSignedGetUrlActionTypes {
+  request = 'document/COMPATIBLE_SIGNED_GET_URL/REQUEST',
+  success = 'document/COMPATIBLE_SIGNED_GET_URL/SUCCESS',
+  failure = 'document/COMPATIBLE_SIGNED_GET_URL/FAILURE',
+  cancel = 'document/COMPATIBLE_SIGNED_GET_URL/CANCEL',
+}
+
+export enum SignedGetUrlActionTypesHash {
+  request = 'document/SIGNED_GET_URL_HASH/REQUEST',
+  success = 'document/SIGNED_GET_URL_HASH/SUCCESS',
+  failure = 'document/SIGNED_GET_URL_HASH/FAILURE',
+  cancel = 'document/SIGNED_GET_URL_HASH/CANCEL',
 }
 
 export enum SignedGetUrlBulkActionTypes {
@@ -186,6 +232,13 @@ export enum ConfirmEmailActionTypes {
   cancel = 'user/EMAIL_CONFIRM/CANCEL',
 }
 
+export enum ConfirmEmailByTwilioActionTypes {
+  request = 'user/EMAIL_CONFIRM_BY_TWILIO/REQUEST',
+  success = 'user/EMAIL_CONFIRM_BY_TWILIO/SUCCESS',
+  failure = 'user/EMAIL_CONFIRM_BY_TWILIO/FAILURE',
+  cancel = 'user/EMAIL_CONFIRM_BY_TWILIO/CANCEL',
+}
+
 export enum SendEmailConfirmationActionTypes {
   request = 'user/SEND_EMAIL_CONFIRMATION/REQUEST',
   success = 'user/SEND_EMAIL_CONFIRMATION/SUCCESS',
@@ -235,7 +288,28 @@ export enum SignUpWithConfirmCodeActionTypes {
   cancel = 'user/SIGN_UP_WITH_CONFIRM_CODE/CANCEL',
 }
 
+export enum UpdateGoogleClientIdActionTypes {
+  request = 'user/UPDATE_GOOGLE_CLIENT_ID/REQUEST',
+  success = 'user/UPDATE_GOOGLE_CLIENT_ID/SUCCESS',
+  failure = 'user/UPDATE_GOOGLE_CLIENT_ID/FAILURE',
+  cancel = 'user/UPDATE_GOOGLE_CLIENT_ID/CANCEL',
+}
+
 export const LogoutActionType = 'user/LOGOUT';
+
+export enum SignOutActionTypes {
+  request = 'user/LOGOUT/REQUEST',
+  success = 'user/LOGOUT/SUCCESS',
+  failure = 'user/LOGOUT/FAILURE',
+  cancel = 'user/LOGOUT/CANCEL',
+}
+
+export enum EmbedSignedUrlBulkGetActionTypes {
+  request = 'document/GET_EMBED_SIGNED_URL_BULK/REQUEST',
+  success = 'document/GET_EMBED_SIGNED_URL_BULK/SUCCESS',
+  failure = 'document/GET_EMBED_SIGNED_URL_BULK/FAILURE',
+  cancel = 'document/GET_EMBED_SIGNED_URL_BULK/CANCEL',
+}
 
 export const setIntegrationActionType = 'user/SET_INTEGRATION';
 
@@ -258,3 +332,7 @@ export const SocketConnectActionType = 'user/CONNECT_SOCKET';
 export const SocketDisconnectActionType = 'user/DISCONNECT_SOCKET';
 
 export const SocketJoinRoom = 'user/JOIN_SOCKET_ROOM';
+
+export const ClearIntegrationDataType = 'user/CLEAR_INTEGRATION_DATA';
+
+export const ClearShowTrialSuccessPageType = 'user/SHOW_TRIAL_SUCCESS_MODAL/CLEAR';

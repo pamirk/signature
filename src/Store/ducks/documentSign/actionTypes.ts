@@ -9,6 +9,13 @@ export enum SignerDocumentGetTypes {
   cancel = 'document_sign/GET_SIGNER_DOCUMENT/CANCEL',
 }
 
+export enum SigningDocumentGetTypes {
+  request = 'document_sign/GET_SIGNING_DOCUMENT/REQUEST',
+  success = 'document_sign/GET_SIGNING_DOCUMENT/SUCCESS',
+  failure = 'document_sign/GET_SIGNING_DOCUMENT/FAILURE',
+  cancel = 'document_sign/GET_SIGNING_DOCUMENT/CANCEL',
+}
+
 export enum AvailableSignersOptionsGetTypes {
   request = 'document_sign/GET_AVAILABLE_SIGNERS_OPTIONS/REQUEST',
   success = 'document_sign/GET_AVAILABLE_SIGNERS_OPTIONS/SUCCESS',
@@ -21,6 +28,13 @@ export enum SubmitSignedDocumentTypes {
   success = 'document_sign/SEND_SIGNED_DOCUMENT/SUCCESS',
   failure = 'document_sign/SEND_SIGNED_DOCUMENT/FAILURE',
   cancel = 'document_sign/SEND_SIGNED_DOCUMENT/CANCEL',
+}
+
+export enum DeclineSigningRequestTypes {
+  request = 'document_sign/DECLINE_SIGNING_REQUEST/REQUEST',
+  success = 'document_sign/DECLINE_SIGNING_REQUEST/SUCCESS',
+  failure = 'document_sign/DECLINE_SIGNING_REQUEST/FAILURE',
+  cancel = 'document_sign/DECLINE_SIGNING_REQUEST/CANCEL',
 }
 
 export enum DocumentSendOutActionTypes {
@@ -84,4 +98,25 @@ export enum SigningUrlGetActionTypes {
   success = 'document/GET_SIGNING_URL/SUCCESS',
   failure = 'document/GET_SIGNING_URL/FAILURE',
   cancel = 'document/GET_SIGNING_URL/CANCEL',
+}
+
+export enum SigningRemindersUnlinkTypes {
+  request = 'document/UNLINK_SIGNING_REMINDERS/REQUEST',
+  success = 'document/UNLINK_SIGNING_REMINDERS/SUCCESS',
+  failure = 'document/UNLINK_SIGNING_REMINDERS/FAILURE',
+  cancel = 'document/UNLINK_SIGNING_REMINDERS/CANCEL',
+}
+
+export enum EmbedDocumentSendOutTypes {
+  request = 'document_sign/EMBED_DOCUMENT_SEND_OUT/REQUEST',
+  success = 'document_sign/EMBED_DOCUMENT_SEND_OUT/SUCCESS',
+  failure = 'document_sign/EMBED_DOCUMENT_SEND_OUT/FAILURE',
+  cancel = 'document_sign/EMBED_DOCUMENT_SEND_OUT/CANCEL',
+}
+
+export enum EmbedDocumentPreviewPagesGetActionTypes {
+  request = 'document_sign/GET_EMBED_DOCUMENT_PREVIEW_PAGES/REQUEST',
+  success = 'document_sign/GET_EMBED_DOCUMENT_PREVIEW_PAGES/SUCCESS',
+  failure = 'document_sign/GET_EMBED_DOCUMENT_PREVIEW_PAGES/FAILURE',
+  cancel = 'document_sign/GET_EMBED_DOCUMENT_PREVIEW_PAGES/CANCEL',
 }

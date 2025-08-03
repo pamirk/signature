@@ -4,7 +4,7 @@ import { Document } from 'Interfaces/Document';
 import {
   createDocument,
   getDocument,
-  getDocuments,
+  getFormRequests,
   updateDocument,
   uploadDocument,
   cleanFileData,
@@ -21,13 +21,20 @@ import {
   getFormRequest,
   disableForm,
   enableForm,
-  toggleEmailNotification,
   getAllTemplates,
+  createDocumentByExistTemplate,
+  updateDocumentByExistTemplate,
+  signSeparateDocument,
+  signSeparateDocumentActivities,
+  deleteDocument,
+  getEmbedDocument,
+  updateEmbedDocument,
 } from './actionCreators';
 import {
   getSignerDocument,
   sendCodeAccess,
   sendDocumentOut,
+  sendOutEmbedDocument,
 } from '../documentSign/actionCreators';
 
 export default createReducer({} as NormalizedEntity<Document>)
@@ -40,9 +47,10 @@ export default createReducer({} as NormalizedEntity<Document>)
       sendCodeAccess.success,
       getDocument.success,
       updateDocument.success,
-      uploadDocument.success,
       cleanFileData.success,
       sendDocumentOut.success,
+      createDocumentByExistTemplate.success,
+      updateDocumentByExistTemplate.success,
       copyDocument.success,
       activateTemplate.success,
       revertDocument.success,
@@ -52,25 +60,48 @@ export default createReducer({} as NormalizedEntity<Document>)
       getFormRequest.success,
       disableForm.success,
       enableForm.success,
-      toggleEmailNotification.success,
+      sendOutEmbedDocument.success,
+      getEmbedDocument.success,
+      updateEmbedDocument.success,
     ],
     (state, action) => ({
       ...state,
       [action.payload.id]: action.payload,
     }),
   )
-  .handleAction(getDocumentConvertionStatus.success, (state, action) => ({
+  .handleAction([uploadDocument.success], (state, action) => ({
     ...state,
-    [action.payload.id]: {
-      ...state[action.payload.id],
-      ...action.payload,
+    [action.payload.document.id]: {
+      ...state[action.payload.document.id],
+      ...action.payload.document,
     },
   }))
-  .handleAction(getDocuments.success, (state, action) => ({
+  .handleAction(
+    [
+      getDocumentConvertionStatus.success,
+      signSeparateDocument.success,
+      signSeparateDocumentActivities.success,
+    ],
+    (state, action) => ({
+      ...state,
+      [action.payload.id]: {
+        ...state[action.payload.id],
+        ...action.payload,
+      },
+    }),
+  )
+  .handleAction(getFormRequests.success, (state, action) => ({
     ...action.payload.documents,
   }))
   .handleAction(getAllDocuments.success, (state, action) => ({ ...action.payload }))
   .handleAction(getAllTemplates.success, (state, action) => ({
     ...state,
     ...action.payload,
-  }));
+  }))
+  .handleAction(deleteDocument.success, (state, action) => {
+    const deleteId = action.payload.documentId;
+    const newState = { ...state };
+    delete newState[deleteId];
+
+    return newState;
+  });

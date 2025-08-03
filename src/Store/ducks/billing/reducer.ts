@@ -2,13 +2,15 @@ import { createReducer } from 'typesafe-actions';
 import {
   getCard,
   updateCard,
-  createCard,
+  attachCard,
   getPlans,
   getInvoices,
   getSubscriptionData,
   getApiSubscription,
   removeApiPlan,
   changeApiPlan,
+  changeLtdPlanDuration,
+  getLtdTier,
 } from './actionCreators';
 import { BillingData, PlanDetails } from 'Interfaces/Billing';
 
@@ -19,7 +21,7 @@ export default createReducer({
   card: {},
 } as BillingData)
   .handleAction(
-    [getCard.success, updateCard.success, createCard.success],
+    [getCard.success, updateCard.success, attachCard.success],
     (state, action) => ({
       ...state,
       card: action.payload,
@@ -27,7 +29,7 @@ export default createReducer({
   )
   .handleAction([getInvoices.success], (state, action) => ({
     ...state,
-    invoices: action.payload,
+    invoices: action.payload.invoices,
   }))
   .handleAction([getPlans.success], (state, action) => ({
     ...state,
@@ -41,7 +43,15 @@ export default createReducer({
     ...state,
     apiSubscription: action.payload,
   }))
+  .handleAction([changeLtdPlanDuration.success], (state, action) => ({
+    ...state,
+    ...action.payload,
+  }))
   .handleAction([removeApiPlan.success, changeApiPlan.success], (state, action) => ({
     ...state,
     apiSubscription: action.payload,
+  }))
+  .handleAction([getLtdTier.success], (state, action) => ({
+    ...state,
+    ltdTier: action.payload,
   }));

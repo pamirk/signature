@@ -5,8 +5,12 @@ import {
   $getAvailableSignersOptions,
   getSignerDocument,
   $getSignerDocument,
+  getSigningDocument,
+  $getSigningDocument,
   submitSignedDocument,
   $submitSignedDocument,
+  declineSigningRequest,
+  $declineSigningRequest,
   sendDocumentOut,
   $sendDocumentOut,
   sendReminders,
@@ -25,6 +29,12 @@ import {
   $getSigningUrl,
   sendCodeAccess,
   getSigningUrl,
+  unlinkSigningReminders,
+  $unlinkSigningReminders,
+  sendOutEmbedDocument,
+  $sendOutEmbedDocument,
+  getEmbedDocumentPreviewPages,
+  $getEmbedDocumentPreviewPages,
 } from './actionCreators';
 import sagas from './sagas';
 
@@ -34,7 +44,9 @@ export default {
     initDocumentSigning,
     finishDocumentSigning,
     getSignerDocument,
+    getSigningDocument,
     submitSignedDocument,
+    declineSigningRequest,
     getAvailableSignersOptions,
     sendDocumentOut,
     sendReminders,
@@ -45,12 +57,17 @@ export default {
     getDocumentConvertionStatus,
     sendCodeAccess,
     getSigningUrl,
+    unlinkSigningReminders,
+    sendOutEmbedDocument,
+    getEmbedDocumentPreviewPages,
   },
 };
 
 export const $actions = {
   getSignerDocument: $getSignerDocument,
+  getSigningDocument: $getSigningDocument,
   submitSignedDocument: $submitSignedDocument,
+  declineSigningRequest: $declineSigningRequest,
   getAvailableSignersOptions: $getAvailableSignersOptions,
   sendDocumentOut: $sendDocumentOut,
   sendReminders: $sendReminders,
@@ -61,4 +78,7 @@ export const $actions = {
   getDocumentConvertionStatus: $getDocumentConvertionStatus,
   sendCodeAccess: $sendCodeAccess,
   getSigningUrl: $getSigningUrl,
+  unlinkSigningReminders: $unlinkSigningReminders,
+  sendOutEmbedDocument: $sendOutEmbedDocument,
+  getEmbedDocumentPreviewPages: $getEmbedDocumentPreviewPages,
 };

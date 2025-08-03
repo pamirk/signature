@@ -11,12 +11,18 @@ import documentSign, { $actions as $documentSignAction } from './documentSign';
 import requestHistoryDuck, { $actions as $requestHistoryActions } from './requestHistory';
 import apiKeyDuck, { $actions as $apiKeyActions } from './apiKey';
 import metaDuck from './meta';
-import companyDuck from './company';
+import companyDuck, { $actions as $companyActions } from './company';
 import integration from './integration';
 import contractsDuck, { $actions as $contractsActions } from './contracts';
 import contracts from './contracts';
+import folderDuck, { $actions as $folderActions } from './folders';
+import gridDuck, { $actions as $gridActions } from './grid';
+import signatureRequestDuck, {
+  $actions as $signatureRequestActions,
+} from './signatureRequest';
+import { setUnauthorizedActionType } from './user/actionTypes';
 
-export const rootReducer = combineReducers({
+const appReducer = combineReducers({
   apiKey: apiKeyDuck.reducer,
   requestHistory: requestHistoryDuck.reducer,
   user: userDuck.reducer,
@@ -28,7 +34,18 @@ export const rootReducer = combineReducers({
   requisite: requisiteDuck.reducer,
   meta: metaDuck.reducer,
   contracts: contractsDuck.reducer,
+  folder: folderDuck.reducer,
+  grid: gridDuck.reducer,
+  signatureRequest: signatureRequestDuck.reducer,
 });
+
+export const rootReducer = (state, action) => {
+  if (action.type === setUnauthorizedActionType) {
+    return appReducer(undefined, action);
+  }
+
+  return appReducer(state, action);
+};
 
 export const rootActions = {
   requestHistory: requestHistoryDuck.actions,
@@ -43,6 +60,9 @@ export const rootActions = {
   requisite: requisiteDuck.actions,
   documentSign: documentSign.actions,
   contracts: contracts.actions,
+  folder: folderDuck.actions,
+  grid: gridDuck.actions,
+  signatureRequest: signatureRequestDuck.actions,
 };
 
 export const $actions = {
@@ -51,12 +71,16 @@ export const $actions = {
   user: $userActions,
   document: $documentActions,
   documentField: $documentFieldActions,
+  company: $companyActions,
   billing: $billingActions,
   team: $teamActions,
   integration: $integrationActions,
   requisite: $requisiteActions,
   documentSign: $documentSignAction,
   contracts: $contractsActions,
+  folder: $folderActions,
+  grid: $gridActions,
+  signatureRequest: $signatureRequestActions,
 };
 
 export function* rootSagas() {
@@ -66,11 +90,15 @@ export function* rootSagas() {
     ...userDuck.sagas,
     ...documentDuck.sagas,
     ...documentFieldDuck.sagas,
+    ...companyDuck.sagas,
     ...billingDuck.sagas,
     ...teamDuck.sagas,
     ...integration.sagas,
     ...requisiteDuck.sagas,
     ...documentSign.sagas,
     ...contracts.sagas,
+    ...folderDuck.sagas,
+    ...gridDuck.sagas,
+    ...signatureRequestDuck.sagas,
   ]);
 }
