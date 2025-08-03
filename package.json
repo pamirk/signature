@@ -17,6 +17,7 @@
     "interactjs": "^1.10.11",
     "jszip": "^3.7.1",
     "jszip-utils": "^0.1.0",
+    "jwt-decode": "^4.0.0",
     "load-script": "^1.0.0",
     "lodash": "^4.17.21",
     "npm-link-shared": "^0.5.6",

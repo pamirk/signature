@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { SignUpData } from 'Interfaces/Auth';
 import { OnSubmitReturnType } from 'Interfaces/FinalForm';
 import { useGoogleLoginRenderButton } from 'Hooks/Auth';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 declare let google: any;
 

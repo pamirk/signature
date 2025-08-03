@@ -8,7 +8,7 @@ import useConfirmEmail from 'Hooks/Auth/useConfirmEmail';
 import { DataLayerAnalytics } from 'Services/Integrations';
 import { useSelector } from 'react-redux';
 import { selectIsEmailConfirmed } from 'Utils/selectors';
-import jwt_decode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { isNewTrialUser, isNotEmpty } from 'Utils/functions';
 import { useCurrentUserGet } from 'Hooks/User';
 import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
@@ -32,7 +32,7 @@ function ConfirmEmail({ location }: RouteChildrenProps) {
     const token = searchParams.get('emailConfirmationToken');
 
     if (token) {
-      const parsedToken: any = jwt_decode(token);
+      const parsedToken: any = jwtDecode(token);
 
       return [token, parsedToken.sub, parsedToken.email, parsedToken.redirect];
     }

@@ -23,7 +23,7 @@ import UpgradeModal from 'Components/UpgradeModal';
 import { processSubmissionErrors } from 'Utils/functions';
 import Toast from 'Services/Toast';
 import useEmbedDocumentUpdate from 'Hooks/Document/useEmbedDocumentUpdate';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { DateFormats } from 'Interfaces/User';
 import { RequisiteValueType } from 'Interfaces/Requisite';
 import {

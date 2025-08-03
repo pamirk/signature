@@ -4,7 +4,7 @@ import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 import History from 'Services/History';
 import { DataLayerAnalytics } from 'Services/Integrations';
 import Toast from 'Services/Toast';
-import jwt_decode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { RouteChildrenProps } from 'react-router-dom';
 
@@ -53,7 +53,7 @@ const InviteAcceptPage = ({ location, match }: RouteChildrenProps<PageParams>) =
       return navigateToRoot();
     }
 
-    const parsedToken: any = jwt_decode(signToken);
+    const parsedToken: any = jwtDecode(signToken);
 
     initInviteAccepting({ token: signToken });
     handleInviteAccept(teamId, parsedToken.sub);
