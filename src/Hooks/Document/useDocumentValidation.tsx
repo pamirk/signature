@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import _ from 'lodash';
+import { difference, isEqual, uniqWith } from 'lodash';
 import Toast from 'Services/Toast';
 import History from 'Services/History';
 import {
@@ -14,6 +14,8 @@ import {
 import { selectUser } from 'Utils/selectors';
 import { User } from 'Interfaces/User';
 import { email as validateEmail } from 'Utils/validation';
+import { DocumentFieldTypes } from 'Interfaces/DocumentFields';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 type DocumentValidationError = string | undefined;
 
@@ -33,9 +35,9 @@ export const checkForSignersDuplicates = (
           email,
         };
   });
-  const duplicateSigners = _.difference(
+  const duplicateSigners = difference(
     partialSigners,
-    _.uniqWith(partialSigners, _.isEqual),
+    uniqWith(partialSigners, isEqual),
   ) as Signer[];
 
   if (duplicateSigners.length) return 'One or more signers are identical';
@@ -60,6 +62,20 @@ export const checkForDocumentFields = (document: Document): DocumentValidationEr
     return `${documentType} must have at least one field`;
 };
 
+export const checkForEmptyTextbox = (document: Document): DocumentValidationError => {
+  const hasEmptyTextbox =
+    document.fields.length &&
+    document.fields.findIndex(
+      field =>
+        field.type === DocumentFieldTypes.Text &&
+        field.required &&
+        !field.text &&
+        (!document.signers ||
+          document.signers.findIndex(signer => signer.id === field.signerId) === -1),
+    ) !== -1;
+  if (hasEmptyTextbox) return 'The Textbox Assigned to (Me) Now must have one letter';
+};
+
 export const checkForDocumentRequiredField = (
   document: Document,
 ): DocumentValidationError => {
@@ -74,7 +90,9 @@ export const checkForCurrentUserPresents = (document: Document, user: User) => {
   const isCurrentUserPresent = !!document.signers?.find(
     signer => signer.email === user.email,
   );
-  if (!isCurrentUserPresent) return 'Current user must be in document signers list';
+
+  if (!user.isTemporary && !isCurrentUserPresent)
+    return 'Current user must be in document signers list';
 };
 
 export const checkForCurrentUserFields = (document: Document, user: User) => {
@@ -83,7 +101,10 @@ export const checkForCurrentUserFields = (document: Document, user: User) => {
       documentField => documentField.signerId === signer.id,
     );
 
-    return signerField && (signer.isPreparer || signer.email === user.email);
+    return (
+      signerField &&
+      (signer.isPreparer || (signer.email === user.email && signer.name === user.name))
+    );
   });
 
   if (!isCurrentUserAssigned) {
@@ -134,7 +155,7 @@ export const checkForUnattachedFields = (document: Document): DocumentValidation
   }
 };
 
-const navigateToOnlyMe = () => History.push('only-me');
+const navigateToOnlyMe = () => History.push(AuthorizedRoutePaths.ONLY_ME);
 
 export const getDocumentValidationMeta = (type: DocumentTypes) =>
   type === DocumentTypes.ME_AND_OTHER
@@ -184,7 +205,7 @@ export const checkSigners = (
 
         const isDuplicated = !!signers
           .slice(0, index)
-          .find(prevSigner => _.isEqual(prevSigner, signer));
+          .find(prevSigner => isEqual(prevSigner, signer));
 
         if (isDuplicated) {
           return { index, message: 'Signer is duplicated' };
@@ -211,6 +232,21 @@ export const useBulkSendValidation = () => {
   return checkBulkSendValues;
 };
 
+export const checkForEmptyNameField = (document: Document): DocumentValidationError => {
+  const hasEmptyTextbox =
+    document.fields.length &&
+    document.fields.findIndex(
+      field =>
+        field.type === DocumentFieldTypes.Name &&
+        !field.text &&
+        (!document.signers ||
+          document.signers.findIndex(signer => signer.id === field.signerId) === -1),
+    ) !== -1;
+  if (hasEmptyTextbox) {
+    return 'The Name field Assigned to (Me) Now must be filled';
+  }
+};
+
 export const useDocumentValidation = () => {
   const user: User = useSelector(selectUser);
 
@@ -226,6 +262,8 @@ export const useDocumentValidation = () => {
         checkForDocumentFields(validationalDocument),
         checkForDocumentRequiredField(validationalDocument),
         checkForUnattachedFields(validationalDocument),
+        checkForEmptyTextbox(validationalDocument),
+        checkForEmptyNameField(validationalDocument),
       ];
 
       const documentWithTemplateErrors = [
@@ -235,9 +273,9 @@ export const useDocumentValidation = () => {
       const otherValidationErrors =
         document.type === DocumentTypes.ME_AND_OTHER
           ? [
-              checkForCurrentUserPresents(validationalDocument, user),
+              checkForCurrentUserPresents(document, user),
               checkForCurrentUserFields(document, user),
-              checkForOtherSignersFieldsAssign(validationalDocument, user),
+              checkForOtherSignersFieldsAssign(document, user),
             ]
           : [checkForUnusedSigners(validationalDocument)];
       return validationalDocument.templateId

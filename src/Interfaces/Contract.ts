@@ -1,9 +1,14 @@
-export interface ContractsPayload {
-}
-
 export interface Contract {
-    email: any;
-    id: any;
-    name: any;
-    document: any;
+  email: string;
+  id: string;
+  name: string;
+  document: {
+    id: string;
+    status: string;
+    codeAccess?: string;
+  };
+}
+export interface ContractsPayload {
+  formRequestId: string;
+  status?: string;
 }

@@ -6,7 +6,7 @@ import { CardFormValues } from 'Interfaces/Billing';
 export default () => {
   const dispatch = useDispatch();
 
-  return useAsyncAction((values: CardFormValues) =>
-    $actions.billing.updateCard(dispatch, { values }),
-  );
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  return useAsyncAction((values: CardFormValues) => $actions.billing.updateCard(dispatch, { values }),);
 };

@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
 import { $actions } from 'Store/ducks';
 import { useAsyncAction } from 'Hooks/Common';
-import { DocumentsGetPayload } from 'Interfaces/Document';
+import { GridUpdatePayload } from 'Interfaces/Grid';
 
 export default () => {
   const dispatch = useDispatch();
 
-  return useAsyncAction((payload: DocumentsGetPayload) =>
-    $actions.document.getDocuments(dispatch, payload),
+  return useAsyncAction((values: GridUpdatePayload) =>
+    $actions.grid.updateGrid(dispatch, values),
   );
 };

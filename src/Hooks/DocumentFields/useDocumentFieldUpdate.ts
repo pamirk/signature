@@ -25,7 +25,7 @@ export default () => {
         }),
       );
     },
-    [],
+    [dispatch],
   );
 
   return updateDocumentField;

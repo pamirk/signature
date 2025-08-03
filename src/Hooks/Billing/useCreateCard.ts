@@ -1,12 +1,42 @@
-import { useDispatch } from 'react-redux';
-import { $actions } from 'Store/ducks';
-import { useAsyncAction } from 'Hooks/Common';
+import { useCallback } from 'react';
+import { useElements, useStripe } from '@stripe/react-stripe-js';
 import { CardFormValues } from 'Interfaces/Billing';
 
 export default () => {
-  const dispatch = useDispatch();
+  const stripe = useStripe();
+  const elements = useElements();
 
-  return useAsyncAction((values: CardFormValues) =>
-    $actions.billing.createCard(dispatch, { values }),
+  const handleCardCreate = useCallback(
+    async (billingDetails?: CardFormValues): Promise<string | undefined> => {
+      if (!elements || !stripe) {
+        return;
+      }
+
+      const cardNumber = elements.getElement('cardNumber');
+
+      if (!cardNumber) {
+        return;
+      }
+
+      const response = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardNumber,
+        billing_details: {
+          address: {
+            postal_code: billingDetails?.postalCode,
+          },
+          name: billingDetails?.cardholderName,
+        },
+      });
+
+      if (response.paymentMethod) {
+        return response.paymentMethod.id;
+      } else {
+        throw response.error;
+      }
+    },
+    [elements, stripe],
   );
+
+  return handleCardCreate;
 };

@@ -18,6 +18,7 @@ export default ({ requisite, defaultValue, requisiteValueType }: Props) => {
   const [downloadFile, isDownloading] = useDownloadFileByUrl();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [drawnFile, setDrawnFile] = useState<File>();
   const [imageFile, setImageFile] = useState<File>();
 
   const [requisiteValue, setRequisiteValue] = useState<string>(
@@ -27,11 +28,13 @@ export default ({ requisite, defaultValue, requisiteValueType }: Props) => {
   const [isInitialImage, setIsInitialImage] = useState<boolean>();
 
   const setImageToCanvas = useCallback(
-    async (key: string) => {
+    async (key: string, type: Exclude<RequisiteValueType, RequisiteValueType.TEXT>) => {
       try {
         const signedUrlData = (await getSignedUrl({ key })) as SignedUrlResponse;
         const imageData: File = await downloadFile(signedUrlData.result);
-        setImageFile(imageData);
+        type === RequisiteValueType.DRAW
+          ? setDrawnFile(imageData)
+          : setImageFile(imageData);
         setIsInitialImage(true);
       } catch (error) {
         Toast.handleErrors(error);
@@ -45,7 +48,7 @@ export default ({ requisite, defaultValue, requisiteValueType }: Props) => {
     (signaturePad: SignaturePad) => {
       const data = signaturePad.toDataURL('image/png');
       const requisiteFile = base64ToFile(data, 'requisite');
-      setImageFile(requisiteFile);
+      setDrawnFile(requisiteFile);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -55,8 +58,10 @@ export default ({ requisite, defaultValue, requisiteValueType }: Props) => {
     if (requisite) {
       switch (requisite.valueType) {
         case RequisiteValueType.UPLOAD:
+          setImageToCanvas(requisite.fileKey, RequisiteValueType.UPLOAD);
+          break;
         case RequisiteValueType.DRAW:
-          setImageToCanvas(requisite.fileKey);
+          setImageToCanvas(requisite.fileKey, RequisiteValueType.DRAW);
           break;
         default:
           break;
@@ -75,8 +80,8 @@ export default ({ requisite, defaultValue, requisiteValueType }: Props) => {
       canvas.getContext('2d')?.scale(ratio, ratio);
       const signPad = new SignaturePad(canvas);
 
-      if (imageFile) {
-        const imageUrl = URL.createObjectURL(imageFile);
+      if (drawnFile) {
+        const imageUrl = URL.createObjectURL(drawnFile);
         signPad.fromDataURL(imageUrl);
         setIsInitialImage(false);
       }
@@ -91,6 +96,7 @@ export default ({ requisite, defaultValue, requisiteValueType }: Props) => {
   return [
     canvasRef,
     [imageFile, setImageFile],
+    [drawnFile, setDrawnFile],
     [requisiteValue, setRequisiteValue],
     isDownloading,
   ] as const;

@@ -10,8 +10,10 @@ export default () => {
   const print = (url: string) => {
     if (shadowIframe) {
       shadowIframe.onload = () => {
-        shadowIframe?.focus();
-        shadowIframe?.contentWindow?.print();
+        setTimeout(() => {
+          shadowIframe?.focus();
+          shadowIframe?.contentWindow?.print();
+        }, 1000);
       };
       shadowIframe.src = url as string;
     }

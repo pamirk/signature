@@ -1,4 +1,5 @@
 import { Location } from 'history';
+import { Document } from 'Interfaces/Document';
 
 export interface Action<TPayload, TResponse> {
   (arg: TPayload): TResponse;
@@ -49,8 +50,28 @@ export interface SignedUrlPayload {
   key: string;
 }
 
+export interface CompatibleSignedUrlPayload extends SignedUrlPayload {
+  pdfFileKey: Document['pdfFileKey'];
+}
+
+export interface SignedUrlHashPayload {
+  key: string;
+  hash: string;
+  documentId: string;
+}
+
 export interface SignedUrlResponse {
   result: string;
+}
+
+export interface SignedPartDocumentUrlResponse {
+  resultDocumentPdfFileKey: string;
+  id: string;
+}
+
+export interface SignedPartDocumentActivityUrlResponse {
+  resultActivitiesPdfFileKey: string;
+  id: string;
 }
 
 export interface BulkSignedUrlPayload {
@@ -134,6 +155,7 @@ export interface FileItem {
   isFinished?: boolean;
   order?: number;
   errorText?: string;
+  file?: File;
 }
 
 export type DocumentItem = FileItem & { file?: File };

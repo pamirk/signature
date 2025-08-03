@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import * as _ from 'lodash';
+import { findKey } from 'lodash';
 import { SignedUrlResponse } from 'Interfaces/Common';
 import { useRequisitePut, useSignedPutUrl } from 'Hooks/User';
 import { MIME_TYPES } from 'Utils/constants';
@@ -13,7 +13,7 @@ export default () => {
 
   const uploadToBacket = useCallback(
     async (file: File, id: string) => {
-      const fileExt = _.findKey(MIME_TYPES, mimeType => mimeType === file.type);
+      const fileExt = findKey(MIME_TYPES, mimeType => mimeType === file.type);
       const fileName = `${id}${fileExt}`;
       const key = `requisite/${userId}/${fileName}`;
       const { result: putUrl } = (await getSignedPutUrl({

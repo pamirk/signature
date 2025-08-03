@@ -1,14 +1,42 @@
+import { AxiosRequestConfig } from 'axios';
 import {
+  EntityDates,
+  NormalizedEntity,
+  OrderingParams,
+  PDFMetadata,
   PaginationData,
   PaginationParams,
-  NormalizedEntity,
-  EntityDates,
-  PDFMetadata,
   RecursivePartial,
-  OrderingParams,
 } from './Common';
-import { AxiosRequestConfig } from 'axios';
 import { DocumentField } from './DocumentFields';
+import { GridItem } from './Grid';
+import { TeamOwner } from './Team';
+import { User, UserRoles } from './User';
+
+export enum SignAction {
+  SignDocument = 'signDocument',
+  SignAndSend = 'signAndSend',
+  Send = 'send',
+}
+
+export enum SignActionLabel {
+  SIGN_DOCUMENT = 'Sign a Document',
+  SIGN_AND_SEND = 'Sign & Send for Signature',
+  SEND = 'Send for Signature',
+}
+
+export enum FinalStepButtonTitle {
+  SIGN_DOCUMENT = 'Sign Document',
+  SIGN_AND_SEND = 'Sign Document and Send for Signature',
+  SEND = 'Send for Signature',
+}
+
+export enum DocumentActions {
+  SEND = 'Send',
+  SAVE = 'Save',
+  CREATE = 'Create',
+  UPDATE = 'Update',
+}
 
 export enum DocumentStatuses {
   API = 'api',
@@ -18,6 +46,9 @@ export enum DocumentStatuses {
   ACTIVE = 'active',
   REPLICA = 'replica',
   PREPARING = 'preparing',
+  DECLINED = 'declined',
+  EXPIRED = 'expired',
+  VOIDED = 'voided',
 }
 
 export enum DocumentTypes {
@@ -28,8 +59,19 @@ export enum DocumentTypes {
   FORM_REQUEST = 'form_request',
 }
 
+export enum DocumentDownloadTypes {
+  MERGED = 'merged',
+  SEPARATED = 'separated',
+}
+
 export interface EmailRecipient {
   email: string;
+}
+
+export interface TeammateField {
+  email: string;
+  name: string;
+  role: UserRoles;
 }
 
 export interface Signer extends EmailRecipient {
@@ -39,6 +81,7 @@ export interface Signer extends EmailRecipient {
   userId: string;
   isPreparer: boolean;
   isFinished: boolean;
+  isDeclined: boolean;
   order: number;
 }
 
@@ -71,6 +114,7 @@ export interface DocumentPart {
   order: number;
   files: DocumentPageFile[] | null;
   pdfMetadata: PDFMetadata | null;
+  pdfFileKey: string;
   filesUploaded: boolean;
   originalFileName: string;
   originalFileUrl: string;
@@ -89,22 +133,43 @@ export interface Document extends Partial<EntityDates> {
   type: DocumentTypes;
   status: DocumentStatuses;
   pdfFileKey: string | null;
+  resultDocumentPdfFileKey: string | null;
   resultPdfFileKey: string | null;
+  resultActivitiesPdfFileKey: string;
   recipients: EmailRecipient[] | null;
   signers: Signer[];
   fields: DocumentField[];
-  isOrdered: boolean;
+  isOrdered?: boolean;
   codeAccess?: string;
+  errorText?: string;
+  entityType: string;
+  entityId: string;
+  documents: Document;
+  folders: any;
   parts: DocumentPart[];
   files: DocumentPageFile[] | null;
   isFromFormRequest: boolean | null;
-  deletedAt: Date | null;
+  deletedAt: string | null;
   testMode?: boolean;
+  disableReminders: boolean;
+  user: User;
+  downloadType: DocumentDownloadTypes;
+  expirationDate?: Date;
 }
 
-export interface DocumentForSigners extends Document {
+export interface DocumentForSigners extends Omit<Document, 'user'> {
+  user: Document['user'] & {
+    team: { id: string; owner: TeamOwner };
+  };
   redirectionPage: string;
   isNeedCodeAccess?: boolean;
+}
+
+export interface DocumentForSigning extends Omit<Document, 'signers' | 'user'> {
+  signers: SignerOption[];
+  user: Document['user'] & {
+    team: { id: string; owner: TeamOwner };
+  };
 }
 
 export interface DocumentsData {
@@ -123,7 +188,13 @@ type DeepPartialSlicedDocument<K extends keyof Document> = RecursivePartial<
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DocumentValuesBase
   extends PartialSlicedDocument<
-    'id' | 'title' | 'message' | 'isOrdered' | 'status' | 'isFromFormRequest'
+    | 'id'
+    | 'title'
+    | 'message'
+    | 'isOrdered'
+    | 'status'
+    | 'isFromFormRequest'
+    | 'expirationDate'
   > {}
 
 export interface DocumentSignValues
@@ -151,10 +222,20 @@ export interface OnlyMeDocumentValues
 
 export type DocumentValues = OnlyMeDocumentValues &
   DocumentSignValues &
-  DeepPartialSlicedDocument<'signers'>;
+  DeepPartialSlicedDocument<'signers' | 'parts'> & { isApiTemplate?: boolean };
 
 export interface DocumentValuesPayload {
   values: DocumentValues;
+}
+
+export interface DocumentFileUploadRequest {
+  filename: string;
+}
+
+export interface DocumentFileUploadResponse {
+  signed_url: string;
+  document: Pick<Document, 'title' | 'id'>;
+  documentPart: DocumentPart;
 }
 
 export interface DateFilter {
@@ -165,19 +246,28 @@ export interface DateFilter {
 export enum SearchTypeEnum {
   DOCUMENTS = 'documents',
   SIGNERS = 'signers',
+  CREATORS = 'creators',
 }
-export interface DocumentsGetPayload
+export interface FormRequestsGetPayload
   extends PaginationParams,
     DateFilter,
     OrderingParams {
-  type?: DocumentTypes[];
   status?: DocumentStatuses[];
-  searchTerm?: string;
+  searchTerm?: string | string[];
   searchType?: SearchTypeEnum;
+  showType?: string;
 }
 
 export interface DocumentIdPayload {
   documentId: Document['id'];
+}
+
+export interface DocumentDeletePayload {
+  documentId: Document['id'];
+  isLocalDelete?: boolean;
+}
+export interface DocumentIdHashPayload extends DocumentIdPayload {
+  hash: string;
 }
 
 export interface DocumentPartIdPayload {
@@ -200,11 +290,18 @@ export interface DocumentDownloadPayload {
   hash?: string;
 }
 
+export interface DocumentActivitiesDownloadPayload {
+  documentId: Document['id'];
+}
+
 export interface DocumentUpdate
-  extends Pick<Document, 'type'>,
-    PartialSlicedDocument<'title' | 'message' | 'templateId' | 'fields'>,
+  extends Pick<Document, 'isOrdered'>,
+    PartialSlicedDocument<
+      'title' | 'message' | 'templateId' | 'fields' | 'expirationDate'
+    >,
     DeepPartialSlicedDocument<'signers' | 'recipients' | 'parts'> {
   documentId: Document['id'];
+  type?: DocumentTypes;
 }
 
 export interface DocumentUpdateQuery {
@@ -217,7 +314,13 @@ export interface DocumentUpdatePayload {
 }
 
 export interface DocumentDisableRemindersPayload {
+  grid: GridItem;
+  disableReminders: boolean;
+}
+
+export interface DocumentDisableRemindersRequest {
   documentId: Document['id'];
+  disableReminders: boolean;
 }
 
 export interface SelectableDocument extends Document {
@@ -267,7 +370,16 @@ export interface SigningUrlPayload {
   signingUrl: string;
 }
 
-export type SignerOption = Pick<Signer, 'id' | 'name'>;
+export type SignerOption = Pick<
+  Signer,
+  'id' | 'name' | 'order' | 'role' | 'isFinished' | 'isPreparer' | 'isDeclined'
+> & {
+  user:
+    | (Pick<User, 'id' | 'isAuthorized' | 'isEmailConfirmed'> & {
+        plan: Pick<User['plan'], 'id' | 'type' | 'duration'>;
+      })
+    | null;
+};
 
 export interface DocumentSendPayload extends DocumentIdPayload {
   isTemplate?: boolean;
@@ -295,6 +407,9 @@ export enum DocumentActivityTypes {
   SIGN = 'sign',
   COMPLETE = 'complete',
   REVERT = 'revert',
+  DECLINE = 'decline',
+  EXPIRE = 'expire',
+  NOT_SIGN = 'not_sign',
 }
 
 export interface DocumentActivity {
@@ -328,3 +443,24 @@ export interface TemplateActivatePayload {
   documentId: Document['id'];
   status?: DocumentStatuses;
 }
+
+export interface SigningRemindersUnlinkPayload {
+  signerId: Signer['id'];
+}
+
+export interface DocumentSeparateSignPayload {
+  documentId: Document['id'];
+  hash?: string;
+}
+
+export interface InteractExtraValues {
+  signers?: Signer[];
+  isOrdered?: boolean;
+  recipients?: EmailRecipient[];
+}
+
+export interface GetReportByEmailPayload {
+  year: number;
+}
+
+export type DocumentStatusOption = 'awaiting' | 'unavailable' | 'completed';

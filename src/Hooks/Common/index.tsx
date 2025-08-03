@@ -1,25 +1,20 @@
-import useModal from "./useModal";
-import useCsvParse from "./useCsvParse";
-import useAsyncAction from "./useAsyncAction";
-import useToggler from "./useToggler";
-import usePrint from "./usePrint";
-import useBeaconRemove from "./useBeaconRemove";
-import useSelectableItem from "./useSelectableItem";
-import usePagination from "./usePagination";
-import useDataOrdering from "./useDataOrdering";
-import useDownloadFiles from "./useDownloadFiles";
-import useWindowSize from "./useWindowSIze";
-import useAttachmentDownload from "./useAttachmentDownload";
-import useBodyScrollStop from "./useBodyScrollStop";
-import useFileUpload from "./useFileUpload";
-
-export {
-    useFileUpload,
-    useBodyScrollStop,
-    useAttachmentDownload,
-    usePagination,
-    useDataOrdering,
-    useDownloadFiles,
-    useWindowSize,
-    useModal, useCsvParse, useAsyncAction, useToggler, usePrint, useBeaconRemove, useSelectableItem
-};
+export { default as useModal } from './useModal';
+export { default as useCsvParse } from './useCsvParse';
+export { default as useAsyncAction } from './useAsyncAction';
+export { default as useToggler } from './useToggler';
+export { default as usePrint } from './usePrint';
+export { default as useBeaconRemove } from './useBeaconRemove';
+export { default as useSelectableItem } from './useSelectableItem';
+export { default as usePagination } from './usePagination';
+export { default as useDataOrdering } from './useDataOrdering';
+export { default as useDownloadFiles } from './useDownloadFiles';
+export { default as useWindowSize } from './useWindowSIze';
+export { default as useAttachmentDownload } from './useAttachmentDownload';
+export { default as useBodyScrollStop } from './useBodyScrollStop';
+export { default as useFileUpload } from './useFileUpload';
+export { default as useNewTabOpen } from './useNewTabOpen';
+export { default as useUrlParamsGet } from './useUrlParamsGet';
+export { default as useBulkDownloadFiles } from './useBulkDownloadFiles';
+export { default as useIsMobile  } from './useIsMobile';
+export { default as useIsTablet } from './useIsTablet';
+export { default as useReferralTracking } from './useReferralTracking';

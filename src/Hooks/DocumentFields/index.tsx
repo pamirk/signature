@@ -1,23 +1,13 @@
-import useDocumentFieldSignerChange from "./useDocumentFieldSignerChange";
-import useDocumentFieldColor from "./useDocumentFieldColor";
-import useDocumentFieldHistory from "./useDocumentFieldHistory";
-import useDocumentFieldCreate from "./useDocumentFieldCreate";
-import useDocumentFieldDelete from "./useDocumentFieldDelete";
-import useDocumentFieldUpdate from "./useDocumentFieldUpdate";
-import useDocumentFieldUpdateLocally from "./useDocumentFieldUpdateLocally";
-import useDocumentFieldsMetaChange from "./useDocumentFieldsMetaChange";
-import useDocumentFieldStyleSet from "./useDocumentFieldStyleSet";
-import useSubmitSignedDocument from "./useSubmitSignedDocument";
-
-export {
-    useSubmitSignedDocument,
-    useDocumentFieldStyleSet,
-    useDocumentFieldSignerChange,
-    useDocumentFieldColor,
-    useDocumentFieldHistory,
-    useDocumentFieldCreate,
-    useDocumentFieldDelete,
-    useDocumentFieldUpdate,
-    useDocumentFieldUpdateLocally,
-    useDocumentFieldsMetaChange
-};
+export { default as useDocumentFieldStyleSet } from './useDocumentFieldStyleSet';
+export { default as useDocumentFieldSignerChange } from './useDocumentFieldSignerChange';
+export { default as useDocumentFieldColor } from './useDocumentFieldColor';
+export { default as useDocumentFieldHistory } from './useDocumentFieldHistory';
+export { default as useDocumentFieldCreate } from './useDocumentFieldCreate';
+export { default as useDocumentFieldDelete } from './useDocumentFieldDelete';
+export { default as useDocumentFieldUpdate } from './useDocumentFieldUpdate';
+export { default as useDocumentFieldUpdateLocally } from './useDocumentFieldUpdateLocally';
+export { default as useDocumentFieldsMetaChange } from './useDocumentFieldsMetaChange';
+export { default as useEmbedDocumentFieldUpdate } from './useEmbedDocumentFieldUpdate';
+export { default as useEmbedDocumentFieldHistory } from './useEmbedDocumentFieldHistory';
+export { default as useEmbedDocumentFieldCreate } from './useEmbedDocumentFieldCreate';
+export { default as useEmbedDocumentFieldDelete } from './useEmbedDocumentFieldDelete';

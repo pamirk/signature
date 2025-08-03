@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from 'react';
 import { SignedUrlResponse } from 'Interfaces/Common';
-import { Document, DocumentStatuses } from 'Interfaces/Document';
+import { Document, DocumentDownloadTypes, DocumentStatuses } from 'Interfaces/Document';
 import { useSignedGetUrl } from 'Hooks/User';
 import { useDownloadFileByUrl } from 'Hooks/Requisite';
 import { usePrint } from 'Hooks/Common';
@@ -24,22 +24,21 @@ export default (documentItem: Document) => {
   const handleGetUrl = useCallback(async (): Promise<string> => {
     if (isDocumentUpdated) {
       const documentFileKey = (documentItem.status === DocumentStatuses.COMPLETED
-        ? documentItem.resultPdfFileKey
+        ? documentItem.downloadType === DocumentDownloadTypes.MERGED
+          ? documentItem.resultPdfFileKey
+          : documentItem.resultDocumentPdfFileKey
         : documentItem.pdfFileKey) as string;
 
       const signedUrl = (await getSignedGetUrl({
         key: documentFileKey,
       })) as SignedUrlResponse;
 
-      let file = await downloadFile(signedUrl.result);
-      if (file.type !== 'application/pdf')
-        file = file.slice(0, file.size, 'application/pdf');
+      const file = await downloadFile(signedUrl.result);
 
-      const url = URL.createObjectURL(file);
+      const url = URL.createObjectURL(new Blob([file], { type: 'application/pdf' }));
 
-      setPdfUrl(URL.createObjectURL(file));
+      setPdfUrl(URL.createObjectURL(new Blob([file], { type: 'application/pdf' })));
       setIsDocumentUpdated(false);
-
       return url;
     }
 

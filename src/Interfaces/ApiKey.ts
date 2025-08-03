@@ -1,15 +1,24 @@
-export type ApiKeyCreatePayload = any
+export type ApiKeyCreatePayload = {
+    name?: string;
+    prefix?: string;
+}
 
 export interface ApiKeysGetPayload {
+    page?: number;
+    limit?: number;
+    sort?: string;
+    order?: 'asc' | 'desc';
+    search?: string;
+    deleted?: boolean;
 }
 
 export interface ApiKey {
     id?: string
-    requests?: any
-    deletedAt?: any
-    name?: any
-    prefix?: any
-    createdAt?: any
+    requests?: string
+    deletedAt?: string
+    name?: string
+    prefix?: string
+    createdAt?: string
 }
 
 export interface ApiKeyIdPayload {
@@ -17,7 +26,11 @@ export interface ApiKeyIdPayload {
 }
 
 export interface ApiKeysData {
+  items?: ApiKey[];
+  // totalItems : number;
+  // totalPages: number;
+  // itemCount: number;
 }
-
 export interface ApiKeyCreateResult {
+    name?: string;
 }

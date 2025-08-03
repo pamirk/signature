@@ -4,6 +4,5 @@ import { useAsyncAction } from 'Hooks/Common';
 
 export default () => {
   const dispatch = useDispatch();
-
   return useAsyncAction(() => $actions.billing.getCard(dispatch));
 };

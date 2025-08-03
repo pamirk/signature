@@ -1,58 +1,40 @@
-import useAllDocumentsGet from "./useAllDocumentsGet";
-import useDocumentBulkSend from "./useDocumentBulkSend";
-import useDocumentDownload from "./useDocumentDownload";
-import useDocumentUpload from "./useDocumentUpload";
-import useDocumentFileDataClean from "./useDocumentFileDataClean";
-import useDocumentConvertionProgressWatcher from "./useDocumentConvertionProgressWatcher";
-import useDocumentCreate from "./useDocumentCreate";
-import useDocumentUpdate from "./useDocumentUpdate";
-import useTemplateActivate from "./useTemplateActivate";
-import useTemplateMerge from "./useTemplateMerge";
-import useDocumentInteractInit from "./useDocumentInteractInit";
-import useDocumentUpdateCancel from "./useDocumentUpdateCancel";
-import useAllTemplatesGet from "./useAllTemplatesGet";
-import useDocumentDownloadUrlGet from "./useDocumentDownloadUrlGet";
-import useDocumentGuard from "./useDocumentGuard";
-import useDocumentActivitiesGet from "./useDocumentActivitiesGet";
-import useDocumentRevert from "./useDocumentRevert";
-import useDocumentToggleNotification from "./useDocumentToggleNotification";
-import useDocumentsDelete from "./useDocumentsDelete";
-import useTemplateReplicate from "./useTemplateReplicate";
-import useDocumentCopy from "./useDocumentCopy";
-import useDocumentsGet from "./useDocumentsGet";
-import useFormRequestGetContracts from "./useFormRequestGetContracts";
-import useTemplateAddToApi from "./useTemplateAddToApi";
-import useTemplateRemoveFromApi from "./useTemplateRemoveFromApi";
-import useDocumentPrint from "./useDocumentPrint";
+/* eslint-disable */
+export { default as useAllDocumentsGet } from './useAllDocumentsGet';
+export { default as useDocumentBulkSend } from './useDocumentBulkSend';
+export { default as useDocumentDownload } from './useDocumentDownload';
+export { default as useDocumentUpload } from './useDocumentUpload';
+export { default as useDocumentFileDataClean } from './useDocumentFileDataClean';
+export { default as useDocumentConvertionProgressWatcher } from './useDocumentConvertionProgressWatcher';
+export { default as useDocumentCreate } from './useDocumentCreate';
+export { default as useDocumentUpdate } from './useDocumentUpdate';
+export { default as useTemplateActivate } from './useTemplateActivate';
+export { default as useTemplateMerge } from './useTemplateMerge';
+export { default as useDocumentInteractInit } from './useDocumentInteractInit';
+export { default as useDocumentUpdateCancel } from './useDocumentUpdateCancel';
+export { default as useAllTemplatesGet } from './useAllTemplatesGet';
+export { default as useDocumentDownloadUrlGet } from './useDocumentDownloadUrlGet';
+export { default as useDocumentGuard } from './useDocumentGuard';
+export { default as useDocumentActivitiesGet } from './useDocumentActivitiesGet';
+export { default as useDocumentRevert } from './useDocumentRevert';
+export { default as useDocumentToggleNotification } from './useDocumentToggleNotification';
+export { default as useDocumentsDelete } from './useDocumentsDelete';
+export { default as useTemplateReplicate } from './useTemplateReplicate';
+export { default as useDocumentCopy } from './useDocumentCopy';
+export { default as useFormRequestGetContracts } from './useFormRequestGetContracts';
+export { default as useTemplateAddToApi } from './useTemplateAddToApi';
+export { default as useTemplateRemoveFromApi } from './useTemplateRemoveFromApi';
+export { default as useDocumentPrint } from './useDocumentPrint';
+export { default as useDocumentDelete } from './useDocumentDelete';
+export { default as useFormRequestsGet } from './useFormRequestsGet';
+export { default as useGetDocumentByHash } from './useGetDocumentByHash';
+export { default as useEmbedDocumentGet } from './useEmbedDocumentGet';
+export { default as useEmbedDocumentTokenInit } from './useEmbedDocumentTokenInit';
+export { default as useEmbedDocumentInteractInit } from './useEmbedDocumentInteractInit';
+export { default as useEmbedDocumentUpdateCancel } from './useEmbedDocumentUpdateCancel';
+export { default as useDocumentCreateByExistTemplate } from './useDocumentCreateByExistTemplate';
+export { default as useAllTemplatesGetCancel } from './useAllTemplatesGetCancel';
+export { default as useDocumentUpdateByExistTemplate } from './useDocumentUpdateByExistTemplate';
+
 import * as DocumentValidators from "./useDocumentValidation";
 
-export {
-    useDocumentPrint,
-    useTemplateAddToApi,
-    useTemplateRemoveFromApi,
-    useFormRequestGetContracts,
-    useDocumentCopy,
-    useDocumentsGet,
-    useTemplateReplicate,
-    useDocumentsDelete,
-    useDocumentGuard,
-    useDocumentRevert,
-    useDocumentToggleNotification,
-    useDocumentActivitiesGet,
-    useDocumentDownloadUrlGet,
-    useTemplateActivate,
-    useAllTemplatesGet,
-    useTemplateMerge,
-    useAllDocumentsGet,
-    useDocumentBulkSend,
-    useDocumentDownload,
-    useDocumentUpload,
-    useDocumentFileDataClean,
-    useDocumentConvertionProgressWatcher,
-    useDocumentCreate,
-    useDocumentUpdate,
-    useDocumentInteractInit,
-    useDocumentUpdateCancel,
-
-    DocumentValidators,
-};
+export { DocumentValidators };

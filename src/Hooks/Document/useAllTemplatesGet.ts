@@ -7,6 +7,6 @@ export default () => {
   const dispatch = useDispatch();
 
   return useAsyncAction((payload?: TemplatesAllGetPayload) =>
-    $actions.document.getAllTemlates(dispatch, payload),
+    $actions.document.getAllTemplates(dispatch, payload),
   );
 };

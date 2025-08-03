@@ -1,3 +1,4 @@
+import { RecaptchaPayload } from './Auth';
 import { UserNotifications, DateFormats } from './User';
 
 export enum DeletionSteps {
@@ -27,7 +28,7 @@ export interface ProfileInfo extends UserNotifications {
 
 export type ProfileInfoPayload = Partial<ProfileInfo>;
 
-export type UpdateEmailPayload = {
+export type UpdateEmailPayload = RecaptchaPayload & {
   email: string;
 };
 
@@ -45,6 +46,6 @@ export interface CodePayload {
 
 export type PhoneVerifyPayload = PhonePayload & PhoneCodePayload;
 
-export interface CodeGeneratePayload extends PhonePayload {
+export interface CodeGeneratePayload extends PhonePayload, RecaptchaPayload {
   scope: CodeScopeType;
 }

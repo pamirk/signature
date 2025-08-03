@@ -4,7 +4,8 @@ import { useAsyncAction } from 'Hooks/Common';
 import { useDocumentFieldsMetaChange } from 'Hooks/DocumentFields';
 import { NormalizedEntity } from 'Interfaces/Common';
 import { Requisite } from 'Interfaces/Requisite';
-import useDocumentFilesGet, { DocumentFilesGetPayload } from './useDocumentFilesGet';
+import { DocumentFilesGetPayload } from './useDocumentFilesGet';
+import useDocumentFilesGet from './useDocumentFilesGet';
 
 export default () => {
   const [getConvertedDocument] = useDocumentFilesGet();

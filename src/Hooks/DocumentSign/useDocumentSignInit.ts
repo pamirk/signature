@@ -6,16 +6,16 @@ import {
 } from 'Hooks/DocumentFields';
 import { NormalizedEntity, PDFMetadata } from 'Interfaces/Common';
 import { Requisite } from 'Interfaces/Requisite';
-import useDocumentFilesGet, {
-  DocumentFilesGetPayload,
-} from 'Hooks/Document/useDocumentFilesGet';
+import { DocumentFilesGetPayload } from 'Hooks/Document/useDocumentFilesGet';
 import { Document } from 'Interfaces/Document';
 import { useRequisitesGet } from 'Hooks/Requisite';
+import { useCompatibleSignedGetUrl } from '../User';
+import { isNotEmpty } from 'Utils/functions';
 
 export default (document?: Document) => {
-  const [getDocumentFiles] = useDocumentFilesGet();
   const [setDocumentFieldsMeta, cleanDocumentFieldsMeta] = useDocumentFieldsMetaChange();
   const [getUserRequisites] = useRequisitesGet();
+  const [getCompatibleSignedGetUrl] = useCompatibleSignedGetUrl();
   const setDocumentFieldStyle = useDocumentFieldStyleSet();
 
   useEffect(() => {
@@ -32,10 +32,18 @@ export default (document?: Document) => {
   return useAsyncAction((payload?: Omit<DocumentFilesGetPayload, 'document'>) => {
     if (!document) return [];
 
+    const fileKey =
+      isNotEmpty(document.files) && document.files && document.files[0].fileKey;
+    const key = fileKey ? fileKey : (document.pdfFileKey as string);
+
     // @ts-ignore
     return Promise.all([
-      getDocumentFiles({ document, ...payload }),
+      getCompatibleSignedGetUrl({ key, pdfFileKey: document.pdfFileKey }),
       getUserRequisites(undefined),
-    ]).then(res => res.flat()) as [string[], string[], {} | NormalizedEntity<Requisite>];
+    ]).then(res => res.flat()) as [
+      { result: string },
+      string[],
+      {} | NormalizedEntity<Requisite>,
+    ];
   });
 };

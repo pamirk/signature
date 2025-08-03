@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { callActionAsync } from 'Utils/functions';
 import { Action } from 'Interfaces/Common';
 
-interface ExecuteAction<TPayload, TResponse> {
+export interface ExecuteAction<TPayload, TResponse> {
   (actionPayload: TPayload): Promise<TResponse>;
 }
 

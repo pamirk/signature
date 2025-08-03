@@ -18,12 +18,12 @@ export default () => {
     (payload: TokenPayload) => {
       dispatch(rootActions.documentSign.initDocumentSigning(payload));
     },
-    [],
+    [dispatch],
   );
 
   const finishDocumentSigning: FinishDocumentSigning = useCallback(() => {
     dispatch(rootActions.documentSign.finishDocumentSigning());
-  }, []);
+  }, [dispatch]);
 
   return [initDocumentSigning, finishDocumentSigning] as const;
 };

@@ -22,6 +22,7 @@ export interface Requisite {
   createdAt: string;
   updatedAt: string;
   deletedAt: string;
+  url: string;
 }
 
 export type RequisitePayload = Pick<

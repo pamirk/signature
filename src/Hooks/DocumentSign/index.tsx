@@ -1,29 +1,17 @@
-import useDocumentConvertionStatusWatcher from "./useDocumentConvertionStatusWatcher";
-import useDocumentSendOut from "./useDocumentSendOut";
-import useDocumentSignPrint from "./useDocumentSignPrint";
-import useDocumentPreviewPagesGet from "./useDocumentPreviewPagesGet";
-import useSigningUrl from "./useSigningUrl";
-import useDocumentShare from "./useDocumentShare";
-import useDocumentShareUrlGet from "./useDocumentShareUrlGet";
-import useRemindersSend from "./useRemindersSend";
-import useSignerDocumentGet from "./useSignerDocumentGet";
-import useAvailableSignersGet from "./useAvailableSignersGet";
-import useDocumentSigning from "./useDocumentSigning";
-import useSignatoryOpenedSend from "./useSignatoryOpenedSend";
-import useDocumentSignInit from "./useDocumentSignInit";
-import useSigningUrlGet from "./useSigningUrlGet";
-
-export {
-    useSigningUrlGet,
-    useDocumentSignInit,
-    useSignerDocumentGet,
-    useAvailableSignersGet,
-    useDocumentSigning,
-    useSignatoryOpenedSend,
-    useDocumentShareUrlGet, useDocumentShare, useRemindersSend,
-    useDocumentPreviewPagesGet,
-    useSigningUrl,
-    useDocumentSendOut,
-    useDocumentConvertionStatusWatcher,
-    useDocumentSignPrint,
-};
+export { default as useDocumentConvertionStatusWatcher } from './useDocumentConvertionStatusWatcher';
+export { default as useDocumentSendOut } from './useDocumentSendOut';
+export { default as useDocumentSignPrint } from './useDocumentSignPrint';
+export { default as useSigningUrl } from './useSigningUrl';
+export { default as useDocumentShare } from './useDocumentShare';
+export { default as useDocumentShareUrlGet } from './useDocumentShareUrlGet';
+export { default as useRemindersSend } from './useRemindersSend';
+export { default as useSignerDocumentGet } from './useSignerDocumentGet';
+export { default as useDocumentSigning } from './useDocumentSigning';
+export { default as useSignatoryOpenedSend } from './useSignatoryOpenedSend';
+export { default as useDocumentSignInit } from './useDocumentSignInit';
+export { default as useSigningUrlGet } from './useSigningUrlGet';
+export { default as useSigningRemindersUnlink } from './useSigningRemindersUnlink';
+export { default as useSigningDocumentGet } from './useSigningDocumentGet';
+export { default as useSubmitSignedDocument } from './useSubmitSignedDocument';
+export { default as useCodeAccessSend } from './useCodeAccessSend';
+export { default as useDeclineSigningRequest } from './useDeclineSigningRequest';

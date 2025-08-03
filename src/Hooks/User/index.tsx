@@ -1,26 +1,18 @@
-import useSignedGetUrl from "./useSignedGetUrl";
-import useSignedGetUrlBulk from "./useSignedGetUrlBulk";
-import useRequisitePut from "./useRequisitePut";
-import useSignedPutUrl from "./useSignedPutUrl";
-import useSignerAvatars from "./useSignerAvatars";
-import useProfileInfoUpdate from "./useProfileInfoUpdate";
-import useSignedDownloadUrlGet from "./useSignedDownloadUrlGet";
-import useCompanyLogoPut from "./useCompanyLogoPut";
-import useSignedPutAssetUrl from "./useSignedPutAssetUrl";
-import useAvatarPut from "./useAvatarPut";
-import useAccountDelete from "./useAccountDelete";
-import useTwillio2fa from "./useTwillio2fa";
-import useGoogleAuthenticator from "./useGoogleAuthenticator";
-import useCurrentUserGet from "./useCurrentUserGet";
-
-
-export {
-    useSignedGetUrlBulk, useRequisitePut, useSignedPutUrl, useCompanyLogoPut, useSignedPutAssetUrl,
-    useSignedGetUrl, useSignerAvatars,useCurrentUserGet,
-    useProfileInfoUpdate,
-    useSignedDownloadUrlGet,
-    useAvatarPut,
-    useAccountDelete,
-    useTwillio2fa,
-    useGoogleAuthenticator,
-};
+export { default as useSignedGetUrl } from './useSignedGetUrl';
+export { default as useSignedGetUrlBulk } from './useSignedGetUrlBulk';
+export { default as useRequisitePut } from './useRequisitePut';
+export { default as useSignedPutUrl } from './useSignedPutUrl';
+export { default as useSignerAvatars } from './useSignerAvatars';
+export { default as useProfileInfoUpdate } from './useProfileInfoUpdate';
+export { default as useSignedDownloadUrlGet } from './useSignedDownloadUrlGet';
+export { default as useCompanyLogoPut } from './useCompanyLogoPut';
+export { default as useSignedPutAssetUrl } from './useSignedPutAssetUrl';
+export { default as useAvatarPut } from './useAvatarPut';
+export { default as useAccountDelete } from './useAccountDelete';
+export { default as useTwillio2fa } from './useTwillio2fa';
+export { default as useGoogleAuthenticator } from './useGoogleAuthenticator';
+export { default as useCurrentUserGet } from './useCurrentUserGet';
+export { default as useGoogleClientIdUpdate } from './useGoogleClientIdUpdate';
+export { default as useCompatibleSignedGetUrl } from './useCompatibleSignedGetUrl';
+export { default as useCompanyInfoGet } from './useCompanyInfoGet';
+export { default as useEmbedSignedUrlBulkGet } from './useEmbedSignedUrlBulkGet';

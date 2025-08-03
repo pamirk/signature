@@ -30,14 +30,12 @@ export default () => {
   }, [documentFieldsHistory]);
 
   const redoDocumentFieldAction: RedoDocumentFieldAction = useCallback(() => {
-    // @ts-ignore
     dispatch(rootActions.documentField.redoDocumentFieldsHistory.request());
-  }, []);
+  }, [dispatch]);
 
   const undoDocumentFieldAction: UndoDocumentFieldAction = useCallback(() => {
-    // @ts-ignore
     dispatch(rootActions.documentField.undoDocumentFieldsHistory.request());
-  }, []);
+  }, [dispatch]);
 
   return [
     redoDocumentFieldAction,
