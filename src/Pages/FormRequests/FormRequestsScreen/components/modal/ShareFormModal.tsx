@@ -1,7 +1,5 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import UIModal from 'Components/UIComponents/UIModal';
-import { Signer, Document } from 'Interfaces/Document';
-import * as _ from 'lodash';
 import { ReactSVG } from 'react-svg';
 import UITextInput from 'Components/UIComponents/UITextInput';
 import Toast from 'Services/Toast';

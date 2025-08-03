@@ -61,7 +61,7 @@ const FormRequestItemMobile = ({ template, className, options }: TemplateItemPro
                   ? 'disabled'
                   : 'completed'
                 : template.status
-            }`}
+            } mobile`}
           >
             <span className="documents__documentStatus-text">
               {template.status === DocumentStatuses.ACTIVE

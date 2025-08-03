@@ -9,13 +9,17 @@ import { FieldTextInput } from 'Components/FormFields';
 import { AvatarField } from './AvatarField';
 import { useAvatarPut, useSignedPutAssetUrl } from 'Hooks/User';
 import Toast from 'Services/Toast';
-import { ProfileInfoPayload, UpdateEmailPayload } from 'Interfaces/Profile';
+import { ProfileInfoPayload } from 'Interfaces/Profile';
 import { useModal } from 'Hooks/Common';
 import CropModal from 'Components/CropModal';
 import ChangeEmailForm from './ChangeEmailForm';
-import useEmailUpdate from 'Hooks/User/useEmailUpdate';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import PersonalFieldsMobileView from './PersonalFieldsMobileView';
+import { useSelector } from 'react-redux';
+import { selectUser } from 'Utils/selectors';
+import classNames from 'classnames';
+import { ReactSVG } from 'react-svg';
+import LockIcon from 'Assets/images/icons/lock.svg';
 
 interface PersonalFieldsProps {
   isUser: boolean;
@@ -31,10 +35,11 @@ const PersonalFields = ({
   updateProfileInfo,
 }: PersonalFieldsProps) => {
   const isMobile = useIsMobile();
+  const { appSumoStatus } = useSelector(selectUser);
   const [getSignedPutAssetUrl] = useSignedPutAssetUrl();
   const [putAvatar, cancelUpload, isAvatarUploading] = useAvatarPut();
-  const [updateEmail, isEmailUpdating] = useEmailUpdate();
   const [avatar, setAvatar] = useState<File | null>(null);
+  const isAppSumo = !!appSumoStatus;
 
   const [isReadOnlyField, setReadOnlyField] = useState<boolean>(true);
 
@@ -80,14 +85,6 @@ const PersonalFields = ({
     ],
   );
 
-  const handleUpdateEmail = async (values: UpdateEmailPayload) => {
-    try {
-      await updateEmail(values);
-    } catch (err) {
-      Toast.handleErrors(err);
-    }
-  };
-
   const handleAvatarDelete = useCallback(async () => {
     try {
       await updateProfileInfo({ avatarUrl: null });
@@ -102,6 +99,7 @@ const PersonalFields = ({
         file={avatar}
         onSubmit={handleAvatarUpload}
         onClose={closeCropModal}
+        onCancel={closeCropModal}
         aspectRatio={1}
       />
     ),
@@ -125,12 +123,17 @@ const PersonalFields = ({
       handleAvatarDelete={handleAvatarDelete}
       isAvatarUploading={isAvatarUploading}
       avatarUrl={avatarUrl}
+      isAppSumo={isAppSumo}
     />
   ) : (
     <div className="settings__block">
       <h1 className="settings__title">Personal Information</h1>
       <div className="settings__form-group settings__block--small">
-        <div className="settings__field settings__form-group-item">
+        <div
+          className={classNames('settings__field settings__form-group-item', {
+            lock: isAppSumo,
+          })}
+        >
           <Field
             name="name"
             label="Full Name"
@@ -138,11 +141,13 @@ const PersonalFields = ({
             component={FieldTextInput}
             validate={composeValidators<string>(required, name)}
             format={value => value && value.trim()}
+            disabled={isAppSumo}
             formatOnBlur
           />
+          {isAppSumo && <ReactSVG src={LockIcon} className="profile__email-lock-icon" />}
         </div>
       </div>
-      <ChangeEmailForm isUser={isUser} />
+      <ChangeEmailForm isUser={isUser} isAppSumo={isAppSumo} />
       <div className="settings__form-group">
         <div className="settings__field settings__form-group-item">
           <Field

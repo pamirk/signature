@@ -1,73 +1,82 @@
-import React, {useCallback} from 'react';
-import {Helmet} from 'react-helmet';
+import React, { useCallback } from 'react';
+import { Helmet } from 'react-helmet';
 import Toast from 'Services/Toast';
 import History from 'Services/History';
-import {usePrimarySignIn} from 'Hooks/Auth';
+import { usePrimarySignIn } from 'Hooks/Auth';
 import {
-    isEmailConfirmationData,
-    isTwoFactorResponseData,
-    isUserResponseData,
+  isEmailConfirmationData,
+  isTwoFactorResponseData,
+  isUserResponseData,
 } from 'Utils/typeGuards';
-import {isNotEmpty} from 'Utils/functions';
+import { isNotEmpty } from 'Utils/functions';
 import LoginForm from 'Components/AuthForm/LoginForm';
-import {useBeaconRemove} from 'Hooks/Common';
-import {DataLayerAnalytics} from 'Services/Integrations';
+import { useBeaconRemove, useReferralTracking } from 'Hooks/Common';
+import { DataLayerAnalytics } from 'Services/Integrations';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 const Login = () => {
-    useBeaconRemove();
-    const isMobile = useIsMobile();
+  useBeaconRemove();
+  const isMobile = useIsMobile();
 
-    const [callSignIn, isLoading] = usePrimarySignIn();
+  const [callSignIn, isLoading] = usePrimarySignIn();
+  const referralTracking = useReferralTracking();
 
-    const signIn = useCallback(
-        async values => {
-            try {
-                const response = await callSignIn(values);
+  const signIn = useCallback(
+    async values => {
+      try {
+        const response = await callSignIn(values);
 
-                if (!isNotEmpty(response)) {
-                    return;
-                }
+        if (!isNotEmpty(response)) {
+          return;
+        }
 
-                if (isTwoFactorResponseData(response)) {
-                    History.push('/two-factor');
-                }
+        if (isUserResponseData(response)) {
+          DataLayerAnalytics.fireUserIdEvent(response.user);
+        }
 
-                if (isEmailConfirmationData(response)) {
-                    History.push('/confirm-account', {confirmationRequired: true});
-                }
+        if (isTwoFactorResponseData(response)) {
+          History.push(UnauthorizedRoutePaths.TWO_FACTOR);
+        }
 
-                if (isUserResponseData(response) && response.isNewUser) {
-                    DataLayerAnalytics.fireGoogleRegistrationEvent();
-                    Toast.success('Your account has been created.');
-                }
-            }
-                //@ts-ignore
-            catch (error: any) {
+        if (isEmailConfirmationData(response)) {
+          History.push(UnauthorizedRoutePaths.CONFIRM_ACCOUNT, {
+            confirmationRequired: true,
+          });
+        }
 
-                Toast.error(error.message);
-            }
-        },
-        [callSignIn],
-    );
+        if (isUserResponseData(response) && response.isNewUser) {
+          DataLayerAnalytics.fireGoogleRegistrationEvent();
+          Toast.success('Your account has been created.');
+        }
 
-    return (
-        <div className="auth">
-            <Helmet>
-                <meta name="description" content="Log in to E-Sign."/>
-                <title>Log In | E-Sign</title>
-            </Helmet>
-            <h1 className={classNames('auth__title', {mobile: isMobile})}>
-                Login to your account
-            </h1>
-            <LoginForm
-                isLoading={isLoading}
-                onSubmit={signIn}
-                formClassName={isMobile ? 'mobile' : ''}
-            />
-        </div>
-    );
+        if (isUserResponseData(response)) {
+          await referralTracking(response.user.email as string, response.user.customerId);
+        }
+      } catch (error) {
+        Toast.error(error.message);
+      }
+    },
+    [callSignIn, referralTracking],
+  );
+
+  return (
+    <div className="auth">
+      <Helmet>
+        <meta name="description" content="Log in to Signaturely." />
+        <title>Log In | Signaturely</title>
+      </Helmet>
+      <h1 className={classNames('auth__title', { mobile: isMobile })}>
+        Login to your account
+      </h1>
+      <LoginForm
+        isLoading={isLoading}
+        onSubmit={signIn}
+        formClassName={isMobile ? 'mobile' : ''}
+      />
+    </div>
+  );
 };
 
 export default Login;

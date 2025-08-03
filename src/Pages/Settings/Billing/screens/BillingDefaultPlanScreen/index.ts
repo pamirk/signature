@@ -1,3 +1,4 @@
-import index from "./BillingDefaultPlanScreen";
+import BillingDefaultPlanScreen  from "./BillingDefaultPlanScreen";
+export { default as UpcomingInvoice } from "./UpcomingInvoice";
 
-export default index
+export default BillingDefaultPlanScreen;

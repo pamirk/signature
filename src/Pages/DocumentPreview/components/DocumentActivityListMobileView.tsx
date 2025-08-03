@@ -2,21 +2,34 @@ import React from 'react';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import DocumentActivityItemMobile from './DocumentActivityItemMobile';
 import { DocumentActivity } from 'Interfaces/Document';
+import DownloadIcon from 'Assets/images/icons/doc-download-icon.svg';
+import HeaderButton from './HeaderButton';
 
 interface DocumentActivityListMobileViewProps {
   isLoadingDocumentActivities: boolean;
+  canDownloadActivities: boolean;
   documentActivities: DocumentActivity[];
+  handleDocumentActivitiesDownload: () => Promise<void>;
 }
 
 const DocumentActivityListMobileView = ({
   isLoadingDocumentActivities,
   documentActivities,
+  canDownloadActivities,
+  handleDocumentActivitiesDownload,
 }: DocumentActivityListMobileViewProps) => {
   return (
     <div className="documentPreview__activity-wrapper mobile">
       <div className="documentPreview__activity-inner mobile">
         <p id="document-activity" className="documentPreview__activity-title">
           Document Activity
+          {canDownloadActivities && (
+            <HeaderButton
+              icon={DownloadIcon}
+              iconType="fill"
+              onClick={handleDocumentActivitiesDownload}
+            />
+          )}
         </p>
         <div className="documentPreview__activity-table-wrapper">
           {isLoadingDocumentActivities ? (

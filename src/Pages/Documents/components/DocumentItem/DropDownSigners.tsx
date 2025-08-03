@@ -4,6 +4,7 @@ import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
 import IconSelectArrow from 'Assets/images/icons/select-arrow-icon.svg';
 import IconArrowCircle from 'Assets/images/icons/arrow-circle.svg';
+import IconCancel from 'Assets/images/icons/cancel.svg';
 import { findOffsetParent } from 'Utils/functions';
 import { Signer } from 'Interfaces/Document';
 
@@ -65,7 +66,7 @@ const DropDownSigners = ({ signers, anchorClassName }: DropDownOptionsInterface)
       </button>
       {isOpen && (
         <div
-          className={classNames('documents__dropdownList', {
+          className={classNames('documents__dropdownList signers', {
             'documents__dropdownList--top': isPlaceOnTop,
           })}
           ref={dropdownListRef}
@@ -88,6 +89,14 @@ const DropDownSigners = ({ signers, anchorClassName }: DropDownOptionsInterface)
                   <ReactSVG
                     src={IconArrowCircle}
                     className="documents__dropdownOptionSigners-icon"
+                  />
+                ) : (
+                  ''
+                )}
+                {signer.isDeclined ? (
+                  <ReactSVG
+                    src={IconCancel}
+                    className="documents__dropdownOptionSigners-declinedIcon"
                   />
                 ) : (
                   ''

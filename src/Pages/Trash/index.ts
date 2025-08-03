@@ -1,0 +1,1 @@
+export { default as TrashScreen } from './TrashScreen/TrashScreen';

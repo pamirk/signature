@@ -1,7 +1,6 @@
-import PreferencesFields from "./PreferencesFields";
-import Billet from "./Billet";
-import BrandingFields from "./BrandingFields";
-import LogoField from "./LogoField";
-import UpgradeDropdown from "./UpgradeDropdown";
-
-export {PreferencesFields, Billet, LogoField, UpgradeDropdown, BrandingFields}
+export { default as PreferencesFields } from './PreferencesFields';
+export { default as Billet } from './Billet';
+export { default as BrandingFields } from './BrandingFields';
+export { LogoField } from './LogoField';
+export { default as UpgradeDropdown } from './UpgradeDropdown';
+export { default as ReportFields } from './ReportFields';

@@ -1,10 +1,12 @@
 import React from 'react';
 import { Field, Form } from 'react-final-form';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { MaskedTextInput } from 'Components/FormFields';
 import UIButton from 'Components/UIComponents/UIButton';
 import { phoneNumberLength, required } from 'Utils/validation';
 import { phoneNumberMaskedProps, phoneCodeMaskedProps } from 'Utils/formatters';
 import { composeValidators } from 'Utils/functions';
+import { REACT_APP_GOOGLE_RECAPTCHA_SITEKEY } from 'Utils/constants';
 
 export interface PhoneVerificationFieldMobileViewProps {
   handleVerify;
@@ -35,6 +37,18 @@ const PhoneVerificationFieldMobileView = ({
                 validate={composeValidators(required, phoneNumberLength)}
               />
             </div>
+          </div>
+          <div className="profile__sms-recaptcha-wrapper">
+            <Field
+              validate={required}
+              name="recaptcha"
+              render={({ input: { onChange } }) => (
+                <ReCAPTCHA
+                  sitekey={REACT_APP_GOOGLE_RECAPTCHA_SITEKEY}
+                  onChange={onChange}
+                />
+              )}
+            />
           </div>
           <div className="profile__button profile__button--verify mobile">
             <UIButton

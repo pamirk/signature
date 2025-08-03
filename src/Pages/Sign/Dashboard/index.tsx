@@ -1,103 +1,95 @@
-import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { ReactSVG } from 'react-svg';
-import UIButton from 'Components/UIComponents/UIButton';
-import IconOnlyMe from 'Assets/images/dashboardIcons/only-me-icon.svg';
-import IconMeAndOthers from 'Assets/images/dashboardIcons/me-others-icon.svg';
-import IconOnlyOthers from 'Assets/images/dashboardIcons/only-others-icon.svg';
+import React, { useEffect, useMemo } from 'react';
 import useWootricSurvey from 'Hooks/Common/useWootricSurvey';
 import { useSelector } from 'react-redux';
 import { User } from 'Interfaces/User';
-import { selectUser } from 'Utils/selectors';
-import useIsMobile from 'Hooks/Common/useIsMobile';
-import classNames from 'classnames';
+import { selectDocument, selectShowTrialSuccessPage, selectUser } from 'Utils/selectors';
+import {WizardSignForm} from 'Components/WizardSignForm';
+import { DocumentTypes, Document } from 'Interfaces/Document';
+import { RouteChildrenProps, useLocation } from 'react-router-dom';
+import { useDocumentGuard } from 'Hooks/Document';
+import UISpinner from 'Components/UIComponents/UISpinner';
+import History from 'Services/History';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
-enum SignTypes {
-  ONLY_ME = 'onlyme',
-  ME_AND_OTHERS = 'me&others',
-  ONLY_OTHERS = 'onlyothers',
-}
-
-const signData = {
-  [SignTypes.ONLY_ME]: {
-    title: 'Only Me',
-    description: 'Sign a document yourself.',
-    link: '/only-me',
-    icon: IconOnlyMe,
-  },
-  [SignTypes.ME_AND_OTHERS]: {
-    title: 'Me & Others',
-    description: 'Send a document for others and yourself to sign.',
-    link: '/me-and-others',
-    icon: IconMeAndOthers,
-  },
-  [SignTypes.ONLY_OTHERS]: {
-    title: 'Only Others',
-    description: 'Send a document for others to sign.',
-    link: '/only-others',
-    icon: IconOnlyOthers,
-  },
+const getSignersMinLength = (type: DocumentTypes) => {
+  switch (type) {
+    case DocumentTypes.TEMPLATE:
+    case DocumentTypes.FORM_REQUEST:
+    case DocumentTypes.ME: {
+      return 1;
+    }
+    case DocumentTypes.OTHERS:
+    case DocumentTypes.ME_AND_OTHER: {
+      return 2;
+    }
+  }
 };
 
-const Dashboard = () => {
+interface DocumentRouteParams {
+  documentId: Document['id'];
+}
+
+interface DashboardLocationContext {
+  showTrialSuccessPage?: boolean;
+}
+
+const Dashboard = ({ match }: RouteChildrenProps<DocumentRouteParams>) => {
+  const location = useLocation<DashboardLocationContext>();
+
   const { email, createdAt }: User = useSelector(selectUser);
-  const isMobile = useIsMobile();
+  const showTrialSuccessPage =
+    useSelector(selectShowTrialSuccessPage) || location?.state?.showTrialSuccessPage;
+
   useWootricSurvey(email as string, createdAt as Date);
+  const documentId = useMemo(() => match?.params.documentId, [match]);
 
-  const getDefaultView = useCallback((data: any) => {
-    return (
-      <>
-        <div className="dashboard__item-icon-wrapper">
-          <ReactSVG src={data.icon} className="dashboard__item-icon" />
-        </div>
-        <p className="dashboard__item-label">{data.title}</p>
-        <p className="dashboard__item-desc">{data.description}</p>
-        <Link to={data.link} className="dashboard__item-link">
-          <UIButton priority="primary" title={data.title} />
-        </Link>
-      </>
-    );
+  const document = useSelector(state => selectDocument(state, { documentId }));
+  const isCheckingDocument = useDocumentGuard({
+    documentId,
+  });
+
+  const initialValues = useMemo(() => {
+    if (document) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { fields, ...restDocument } = document;
+
+      return {
+        ...restDocument,
+        signers:
+          document.signers.length < getSignersMinLength(document.type)
+            ? [...document.signers, { order: document.signers.length }]
+            : document.signers,
+        recipients: document.recipients,
+      };
+    }
+
+    return {
+      type: DocumentTypes.ME,
+      signers: [
+        {
+          name: 'Me (Now)',
+          email: email,
+          order: -1,
+          isPreparer: true,
+        },
+      ],
+    };
+  }, [document, email]);
+
+  useEffect(() => {
+    if (showTrialSuccessPage) {
+      History.push(AuthorizedRoutePaths.TRIAL_SUCCESS, { successRequired: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getMobileView = useCallback((data: any) => {
-    return (
-      <>
-        <div className="dashboard__item-wrapper">
-          <div className="dashboard__item-icon-wrapper mobile">
-            <ReactSVG src={data.icon} className="dashboard__item-icon" />
-          </div>
-          <div className="dashboard__item-text">
-            <p className="dashboard__item-label mobile">{data.title}</p>
-            <p className="dashboard__item-desc mobile">{data.description}</p>
-          </div>
-        </div>
-        <Link to={data.link} className="dashboard__item-link mobile">
-          <UIButton priority="primary" title={data.title} />
-        </Link>
-      </>
-    );
-  }, []);
+  if (isCheckingDocument) {
+    return <UISpinner wrapperClassName="spinner--main__wrapper" width={50} height={50} />;
+  }
 
   return (
     <div className="dashboard__wrapper">
-      <h1 className="dashboard__title">Who needs to sign?</h1>
-      <ul className="dashboard__list">
-        <li className={classNames('dashboard__item', { mobile: isMobile })}>
-          {isMobile
-            ? getMobileView(signData[SignTypes.ONLY_ME])
-            : getDefaultView(signData[SignTypes.ONLY_ME])}
-        </li>
-        <li className={classNames('dashboard__item', { mobile: isMobile })}>
-          {isMobile
-            ? getMobileView(signData[SignTypes.ME_AND_OTHERS])
-            : getDefaultView(signData[SignTypes.ME_AND_OTHERS])}
-        </li>
-        <li className={classNames('dashboard__item', { mobile: isMobile })}>
-          {isMobile
-            ? getMobileView(signData[SignTypes.ONLY_OTHERS])
-            : getDefaultView(signData[SignTypes.ONLY_OTHERS])}
-        </li>
-      </ul>
+      <WizardSignForm initialValues={initialValues} isEditMode={!!documentId} />
     </div>
   );
 };

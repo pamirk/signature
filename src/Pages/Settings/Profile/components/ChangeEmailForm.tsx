@@ -9,9 +9,10 @@ import Toast from 'Services/Toast';
 
 export interface ChangeEmailFormFieldProps {
   isUser: boolean;
+  isAppSumo: boolean;
 }
 
-const ChangeEmailForm = ({ isUser }: ChangeEmailFormFieldProps) => {
+const ChangeEmailForm = ({ isUser, isAppSumo }: ChangeEmailFormFieldProps) => {
   const { email } = useSelector(selectUser);
   const [updateEmail, isEmailUpdating] = useEmailUpdate();
 
@@ -28,14 +29,27 @@ const ChangeEmailForm = ({ isUser }: ChangeEmailFormFieldProps) => {
   return (
     <Form
       keepDirtyOnReinitialize
-      initialValues={{ email: email as string }}
+      initialValues={
+        {
+          email: email as string,
+        } as UpdateEmailPayload
+      }
       onSubmit={handleUpdateEmail}
-      render={({ handleSubmit, submitting, hasValidationErrors, pristine, values }) => (
+      render={({
+        handleSubmit,
+        submitting,
+        hasValidationErrors,
+        pristine,
+        values,
+        form,
+      }) => (
         <ChangeEmailFields
           handleSubmit={handleSubmit}
           isDisabled={pristine || submitting || hasValidationErrors || isEmailUpdating}
           isFieldDisabled={isUser}
           emailValue={values.email}
+          form={form}
+          isAppSumo={isAppSumo}
         />
       )}
     />

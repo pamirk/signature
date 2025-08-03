@@ -1,10 +1,12 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
 import UIButton from 'Components/UIComponents/UIButton';
 import { useInviteAccepting, useTeamJoin } from 'Hooks/Team';
-import { RouteChildrenProps } from 'react-router-dom';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 import History from 'Services/History';
 import { DataLayerAnalytics } from 'Services/Integrations';
 import Toast from 'Services/Toast';
+import jwt_decode from 'jwt-decode';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { RouteChildrenProps } from 'react-router-dom';
 
 interface PageParams {
   teamId: string;
@@ -25,16 +27,20 @@ const InviteAcceptPage = ({ location, match }: RouteChildrenProps<PageParams>) =
   }, [location.search, match]);
 
   const navigateToRoot = useCallback(() => {
-    History.replace('/');
+    History.replace(AuthorizedRoutePaths.BASE_PATH);
   }, []);
 
   const handleInviteAccept = useCallback(
-    async (teamId: string) => {
+    async (teamId: string, userId: string) => {
       try {
         await acceptInvite({ teamId });
-        DataLayerAnalytics.fireConfirmedRegistrationEvent();
+        DataLayerAnalytics.fireConfirmedRegistrationEvent(userId);
         Toast.success('Invite accepted.');
       } catch (error) {
+        Toast.error(
+          error.message ??
+            'Unable to upgrade subscription. Please contact the team owner.',
+        );
         navigateToRoot();
       }
     },
@@ -47,8 +53,10 @@ const InviteAcceptPage = ({ location, match }: RouteChildrenProps<PageParams>) =
       return navigateToRoot();
     }
 
+    const parsedToken: any = jwt_decode(signToken);
+
     initInviteAccepting({ token: signToken });
-    handleInviteAccept(teamId);
+    handleInviteAccept(teamId, parsedToken.sub);
 
     return () => finishInviteAccepting();
     // eslint-disable-next-line react-hooks/exhaustive-deps

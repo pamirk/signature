@@ -1,3 +1,3 @@
-import BuyNow from "./BuyNow";
+import Index from "./BuyNow";
 
-export default BuyNow;
+export default Index

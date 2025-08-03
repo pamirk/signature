@@ -6,11 +6,12 @@ import { useSelector } from 'react-redux';
 import { selectTwoFactorType } from 'Utils/selectors';
 import { TwoFactorTypes } from 'Interfaces/Auth';
 import History from 'Services/History';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 const TwoFactor = () => {
   const twoFactorType = useSelector(selectTwoFactorType);
 
-  if (!twoFactorType) History.push('/login');
+  if (!twoFactorType) History.push(UnauthorizedRoutePaths.LOGIN);
 
   const [callSignInTwillio] = useTwillioSignIn();
   const [callSignInGoogleAuthenticator] = useGoogleAuthenticatorSignIn();

@@ -17,7 +17,7 @@ const ApiKeyCreateContent = ({ onApiKeyGenerate }: ApiKeyCreateContentProps) => 
   const handleSubmit = useCallback(
     async values => {
       try {
-        const result:any = await createApiKey(values);
+        const result = await createApiKey(values);
 
         if (isNotEmpty(result)) {
           onApiKeyGenerate(result.key);

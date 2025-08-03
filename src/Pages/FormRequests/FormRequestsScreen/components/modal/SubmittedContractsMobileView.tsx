@@ -1,13 +1,16 @@
 import React from 'react';
-import * as _ from 'lodash';
 import DownloadIcon from 'Assets/images/icons/download-icon.svg';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import { ReactSVG } from 'react-svg';
 import IconEye from 'Assets/images/icons/eye-icon.svg';
+import IconKey from 'Assets/images/icons/key-icon.svg';
+import { Contract } from 'Interfaces/Contract';
+import { Document } from 'Interfaces/Document';
 
 interface SubmittedContractsMobileViewProps {
-  contracts: any[];
+  contracts: Contract[];
   handleDocumentDownload: (documentId: string) => void;
+  handleCopyCodeAccess: (document: Document) => void;
   navigateToPreview: (documentId: string) => void;
   openDeleteModal: (documentId: string) => void;
 }
@@ -15,6 +18,7 @@ interface SubmittedContractsMobileViewProps {
 const SubmittedContractsMobileView = ({
   contracts,
   handleDocumentDownload,
+  handleCopyCodeAccess,
   navigateToPreview,
   openDeleteModal,
 }: SubmittedContractsMobileViewProps) => {
@@ -72,6 +76,17 @@ const SubmittedContractsMobileView = ({
                       className="submittedContractsModal__tableAction-icon"
                     />
                   </div>
+                  {contract.document.codeAccess && (
+                    <div
+                      className="table__actions-item"
+                      onClick={() => handleCopyCodeAccess(contract.document)}
+                    >
+                      <ReactSVG
+                        src={IconKey}
+                        className="submittedContractsModal__tableAction-icon"
+                      />
+                    </div>
+                  )}
                   <button
                     onClick={() => openDeleteModal(contract.document.id)}
                     className="tableControls__control tableControls__control--red"

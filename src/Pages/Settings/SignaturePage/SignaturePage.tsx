@@ -32,6 +32,7 @@ const SignaturePage = () => {
   const [showRequisiteModal, closeRequisiteModal] = useModal(() => (
     <UIModal
       className={classNames('requisiteModal__wrapper', { mobile: isMobile })}
+      overlayClassName="create-signature"
       onClose={closeRequisiteModal}
       hideCloseIcon
     >

@@ -30,8 +30,8 @@ import UIDatePicker from 'Components/UIComponents/UIDatePicker';
 import UIPaginator from 'Components/UIComponents/UIPaginator';
 import UISelect from 'Components/UIComponents/UISelect';
 import DebounceInput from 'Components/DebounceInput';
-import { useDocumentsGet, useDocumentsDelete } from 'Hooks/Document';
-import { DocumentStatuses, DocumentTypes } from 'Interfaces/Document';
+import { useFormRequestsGet, useDocumentsDelete } from 'Hooks/Document';
+import { DocumentStatuses } from 'Interfaces/Document';
 import { PlanTypes } from 'Interfaces/Billing';
 import { TemplateUpgradeModal } from 'Components/UpgradeModal';
 import { User, UserRoles } from 'Interfaces/User';
@@ -39,6 +39,7 @@ import { Billet } from 'Pages/Settings/Company/components';
 import { useSubscriptionDataGet } from 'Hooks/Billing';
 import EmptyTable from 'Components/EmptyTable';
 import { Document } from 'Interfaces/Document';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 type selectedPage = { selected: number };
 
@@ -57,13 +58,13 @@ const validStatuses: DocumentStatuses[] = [
 const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
   const userPlan = useSelector(selectUserPlan);
   const user = useSelector(selectUser) as User;
-  const [getDocuments, isFetchLoading] = useDocumentsGet();
+  const [getFormRequests, isFetchLoading] = useFormRequestsGet();
   const [deleteTemplates, isDeleteLoading] = useDocumentsDelete();
   const [paginationProps, setPageNumber] = usePagination({
     paginationSelector: selectDocumentsPaginationData,
   });
   const [selectedDates, setSelectedDates] = useState<RangeModifier>();
-  const [getSubscriptionData, isSubscriptionDataLoading] = useSubscriptionDataGet();
+  const [, isSubscriptionDataLoading] = useSubscriptionDataGet();
 
   const forms = useSelector(selectFormRequests);
   const status = match?.params.status;
@@ -86,15 +87,14 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
 
   const handleDeleteTemplates = useCallback(
     async (formIds?: Document['id'][]) => {
-      const { from, to }:any = selectedDates || {};
+      const { from, to } = selectedDates || {};
       const { key, direction } = orderingConfig;
       const orderingDirection = direction.toString().toUpperCase();
       formIds = formIds || selectedItems.map(item => item.id);
       try {
         await deleteTemplates(formIds);
-        await getDocuments({
+        await getFormRequests({
           page: 1,
-          type: [DocumentTypes.FORM_REQUEST],
           limit: paginationProps.itemsLimit,
           searchTerm: templateNameFilter,
           status: [DocumentStatuses.DRAFT, DocumentStatuses.ACTIVE],
@@ -111,7 +111,7 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
     },
     [
       deleteTemplates,
-      getDocuments,
+      getFormRequests,
       selectedDates,
       orderingConfig,
       selectedItems,
@@ -131,12 +131,12 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
     if (
       !user.teamId &&
       (userPlan.type === PlanTypes.FREE ||
-        userPlan.type == PlanTypes.PERSONAL ||
+        userPlan.type === PlanTypes.PERSONAL ||
         !user.teamId)
     ) {
       openUpgradeModal();
     } else {
-      History.push('/form-requests/create');
+      History.push(AuthorizedRoutePaths.FORM_REQUESTS_CREATE);
     }
   }, [openUpgradeModal, user.teamId, userPlan.type]);
 
@@ -165,13 +165,12 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
   };
 
   const handleGetTemplates = useCallback(async () => {
-    const { from, to }:any = selectedDates || {};
+    const { from, to } = selectedDates || {};
     const { key, direction } = orderingConfig;
     const orderingDirection = direction.toString().toUpperCase();
 
     try {
-      await getDocuments({
-        type: [DocumentTypes.FORM_REQUEST],
+      await getFormRequests({
         page: paginationProps.pageNumber + 1,
         limit: paginationProps.itemsLimit,
         searchTerm: templateNameFilter,
@@ -230,9 +229,9 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
 
   const handleChangeFilterStatus = useCallback((value?: string | number) => {
     if (value === 'all') {
-      History.push('/form-requests');
+      History.push(AuthorizedRoutePaths.FORM_REQUESTS);
     } else {
-      History.push(`/form-requests/${value}`);
+      History.push(`${AuthorizedRoutePaths.FORM_REQUESTS}/${value}`);
     }
   }, []);
 
@@ -241,27 +240,43 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
   }, [user.plan.type]);
 
   const isTableEmpty = useMemo(() => {
-    return (!isBusinessPlan && !user.teamId) || forms.length === 0;
-  }, [isBusinessPlan, user.teamId, forms.length]);
+    return forms.length === 0;
+  }, [forms.length]);
+
+  const isAvailablePlan = useMemo(() => {
+    return !isBusinessPlan && !user.teamId;
+  }, [isBusinessPlan, user.teamId]);
+
+  const isSetSearchFilter = useMemo(() => {
+    return !!templateNameFilter || !!status || !!selectedDates;
+  }, [selectedDates, status, templateNameFilter]);
 
   const emptyTableProps = useMemo(() => {
-    return !isBusinessPlan && !user.teamId
+    return isAvailablePlan
       ? {
           buttonText: 'Upgrade to Business',
           headerText: 'Start creating forms!',
           description: 'Upgrade to business to add forms to your account',
         }
+      : isSetSearchFilter
+      ? {
+          buttonText: 'Create Form',
+          headerText: 'No matches found for your current search.',
+          description: '',
+        }
       : {
-          buttonClassName: 'team__button--hide',
-          headerText: 'Start creating forms!',
+          buttonText: 'Create Form',
+          headerText: "You don't have any forms yet.",
+          description:
+            'Create your first form to save time when repeating the same signature documents.',
         };
-  }, [isBusinessPlan, user.teamId]);
+  }, [isAvailablePlan, isSetSearchFilter]);
 
   return (
     <div className="documents__wrapper">
       <div className="documents__header documents__header--template">
         <div className="documents__titleGroup">
-          {user.plan.type !== PlanTypes.BUSINESS && !user.teamId ? (
+          {isAvailablePlan ? (
             <div className="company__billet-container">
               <p className="team__header-title">Forms</p>
               <Billet title="Business Feature" />
@@ -288,45 +303,37 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
           you to send your documents faster.
         </p>
       </div>
-      {!isTableEmpty && (
-        <div className="tableFilters__wrapper tableFilters__itemGroup">
-          <div className="tableFilters__item tableFilters__search">
-            <DebounceInput
-              placeholder="Search for Forms..."
-              onChange={changeTemplateNameFilter}
-              icon={IconSearch}
+      <div className="tableFilters__wrapper tableFilters__itemGroup">
+        <div className="tableFilters__item tableFilters__search">
+          <DebounceInput
+            placeholder="Search for Forms..."
+            onChange={changeTemplateNameFilter}
+            icon={IconSearch}
+          />
+        </div>
+        <div className="tableFilters__itemGroup">
+          <div className="tableFilters__item tableFilters__item--small">
+            <UISelect
+              value={status}
+              handleSelect={handleChangeFilterStatus}
+              options={statusFilterOptions}
+              placeholder="Status: All"
             />
           </div>
-          <div className="tableFilters__itemGroup">
-            <div className="tableFilters__item tableFilters__item--small">
-              <UISelect
-                value={status}
-                handleSelect={handleChangeFilterStatus}
-                options={statusFilterOptions}
-                placeholder="Status: All"
-              />
-            </div>
-            <div className="tableFilters__item">
-              <UIDatePicker
-                position="right"
-                value={selectedDates}
-                onDateRangeSelect={handleChangeDateFilter}
-                onCancel={handleCancelDateFilter}
-              />
-            </div>
+          <div className="tableFilters__item">
+            <UIDatePicker
+              position="right"
+              value={selectedDates}
+              onDateRangeSelect={handleChangeDateFilter}
+              onCancel={handleCancelDateFilter}
+            />
           </div>
         </div>
-      )}
+      </div>
 
       {isTableEmpty ? (
         <div className="documents__empty-table">
-          <EmptyTable
-            {...emptyTableProps}
-            onClick={() => {
-              History.push('/settings/billing/plan');
-            }}
-            iconClassName="empty-table__icon--team"
-          />
+          <EmptyTable {...emptyTableProps} onClick={handleTemplateCreateClick} />
         </div>
       ) : (
         <>
@@ -342,6 +349,7 @@ const FormRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
             onTemplateCreateClick={handleTemplateCreateClick}
             openDeleteModal={openDeleteModal}
             handleFormDelete={handleDeleteTemplates}
+            handleGetForms={handleGetTemplates}
           />
         </>
       )}

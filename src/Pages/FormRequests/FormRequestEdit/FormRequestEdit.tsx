@@ -9,6 +9,7 @@ import UISpinner from 'Components/UIComponents/UISpinner';
 import { useTemplateReplicate, useDocumentGuard } from 'Hooks/Document';
 import Toast from 'Services/Toast';
 import FormRequestForm from 'Components/FormRequestsForm';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface TemplateRouteParams {
   formRequestId: Document['id'];
@@ -23,7 +24,7 @@ const FormRequestEdit = ({ match }: RouteChildrenProps<TemplateRouteParams>) => 
   );
 
   const handleTemplateCheckFailure = useCallback(() => {
-    History.replace('/form-requests');
+    History.replace(AuthorizedRoutePaths.FORM_REQUESTS);
   }, []);
 
   const handleTemplateCheckSuccess = useCallback(

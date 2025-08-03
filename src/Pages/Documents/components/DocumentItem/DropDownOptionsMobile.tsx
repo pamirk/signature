@@ -9,6 +9,7 @@ interface DropDownOption {
   name: string;
   onClick: () => void;
   className?: string;
+  classNameIcon?: string;
   hidden: boolean;
 }
 
@@ -76,7 +77,10 @@ const DropDownOptionsMobile = ({
                 >
                   <ReactSVG
                     src={option.icon}
-                    className="documents__dropdownOption-icon"
+                    className={classNames(
+                      'documents__dropdownOption-icon',
+                      option.classNameIcon,
+                    )}
                   />
                   <span>{option.name}</span>
                 </div>

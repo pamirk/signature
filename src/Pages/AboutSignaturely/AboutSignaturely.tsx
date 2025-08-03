@@ -10,6 +10,7 @@ import LegalIcon from 'Assets/images/aboutSignaturelyIcons/legal-icon.svg';
 import ReminderIcon from 'Assets/images/aboutSignaturelyIcons/reminder-icon.svg';
 import ManagementIcon from 'Assets/images/aboutSignaturelyIcons/management-icon.svg';
 import PaperlessIcon from 'Assets/images/aboutSignaturelyIcons/paperless-icon.svg';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 const dashboardItems = [
   {
@@ -19,7 +20,7 @@ const dashboardItems = [
     icon: CollaborationIcon,
   },
   {
-    title: 'Tine-saving templates',
+    title: 'Time-saving templates',
     desc:
       'Create templates for your documents once and use them again and again. Share templates with others in your team for extra hours saved.',
     icon: TimeSaveIcon,
@@ -57,26 +58,26 @@ interface AboutSignaturelyProps {
 const AboutSignaturely = ({
   location,
 }: RouteComponentProps<{}, StaticContext, AboutSignaturelyProps>) => {
-  if (!location?.state?.isSignUpClose) History.push('/');
+  if (!location?.state?.isSignUpClose) History.push(UnauthorizedRoutePaths.BASE_PATH);
 
   return (
     <div className="about-signaturely__wrapper">
       <div className="about-signaturely">
         <div className="about-signaturely__info">
           <div className="about-signaturely__info-title">
-            What E-sign can do for you?
+            What Signaturely can do for you?
           </div>
           <div className="about-signaturely__info-text">
-            Did you enjoy the experience of signing with E-sign? Sign like
+            Did you enjoy the experience of signing with Signaturely? Sign like
             <br />
             that everytime. Create a free account today and enjoy all these great
             benefits.
           </div>
           <UIButton
             priority="primary"
-            title="Create Free Account"
+            title="Create Account"
             handleClick={() => {
-              History.push('/signup');
+              History.push(UnauthorizedRoutePaths.SIGN_UP);
             }}
           />
         </div>
@@ -87,9 +88,9 @@ const AboutSignaturely = ({
         </ul>
         <UIButton
           priority="primary"
-          title="Create Free Account"
+          title="Create Account"
           handleClick={() => {
-            History.push('/signup');
+            History.push(UnauthorizedRoutePaths.SIGN_UP);
           }}
         />
       </div>

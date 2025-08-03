@@ -1,7 +1,12 @@
 import React from 'react';
 import FieldTextInput from 'Components/FormFields/FieldTextInput';
 import { Form, Field } from 'react-final-form';
-import { required, maxLength100, notOnlySpaces } from 'Utils/validation';
+import {
+  required,
+  maxLength100,
+  notOnlySpaces,
+  titleNotUrlProtocol,
+} from 'Utils/validation';
 import { OnSubmitReturnType } from 'Interfaces/FinalForm';
 import { composeValidators } from 'Utils/functions';
 
@@ -21,7 +26,12 @@ const EditableTitle = ({ documentTitle, onSubmit }: RenameTitleFormProps) => {
             component={FieldTextInput}
             autofocus
             hidden
-            validate={composeValidators<string>(required, notOnlySpaces, maxLength100)}
+            validate={composeValidators<string>(
+              required,
+              notOnlySpaces,
+              maxLength100,
+              titleNotUrlProtocol,
+            )}
           />
         </form>
       )}

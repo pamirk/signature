@@ -1,4 +1,3 @@
-import ConfirmEmail from "./ConfirmEmail";
+import Index from "./ConfirmEmail";
 
-
-export default ConfirmEmail;
+export default Index

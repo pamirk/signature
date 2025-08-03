@@ -7,6 +7,7 @@ import ApiIcon from 'Assets/images/icons/api-icon.svg';
 import ApiKeyItem from './ApiKeyItem';
 import { ApiKey } from 'Interfaces/ApiKey';
 import UISpinner from 'Components/UIComponents/UISpinner';
+import useIsMobile from 'Hooks/Common/useIsMobile';
 
 interface ApiKeysListProps {
   apiKeys: ApiKey[];
@@ -15,6 +16,7 @@ interface ApiKeysListProps {
   isLoading: boolean;
   createApiKey: () => void;
   onApiKeyDelete: (id: ApiKey['id']) => void;
+  setPageNumber: (pageNumber: number) => void;
 }
 
 const defaultPaginationProps: TablePaginationProps = {
@@ -32,8 +34,11 @@ function ApiKeysList({
   requestOrdering,
   onApiKeyDelete,
   createApiKey,
+  setPageNumber,
 }: ApiKeysListProps) {
   const { pageNumber, itemsCount, itemsLimit, totalItems } = paginationProps;
+  const isMobile = useIsMobile();
+
   if (apiKeys.length === 0 && !isLoading)
     return (
       <div className="documents__empty-table">
@@ -60,39 +65,52 @@ function ApiKeysList({
       </div>
       <div className="table__container">
         <div className="table__innerContainer">
-          <div className="table__row table__header">
-            <div className="table__column table__column--text apiKeys__column--medium">
-              <button
-                className="tableControls__headerControl"
-                onClick={() => requestOrdering('name')}
-              >
-                <span>NAME</span>
-                <ReactSVG src={IconSort} />
-              </button>
+          {isMobile ? (
+            <div className="table__row table__header">API KEYS</div>
+          ) : (
+            <div className="table__row table__header">
+              <div className="table__column table__column--text apiKeys__column--medium">
+                <button
+                  className="tableControls__headerControl"
+                  onClick={() => {
+                    setPageNumber(0);
+                    requestOrdering('name');
+                  }}
+                >
+                  <span>NAME</span>
+                  <ReactSVG src={IconSort} />
+                </button>
+              </div>
+              <div className="table__column table__column--prefix apiKeys__column--small">
+                <button
+                  className="tableControls__headerControl"
+                  onClick={() => {
+                    setPageNumber(0);
+                    requestOrdering('prefix');
+                  }}
+                >
+                  <span>PREFIX</span>
+                  <ReactSVG src={IconSort} />
+                </button>
+              </div>
+              <div className="table__column table__column--date apiKeys__column--medium">
+                <button
+                  className="tableControls__headerControl"
+                  onClick={() => {
+                    setPageNumber(0);
+                    requestOrdering('createdAt');
+                  }}
+                >
+                  <span>DATE CREATED</span>
+                  <ReactSVG src={IconSort} />
+                </button>
+              </div>
+              <div className="table__column table__column__text apiKeys__column--small">
+                REQUESTS
+              </div>
+              <div className="table__column table__column--action">ACTION</div>
             </div>
-            <div className="table__column table__column--prefix apiKeys__column--small">
-              <button
-                className="tableControls__headerControl"
-                onClick={() => requestOrdering('prefix')}
-              >
-                <span>PREFIX</span>
-                <ReactSVG src={IconSort} />
-              </button>
-            </div>
-            <div className="table__column table__column--date apiKeys__column--medium">
-              <button
-                className="tableControls__headerControl"
-                onClick={() => requestOrdering('createdAt')}
-              >
-                <span>DATE CREATED</span>
-                <ReactSVG src={IconSort} />
-              </button>
-            </div>
-            <div className="table__column table__column__text apiKeys__column--small">
-              REQUESTS
-            </div>
-            <div className="table__column table__column--action">ACTION</div>
-          </div>
+          )}
           {isLoading ? (
             <UISpinner
               width={50}

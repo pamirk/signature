@@ -9,6 +9,7 @@ interface ConfirmCodeModalProps {
   isSending?: boolean;
   title: string;
   subtitle?: string;
+  placeholder?: string;
   resendCode?: () => void;
   codeLength?: number;
 }
@@ -18,6 +19,7 @@ const ConfirmCodeModal = ({
   isSending,
   title,
   subtitle,
+  placeholder = '0A2b3C4d5E',
   resendCode,
   onClose,
   codeLength,
@@ -37,16 +39,22 @@ const ConfirmCodeModal = ({
   }, [resendCode]);
 
   return (
-    <UIModal onClose={() => onClose()} className="confirmCodeModal" hideCloseIcon>
+    <UIModal
+      onClose={() => onClose()}
+      className="confirmCodeModal"
+      hideCloseIcon
+      shouldCloseOnOverlayClick={false}
+    >
       <div className="confirmCodeModal__wrapper">
         <div className="confirmCodeModal__title">{title}</div>
         {subtitle && <div className="confirmCodeModal__subtitle">{subtitle}</div>}
         <div className="confirmCodeModal__field">
           <UITextInput
             type="password"
+            autoComplete="off"
             onChange={handleCodeAccessChange}
             value={codeAccess}
-            placeholder="0A2b3C4d5E"
+            placeholder={placeholder}
           />
           {resendCode && (
             <UIButton

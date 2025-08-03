@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import IconRemove from 'Assets/images/icons/remove-icon.svg';
 import IconSort from 'Assets/images/icons/sort.svg';
 
-import EmptyTable from 'Components/EmptyTable';
 import { TablePaginationProps } from 'Interfaces/Common';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { SelectableDocument } from 'Interfaces/Document';
@@ -24,6 +23,7 @@ interface FromRequestsProps {
   openDeleteModal: () => void;
   onTemplateCreateClick: () => void;
   handleFormDelete: (formIds: Document['id'][]) => void;
+  handleGetForms: () => void;
 }
 
 const defaultPaginationProps: TablePaginationProps = {
@@ -38,27 +38,16 @@ function FromRequests({
   templates,
   paginationProps = defaultPaginationProps,
   openDeleteModal,
-  onTemplateCreateClick,
   toggleItemSelection,
   isLoading,
   requestOrdering,
   isDeleteModalOpen,
   handleFormDelete,
+  handleGetForms,
 }: FromRequestsProps) {
   const { pageNumber, itemsCount, itemsLimit, totalItems } = paginationProps;
   const isMobile = useIsMobile();
 
-  if (templates.length === 0 && !isLoading)
-    return (
-      <div className="documents__empty-table">
-        <EmptyTable
-          onClick={onTemplateCreateClick}
-          buttonText="Create Form"
-          headerText="You don't have any forms yet."
-          description="Create your first form to save time when repeating the same signature documents."
-        />
-      </div>
-    );
   return isMobile ? (
     <FormRequestsMobile
       templates={templates}
@@ -67,6 +56,7 @@ function FromRequests({
       isLoading={isLoading}
       isDeleteModalOpen={isDeleteModalOpen}
       handleFormDelete={handleFormDelete}
+      handleGetForms={handleGetForms}
     />
   ) : (
     <div className="table documents__table">
@@ -112,7 +102,7 @@ function FromRequests({
             </div>
             <div className="table__column table__column--status">
               <button
-                className="tableControls__headerControl"
+                className="tableControls__headerControl status"
                 onClick={() => requestOrdering('status')}
               >
                 <span>STATUS</span>
@@ -141,6 +131,7 @@ function FromRequests({
                     'table__dataRow--delete': isDeleteModalOpen && isSelected,
                     'table__dataRow--inactive': isDeleteModalOpen && !isSelected,
                   })}
+                  handleGetForms={handleGetForms}
                 />
               );
             })

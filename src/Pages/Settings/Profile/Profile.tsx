@@ -10,7 +10,7 @@ import {
   NotificationsFields,
   PhoneVerificationField,
 } from './components';
-import { DeletionSteps, ProfileInfo, CodeScopeType } from 'Interfaces/Profile';
+import { ProfileInfo, CodeScopeType } from 'Interfaces/Profile';
 import Toast from 'Services/Toast';
 import { useSelector } from 'react-redux';
 import { selectProfileInfo, selectUser } from 'Utils/selectors';
@@ -26,10 +26,10 @@ import TwoFactorForm from 'Pages/Auth/TwoFactor/components/TwoFactorForm';
 import { User, UserRoles } from 'Interfaces/User';
 import { TwoFactorTypes } from 'Interfaces/Auth';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import PhoneVerificationUnsubscribe from './components/PhoneVerificationUnsubscribe';
 
 const Profile = () => {
   const isMobile = useIsMobile();
-  const [step, setStep] = useState<DeletionSteps>(DeletionSteps.START_DELETION);
   const [qrCode, setQrCode] = useState<string>();
   const [updateProfileInfo] = useProfileInfoUpdate();
   const [
@@ -46,7 +46,7 @@ const Profile = () => {
   ] = useGoogleAuthenticator();
 
   const [phoneToVerify, setPhoneToVerify] = useState<string>();
-  const logout = useLogout();
+  const [logout] = useLogout();
   const [deleteAccount, isDeleteLoading] = useAccountDelete();
   const profileInitialValues = useSelector(selectProfileInfo);
   const {
@@ -58,15 +58,11 @@ const Profile = () => {
     avatarUrl,
   }: User = useSelector(selectUser);
 
-  const nextStep = () => {
-    setStep(step + 1);
-  };
-
   const handlAccounteDelete = useCallback(async () => {
     try {
       await deleteAccount(undefined);
       Toast.success('Account Deleted.');
-      logout();
+      logout(null);
     } catch (error) {
       Toast.handleErrors(error);
     }
@@ -75,14 +71,12 @@ const Profile = () => {
   const [showDeleteModal, closeDeleteModal] = useModal(
     () => (
       <DeleteAccountModal
-        step={step}
-        nextStep={nextStep}
         onDeleteAccount={handlAccounteDelete}
         onClose={closeDeleteModal}
         isLoading={isDeleteLoading}
       />
     ),
-    [step, isDeleteLoading],
+    [isDeleteLoading],
   );
 
   const handleSubmit = useCallback(
@@ -198,9 +192,9 @@ const Profile = () => {
   }, [enableGoogleAuthenticator, isGoogle2fa, showGoogleAuthenticatorModal]);
 
   const handleCodeGenerate = useCallback(
-    async (phone: string, scope: CodeScopeType = CodeScopeType.VERIFY) => {
+    async ({ phone, recaptcha }, scope: CodeScopeType = CodeScopeType.VERIFY) => {
       try {
-        await generateCode({ phone, scope });
+        await generateCode({ recaptcha, phone, scope });
         setPhoneToVerify(phone);
         showVerifyModal();
       } catch (error) {
@@ -209,10 +203,6 @@ const Profile = () => {
     },
     [generateCode, showVerifyModal],
   );
-
-  const handleDisablingCodeGenerate = useCallback(async () => {
-    await handleCodeGenerate(phoneNumber as string, CodeScopeType.DISABLE);
-  }, [handleCodeGenerate, phoneNumber]);
 
   return (
     <div className="profile">
@@ -251,26 +241,11 @@ const Profile = () => {
                     SMS 2-Factor Authenthicator
                   </h2>
                   {isTwillio2fa ? (
-                    <>
-                      <div className="profile__sms-disable">
-                        <UIButton
-                          type="button"
-                          priority="secondary"
-                          title="Disable 2-factor authentication"
-                          disabled={isTwillioLoading}
-                          isLoading={isTwillioLoading}
-                          handleClick={handleDisablingCodeGenerate}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        disabled={isTwillioLoading}
-                        className="profile__sms-change"
-                        onClick={handleDisablingCodeGenerate}
-                      >
-                        Change Authentication Number
-                      </button>
-                    </>
+                    <PhoneVerificationUnsubscribe
+                      isLoading={isTwillioLoading}
+                      phoneNumber={phoneNumber}
+                      handleCodeGenerate={handleCodeGenerate}
+                    />
                   ) : (
                     <PhoneVerificationField
                       isLoading={isTwillioLoading}

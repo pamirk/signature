@@ -5,7 +5,7 @@ import { useSigningUrl } from 'Hooks/DocumentSign';
 import { useSignerAvatars } from 'Hooks/User';
 import { Signer, Document } from 'Interfaces/Document';
 import SignerItemLabel from '../../SignerItemLabel';
-import * as _ from 'lodash';
+import { orderBy } from 'lodash';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
 import CopyClipboardIcon from 'Assets/images/icons/download-icon.svg';
@@ -27,7 +27,7 @@ const SigningLinkModal = ({
   const [getSigningUrl, isLoading] = useSigningUrl();
   const isMobile = useIsMobile();
 
-  const orderedSigners = useMemo(() => _.orderBy(signers, 'order', 'asc'), [signers]);
+  const orderedSigners = useMemo(() => orderBy(signers, 'order', 'asc'), [signers]);
 
   const firstUnfinishedSigner = useMemo(() => {
     if (!isSignersOrdered) return null;

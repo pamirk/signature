@@ -87,8 +87,10 @@ const Api = () => {
 
   const [openGenerateApiKeyModal, closeGenerateApiKeyModal] = useModal(
     () => (
-        //@ts-ignore
-      <ApiKeyModal onSuccessGenerate={handleGetApiKeysFromFirstPage} onClose={closeGenerateApiKeyModal}/>
+      <ApiKeyModal
+        onSuccessGenerate={handleGetApiKeysFromFirstPage}
+        onClose={closeGenerateApiKeyModal}
+      />
     ),
     [],
   );
@@ -98,8 +100,11 @@ const Api = () => {
   }, [setPageNumber]);
 
   useEffect(() => {
-    handleGetApiKeys();
     handleApiSubscriptionGet();
+  }, [handleApiSubscriptionGet]);
+
+  useEffect(() => {
+    handleGetApiKeys();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGetApiKeys]);
 
@@ -132,6 +137,7 @@ const Api = () => {
                 requestOrdering={requestOrdering}
                 isLoading={isApiKeysLoading}
                 paginationProps={paginationProps}
+                setPageNumber={setPageNumber}
               />
               {paginationProps.pageCount > 1 && (
                 <UIPaginator

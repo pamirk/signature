@@ -10,6 +10,7 @@ import { RouteChildrenProps } from 'react-router-dom';
 import History from 'Services/History';
 import { usePasswordChange, usePasswordChangeToken } from 'Hooks/Auth';
 import Toast from 'Services/Toast';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 function ChangePassword({ location }: RouteChildrenProps) {
   const [setToken, clearToken] = usePasswordChangeToken();
@@ -21,7 +22,7 @@ function ChangePassword({ location }: RouteChildrenProps) {
   }, [location.search]);
 
   const navigateToRoot = useCallback(() => {
-    History.replace('/');
+    History.replace(AuthorizedRoutePaths.BASE_PATH);
   }, []);
 
   const handleSubmit = useCallback(

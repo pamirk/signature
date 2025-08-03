@@ -76,7 +76,7 @@ function TwoFactorForm({
               <div className="title">
                 {title || `To confirm this action, enter the code from ${type}`}
               </div>
-              {imageSrc && <img src={imageSrc} />}
+              {imageSrc && <img src={imageSrc} alt="" />}
               <div className="subtitle">{description}</div>
               <Field name="code" component={FieldTextInput} placeholder={placeholder} />
               <div className="twoFactor__submitButton">

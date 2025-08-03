@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
-import * as _ from 'lodash';
-import { useSelectableItem } from 'Hooks/Common';
+import { orderBy } from 'lodash';
+import { useModal, useSelectableItem } from 'Hooks/Common';
 import { useRemindersSend } from 'Hooks/DocumentSign';
 import Toast from 'Services/Toast';
 import { Signer, Document } from 'Interfaces/Document';
@@ -10,6 +10,8 @@ import { useSignerAvatars } from 'Hooks/User';
 import SignerItemLabel from '../../SignerItemLabel';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
+import UpgradeModal from '../../../../../Components/UpgradeModal';
+import { RequestErrorTypes } from '../../../../../Interfaces/Common';
 
 interface ReminderModalProps {
   signersOptions: Signer[];
@@ -27,28 +29,55 @@ const ReminderModal = ({
   const [sendReminders, isLoading] = useRemindersSend();
   const [userAvatars] = useSignerAvatars(documentId);
   const isMobile = useIsMobile();
-  const orderedSigners = useMemo(() => _.orderBy(signersOptions, 'order', 'asc'), [
+  const orderedSigners = useMemo(() => orderBy(signersOptions, 'order', 'asc'), [
     signersOptions,
   ]);
   const firstUnfinishedSigner = useMemo(() => {
     if (!isSignersOrdered) return null;
 
-    return orderedSigners.find((signer:any) => !signer.isFinished);
+    return orderedSigners.find(signer => !signer.isFinished && !signer.isDeclined);
   }, [orderedSigners, isSignersOrdered]);
-  // @ts-ignore
-  const [selectableSigners, toggleSignerSelection, selectedSigners] = useSelectableItem(orderedSigners, 'id',);
+  const [selectableSigners, toggleSignerSelection, selectedSigners] = useSelectableItem(
+    orderedSigners,
+    'id',
+  );
+
+  const [showUpgradeModal, hideUpgradeModal] = useModal(() => {
+    return (
+      <UpgradeModal
+        title="Please upgrade your plan"
+        onClose={hideUpgradeModal}
+        cancelComponent={() => (
+          <div className="upgradeModal__button--cancel" onClick={hideUpgradeModal}>
+            Nevermind
+          </div>
+        )}
+      >
+        Free Users can only send 2 reminders per document. <br />
+        Please upgrade your plan if you need to send more reminders.
+      </UpgradeModal>
+    );
+  });
 
   const handleRemindersSend = useCallback(async () => {
     try {
-      const selectedSignersIds = selectedSigners.map((signer:any) => signer.id);
+      const selectedSignersIds = selectedSigners.map(signer => signer.id);
 
       await sendReminders({ signersIds: selectedSignersIds, documentId });
       onClose();
       Toast.success('Reminder(s) has been sent');
     } catch (error) {
+      console.log(error);
+      if (
+        error.type === RequestErrorTypes.QUOTA_EXCEEDED &&
+        error.message === 'Upgrade to Personal plan'
+      ) {
+        return showUpgradeModal();
+      }
+
       Toast.handleErrors(error);
     }
-  }, [onClose, selectedSigners, sendReminders, documentId]);
+  }, [selectedSigners, sendReminders, documentId, onClose, showUpgradeModal]);
 
   return (
     <div className="reminderModal__wrapper">
@@ -59,7 +88,7 @@ const ReminderModal = ({
         </p>
       </div>
       <div className={classNames('reminderModal__options', { mobile: isMobile })}>
-        {selectableSigners.map((selectableSigner:any) => (
+        {selectableSigners.map(selectableSigner => (
           <button
             disabled={
               selectableSigner.isFinished ||

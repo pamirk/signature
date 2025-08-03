@@ -5,10 +5,11 @@ import UIButton from 'Components/UIComponents/UIButton';
 import PlusLogo from 'Assets/images/icons/plus.svg';
 import AppSumoLogo from 'Assets/images/icons/appsumo.svg';
 import SignaturelyLogo from 'Assets/images/logo.svg';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 const AppSumoThanks = () => {
   const navigateToRoot = useCallback(() => {
-    History.replace('/');
+    History.replace(AuthorizedRoutePaths.BASE_PATH);
   }, []);
 
   return (

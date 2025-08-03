@@ -1,24 +1,40 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { useDocumentActivitiesGet } from 'Hooks/Document';
 import Toast from 'Services/Toast';
 import { isNotEmpty } from 'Utils/functions';
 import { Document, DocumentActivity } from 'Interfaces/Document';
-
+import DownloadIcon from 'Assets/images/icons/doc-download-icon.svg';
+import SignIcon from 'Assets/images/icons/sign-icon.svg';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import DocumentActivityItem from './DocumentActivityItem';
 import DocumentActivityListMobileView from './DocumentActivityListMobileView';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import HeaderButton from './HeaderButton';
 
 interface DocumentActivityListProps {
   documentId: Document['id'];
+  canDownloadActivities: boolean;
+  handleDocumentActivitiesDownload: () => Promise<void>;
+  isDownloading: boolean;
+  isDocumentCompleted: boolean;
 }
 
-const DocumentActivityList = ({ documentId }: DocumentActivityListProps) => {
+const DocumentActivityList = ({
+  documentId,
+  canDownloadActivities,
+  handleDocumentActivitiesDownload,
+  isDownloading,
+  isDocumentCompleted,
+}: DocumentActivityListProps) => {
   const location = useLocation();
   const [getDocumentActivities, isLoadingDocumentActivities] = useDocumentActivitiesGet();
   const [documentActivities, setDocumentActivities] = useState<DocumentActivity[]>([]);
   const isMobile = useIsMobile();
+
+  const isDownloadingEnable = useMemo(() => canDownloadActivities, [
+    canDownloadActivities,
+  ]);
 
   const handleDocumentActivitiesGet = useCallback(async documentId => {
     try {
@@ -56,12 +72,23 @@ const DocumentActivityList = ({ documentId }: DocumentActivityListProps) => {
     <DocumentActivityListMobileView
       isLoadingDocumentActivities={isLoadingDocumentActivities}
       documentActivities={documentActivities}
+      canDownloadActivities={isDownloadingEnable}
+      handleDocumentActivitiesDownload={handleDocumentActivitiesDownload}
     />
   ) : (
     <div className="documentPreview__activity-wrapper">
       <div className="documentPreview__activity-inner">
         <p id="document-activity" className="documentPreview__activity-title">
           Document Activity
+          {isDocumentCompleted && isDownloadingEnable && (
+            <HeaderButton
+              icon={DownloadIcon}
+              iconType="stroke"
+              onClick={handleDocumentActivitiesDownload}
+              disabled={isDownloading}
+              isLoading={isDownloading}
+            />
+          )}
         </p>
         <div className="documentPreview__activity-table-wrapper">
           {isLoadingDocumentActivities ? (

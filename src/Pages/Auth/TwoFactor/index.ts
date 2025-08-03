@@ -1,5 +1,3 @@
 import TwoFactor from "./TwoFactor";
 
-export {
-    TwoFactor,
-};
+export { TwoFactor };

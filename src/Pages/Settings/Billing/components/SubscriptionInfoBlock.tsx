@@ -11,6 +11,7 @@ import {
 } from 'Interfaces/Billing';
 import { isNotEmpty } from 'Utils/functions';
 import { capitalize } from 'lodash';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface SubscriptionInfoProps {
   subscriptionInfo: SubscriptionInfo;
@@ -36,8 +37,12 @@ const SubscriptionInfoBlock = ({
   appSumoStatus,
 }: SubscriptionInfoProps) => {
   const handleUpgradeClick = useCallback(() => {
-    History.push('/settings/billing/plan');
-  }, []);
+    if (appSumoStatus === AppSumoStatus.FULL) {
+      History.push(AuthorizedRoutePaths.SETTINGS_API);
+    } else {
+      History.push(AuthorizedRoutePaths.SETTINGS_BILLING_PLAN);
+    }
+  }, [appSumoStatus]);
   const { userQuantity, amount, discountQuantity, discountAmount } = subscriptionInfo;
   const isSubscribed = isNotEmpty(subscriptionInfo);
 
@@ -89,7 +94,7 @@ const SubscriptionInfoBlock = ({
             <UIButton
               priority="primary"
               handleClick={handleUpgradeClick}
-              title="Upgrade Plan"
+              title={`Upgrade ${appSumoStatus === AppSumoStatus.FULL ? 'API' : 'Plan'}`}
             />
           </div>
         </div>

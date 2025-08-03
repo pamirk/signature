@@ -1,3 +1,4 @@
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -9,7 +10,7 @@ const CheckInbox = () => {
         <div className="auth__description">
           If that is a valid address, we have sent an email to it to reset your password.
         </div>
-        <Link to="/login" className="auth__link auth__link--center">
+        <Link to={UnauthorizedRoutePaths.LOGIN} className="auth__link auth__link--center">
           Back to Login
         </Link>
       </div>

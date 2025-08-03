@@ -14,6 +14,7 @@ import { User, UserRoles } from 'Interfaces/User';
 import { PlanTypes } from 'Interfaces/Billing';
 import { TeamMemberListMobileView } from './TeamMemberListMobileView';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface TeamMembersListProps {
   user: User;
@@ -68,7 +69,7 @@ function TeamMembersList({
         <EmptyTable
           {...emptyTableProps}
           onClick={() => {
-            History.push('/settings/billing/plan');
+            History.push(AuthorizedRoutePaths.SETTINGS_BILLING_PLAN);
           }}
           icon={TeamIcon}
           iconClassName="empty-table__icon--team"
@@ -82,6 +83,10 @@ function TeamMembersList({
       teamMembers={teamMembers}
       isEditEnabled={isOwnerOrAdmin}
       isChangingRoleEnabled={user.role === UserRoles.OWNER}
+      toggleItemSelection={toggleItemSelection}
+      user={user}
+      isOwnerOrAdmin={isOwnerOrAdmin}
+      openDeleteModal={openDeleteModal}
     />
   ) : (
     <div className="table documents__table">

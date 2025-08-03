@@ -7,8 +7,8 @@ interface BillingPlanTableMobileViewProps {
   currentDisplayedPlan: PlanTypes;
   renderCell: (
     type: PlanFieldTypes,
-    value: string | boolean,
-  ) => string | boolean | JSX.Element;
+    value: string | number | boolean,
+  ) => string | number | boolean | JSX.Element;
 }
 
 const BillingPlanTableMobileView = ({
@@ -18,21 +18,15 @@ const BillingPlanTableMobileView = ({
 }: BillingPlanTableMobileViewProps) => {
   const getCurrentPlanItemValue = (item: any) => {
     switch (currentDisplayedPlan) {
-      case PlanTypes.FREE:
-        return (
-          <div className="billing__table-column billing__table-column">
-            {renderCell(item.type, item.freeValue)}
-          </div>
-        );
       case PlanTypes.PERSONAL:
         return (
-          <div className="billing__table-column billing__table-column">
+          <div className="billing__table-column mobile">
             {renderCell(item.type, item.personalValue)}
           </div>
         );
       case PlanTypes.BUSINESS:
         return (
-          <div className="billing__table-column billing__table-column">
+          <div className="billing__table-column mobile">
             {renderCell(item.type, item.businessValue)}
           </div>
         );
@@ -46,7 +40,7 @@ const BillingPlanTableMobileView = ({
       </div>
       {planInformationItems.map(item => (
         <div key={item.name} className="billing__table-row table__row">
-          <div className="billing__table-column billing__table-column--name">
+          <div className="billing__table-column mobile billing__table-column--name">
             {item.name}
           </div>
           {getCurrentPlanItemValue(item)}

@@ -92,6 +92,13 @@ const DocumentActivityItem = ({ documentActivity }: DocumentActivityItemProps) =
               </p>
             </li>
           )}
+          {type === DocumentActivityTypes.EXPIRE && (
+            <li className="documentPreview__activity-table-actions-item">
+              <p className="documentPreview__activity-table-actions-label">
+                Document Expired
+              </p>
+            </li>
+          )}
           {!!sourceIP && (
             <li className="documentPreview__activity-table-actions-item">
               <p className="documentPreview__activity-table-actions-label">

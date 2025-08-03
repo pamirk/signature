@@ -14,6 +14,7 @@ import { ApiKey } from 'Interfaces/ApiKey';
 import History from 'Services/History';
 import { useRequestHistoryGet } from 'Hooks/RequestHistory';
 import UIButton from 'Components/UIComponents/UIButton';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 type selectedPage = { selected: number };
 
@@ -40,14 +41,13 @@ const RequestHistory = ({ match }: RouteChildrenProps<ApiKeyParams>) => {
 
   const handleGetRequestHistory = useCallback(async () => {
     if (!apiKeyId) {
-      History.push('/');
+      History.push(AuthorizedRoutePaths.BASE_PATH);
       return;
     }
 
     const { key, direction } = orderingConfig;
     const orderingDirection = direction.toString().toUpperCase();
     try {
-      console.log('order');
       getRequestHistory({
         limit: paginationProps.itemsLimit,
         page: paginationProps.pageNumber + 1,
@@ -79,7 +79,7 @@ const RequestHistory = ({ match }: RouteChildrenProps<ApiKeyParams>) => {
         <UIButton
           className="apiKeys__back-button"
           priority="secondary"
-          handleClick={() => History.push('/settings/api')}
+          handleClick={() => History.push(AuthorizedRoutePaths.SETTINGS_API)}
           title="Back"
         />
       </div>

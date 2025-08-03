@@ -24,7 +24,7 @@ const ThanksMessage = ({ companyLogo }: ThanksMessageProps) => {
           >
             <div className="form-request__logo">
               {companyLogo ? (
-                <img src={companyLogo} />
+                <img src={companyLogo} alt="" />
               ) : (
                 <img src={Logo} alt="Signaturely" />
               )}
@@ -36,8 +36,17 @@ const ThanksMessage = ({ companyLogo }: ThanksMessageProps) => {
             </div>
           </div>
           <div className="form-request__footer">
-            Powered by{' '}
-            <div className="form-request__footer--signaturely">Signaturely</div>
+            <a
+              href="https://signaturely.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                textDecoration: 'none',
+              }}
+            >
+              <span>Powered by</span>
+              <span className="form-request__footer--signaturely">Signaturely</span>
+            </a>
           </div>
         </div>
       </div>

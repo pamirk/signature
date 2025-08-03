@@ -1,21 +1,23 @@
-import React, { useCallback, useMemo } from 'react';
 import arrayMutators from 'final-form-arrays';
+import React, { useCallback, useMemo } from 'react';
 import { Form, FormRenderProps } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 
 import { OnSubmitReturnType } from 'Interfaces/FinalForm';
 
-import EmailRecipientsArray from 'Components/FormFields/EmailRecipientsArray';
+import { TeammateFieldArray } from 'Components/FormFields/TeammatesArray';
 import UIButton from 'Components/UIComponents/UIButton';
-import { TeamMembersAddPayload } from 'Interfaces/Team';
-import dayjs from 'dayjs';
 import {
-  SubscriptionInfo,
-  PlanDurations,
-  PlanDetails,
   AppSumoStatus,
+  LtdTier,
+  PlanDetails,
+  PlanDurations,
+  SubscriptionInfo,
 } from 'Interfaces/Billing';
+import { TeamMembersAddPayload } from 'Interfaces/Team';
 import { UserRoles } from 'Interfaces/User';
+import dayjs from 'dayjs';
+import { isNotEmpty } from 'Utils/functions';
 
 interface TeamMembersAddModalProps {
   subscriptionInfo: SubscriptionInfo;
@@ -24,9 +26,13 @@ interface TeamMembersAddModalProps {
   appSumoStatus: AppSumoStatus;
   sendDocument: (values: TeamMembersAddPayload) => OnSubmitReturnType;
   onClose: () => void;
+  ltdTier: LtdTier;
+  teamSize: number;
 }
 
-const formInitialValues = { emails: [{}] } as TeamMembersAddPayload;
+const formInitialValues = {
+  members: [{ role: UserRoles.USER }],
+} as unknown as TeamMembersAddPayload;
 
 const TeamMembersAddModal = ({
   sendDocument,
@@ -35,6 +41,7 @@ const TeamMembersAddModal = ({
   userRole,
   plan,
   appSumoStatus,
+  ltdTier,
 }: TeamMembersAddModalProps) => {
   const { subscriptionPrice, nextBillingDate } = useMemo(() => {
     return {
@@ -71,50 +78,55 @@ const TeamMembersAddModal = ({
           <form onSubmit={handleSubmit}>
             <div className="teamModal__email-wrapper">
               <FieldArray
-                name="emails"
-                component={EmailRecipientsArray}
-                label="Email"
+                name="members"
+                component={TeammateFieldArray}
+                label="Team members"
                 labelClassName="shareModal__label"
                 addLabel="Add team member"
                 isItemsDeletable
+                isRoleSelectable={userRole === UserRoles.OWNER}
               />
             </div>
-            {userRole === UserRoles.OWNER && !appSumoStatus && (
-              <>
-                <div className="teamModal__price teamModal__text teamModal__text--bold">
-                  <span className="teamModal__text--black">You’ll be charged</span>&nbsp;
-                  <span className="teamModal__text--blue">
-                    ${values.emails.length * subscriptionPrice}
-                  </span>
-                  &nbsp;
-                  <span className="teamModal__text--black">
-                    for inviting per{' '}
-                    {plan.duration === PlanDurations.MONTHLY ? 'month' : 'year'}
-                  </span>
-                  &nbsp;
-                  <span className="teamModal__text--blue">
-                    {values.emails.length} new user(s)
-                  </span>{' '}
-                  &nbsp;(
-                  {`$${subscriptionPrice}/${
-                    plan.duration === PlanDurations.MONTHLY ? 'mo' : 'yr'
-                  } for each user`}
-                  ).
-                </div>
-                <div className="teamModal__price-description teamModal__text">
-                  The pricing change will be reflected on your next bill on (
-                  {nextBillingDate}
-                  ).
-                </div>
-              </>
-            )}
+            {userRole === UserRoles.OWNER &&
+              (!(appSumoStatus || isNotEmpty(ltdTier)) ||
+                (appSumoStatus === AppSumoStatus.STANDARD &&
+                  isNotEmpty(subscriptionInfo))) && (
+                <>
+                  <div className="teamModal__price teamModal__text teamModal__text--bold">
+                    <span className="teamModal__text--black">You’ll be charged</span>
+                    &nbsp;
+                    <span className="teamModal__text--blue">
+                      ${((values?.members?.length ?? 0) * subscriptionPrice).toFixed(2)}
+                    </span>
+                    &nbsp;
+                    <span className="teamModal__text--black">
+                      for inviting per{' '}
+                      {plan.duration === PlanDurations.MONTHLY ? 'month' : 'year'}
+                    </span>
+                    &nbsp;
+                    <span className="teamModal__text--blue">
+                      {values?.members?.length} new user(s)
+                    </span>{' '}
+                    &nbsp;(
+                    {`$${subscriptionPrice}/${
+                      plan.duration === PlanDurations.MONTHLY ? 'mo' : 'yr'
+                    } for each user`}
+                    ).
+                  </div>
+                  <div className="teamModal__price-description teamModal__text">
+                    The pricing change will be reflected on your next bill on (
+                    {nextBillingDate}
+                    ).
+                  </div>
+                </>
+              )}
             <div className="teamModal__buttons-group">
               <div className="teamModal__submit-button">
                 <UIButton
                   priority="primary"
                   type="submit"
                   handleClick={handleSubmit}
-                  disabled={submitting || !values.emails?.length}
+                  disabled={submitting || !values?.members?.length}
                   isLoading={submitting}
                   title={`Send Invite${!appSumoStatus ? 's' : ''}`}
                 />

@@ -6,7 +6,7 @@ import { FieldTextInput, FieldTextArea } from 'Components/FormFields';
 import { Field } from 'react-final-form';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
 import Billet from './Billet';
-import LogoField from './LogoField';
+import { LogoField } from './LogoField';
 
 interface BrandingFieldsMobileViewProps {
   disabled: boolean;
@@ -20,6 +20,7 @@ interface BrandingFieldsMobileViewProps {
   isCropCancelled;
   isPageFieldEnabled;
   handleCheckboxClick;
+  logoFile;
 }
 
 const BrandingFieldsMobileView = ({
@@ -34,6 +35,7 @@ const BrandingFieldsMobileView = ({
   isCropCancelled,
   isPageFieldEnabled,
   handleCheckboxClick,
+  logoFile,
 }: BrandingFieldsMobileViewProps) => {
   return (
     <div>
@@ -55,6 +57,8 @@ const BrandingFieldsMobileView = ({
             onUploadFailure={handleFileUploadFailure}
             onUploadCancel={handleUploadCancel}
             companyLogoName={companyLogoName}
+            logoFile={logoFile}
+            companyLogoKey={companyLogoFormValue}
             disabled={disabled}
             isFinished={isLogoProcessed || !!companyLogoFormValue}
             isCropCancelled={isCropCancelled}

@@ -14,6 +14,7 @@ import SimplifiedWrapper from 'Layouts/SimplifiedWrapper';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { applyAppSumoLink } from 'Store/ducks/user/actionCreators';
 import { DataLayerAnalytics } from 'Services/Integrations';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 const LoadingUserScreen = ({ location }: RouteComponentProps) => {
   const [signIn, isLoading] = useAppSumoSignIn();
@@ -27,7 +28,7 @@ const LoadingUserScreen = ({ location }: RouteComponentProps) => {
   }, [location.search]);
 
   const navigateToRoot = useCallback(() => {
-    History.replace('/');
+    History.replace(AuthorizedRoutePaths.BASE_PATH);
   }, []);
 
   const handleAppSumoSignIn = useCallback(async () => {
@@ -52,7 +53,7 @@ const LoadingUserScreen = ({ location }: RouteComponentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigateToRoot, appSumoToken]);
 
-  if (!user.authStatus || user.authStatus === AuthStatuses.UNATHORIZED || isLoading) {
+  if (!user.authStatus || user.authStatus === AuthStatuses.UNAUTHORIZED || isLoading) {
     return (
       <SimplifiedWrapper location={location}>
         <UISpinner width={50} height={50} className="spinner--main__wrapper" />

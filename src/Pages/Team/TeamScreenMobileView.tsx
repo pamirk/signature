@@ -1,5 +1,5 @@
 import UIButton from 'Components/UIComponents/UIButton';
-import { PlanTypes } from 'Interfaces/Billing';
+import { AppSumoStatus, PlanTypes } from 'Interfaces/Billing';
 import { SelectableItem } from 'Interfaces/Common';
 import { TeamMember } from 'Interfaces/Team';
 import { User, UserRoles } from 'Interfaces/User';
@@ -16,6 +16,7 @@ interface TeamScreenMobileViewProps {
   isDeleteModalOpen: boolean;
   openDeleteModal: () => void;
   onAddTeamMember: () => void;
+  toggleItemSelection?: (teamMemberId: string) => void;
 }
 
 export const TeamScreenMobileView = ({
@@ -27,6 +28,7 @@ export const TeamScreenMobileView = ({
   isDeleteModalOpen,
   onAddTeamMember,
   openDeleteModal,
+  toggleItemSelection,
 }: TeamScreenMobileViewProps) => {
   return (
     <div className="team">
@@ -60,7 +62,14 @@ export const TeamScreenMobileView = ({
         isLoading={isLoading}
         openDeleteModal={openDeleteModal}
         teamMembers={teamMembers}
+        toggleItemSelection={toggleItemSelection}
       />
+      {user.appSumoStatus === AppSumoStatus.STANDARD && (
+        <div className="team__header-description mobile">
+          Your current lifetime deal includes 3 users. If you require more seats, they can
+          be added through our subscription plans.
+        </div>
+      )}
     </div>
   );
 };

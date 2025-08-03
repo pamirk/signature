@@ -6,6 +6,7 @@ import { PlanTypes } from 'Interfaces/Billing';
 import FormRequestForm from 'Components/FormRequestsForm';
 import History from 'Services/History';
 import { User } from 'Interfaces/User';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 function FormRequestCreate() {
   const userPlan = useSelector(selectUserPlan);
@@ -13,7 +14,7 @@ function FormRequestCreate() {
 
   useEffect(() => {
     if (userPlan.type !== PlanTypes.BUSINESS && !user.teamId) {
-      History.push('/settings/billing/plan');
+      History.push(AuthorizedRoutePaths.SETTINGS_BILLING_PLAN);
     }
   }, [user.teamId, userPlan.type]);
 

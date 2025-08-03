@@ -6,6 +6,8 @@ import ViewIcon from 'Assets/images/activityTypeIcons/viewed-icon.svg';
 import SignIcon from 'Assets/images/activityTypeIcons/signed-icon.svg';
 import CompleteIcon from 'Assets/images/activityTypeIcons/completed-icon.svg';
 import RevertedIcon from 'Assets/images/activityTypeIcons/reverted-icon.svg';
+import DeclinedIcon from 'Assets/images/activityTypeIcons/declined-icon.svg';
+import ExpiredIcon from 'Assets/images/activityTypeIcons/expired-icon.svg';
 
 export const documentActivityContentByType = {
   [DocumentActivityTypes.CREATE]: {
@@ -35,5 +37,17 @@ export const documentActivityContentByType = {
   [DocumentActivityTypes.REVERT]: {
     icon: RevertedIcon,
     title: 'REVERTED',
+  },
+  [DocumentActivityTypes.DECLINE]: {
+    icon: DeclinedIcon,
+    title: 'DECLINED',
+  },
+  [DocumentActivityTypes.EXPIRE]: {
+    icon: ExpiredIcon,
+    title: 'EXPIRED',
+  },
+  [DocumentActivityTypes.NOT_SIGN]: {
+    icon: DeclinedIcon,
+    title: 'NOT SIGN',
   },
 };

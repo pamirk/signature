@@ -8,7 +8,7 @@ interface HeaderButtonProps {
   title?: string;
   icon: string;
   iconType?: 'stroke' | 'fill';
-  onClick: (args: any) => any;
+  onClick: () => Promise<void> | void;
   disabled?: boolean;
   isLoading?: boolean;
   isMobile?: boolean;

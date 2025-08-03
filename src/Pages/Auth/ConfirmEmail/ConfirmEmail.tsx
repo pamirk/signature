@@ -6,36 +6,120 @@ import Toast from 'Services/Toast';
 import useEmailConfirmToken from 'Hooks/Auth/useEmailConfirmToken';
 import useConfirmEmail from 'Hooks/Auth/useConfirmEmail';
 import { DataLayerAnalytics } from 'Services/Integrations';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectIsEmailConfirmed } from 'Utils/selectors';
+import jwt_decode from 'jwt-decode';
+import { isNewTrialUser, isNotEmpty } from 'Utils/functions';
+import { useCurrentUserGet } from 'Hooks/User';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
+import { isTwoFactorResponseData } from 'Utils/typeGuards';
+import { useConfirmEmailByTwilio } from 'Hooks/Auth';
+import { useModal } from 'react-modal-hook';
+import UIModal from 'Components/UIComponents/UIModal';
+import TwoFactorForm from '../TwoFactor/components/TwoFactorForm';
+import { AuthResponseData, TwoFactorTypes } from 'Interfaces/Auth';
 
 function ConfirmEmail({ location }: RouteChildrenProps) {
+  const [getCurrentUser] = useCurrentUserGet();
   const [setToken, clearToken] = useEmailConfirmToken();
   const isEmailConfirmed = useSelector(selectIsEmailConfirmed);
 
   const [confirmEmail, isConfirmLoading] = useConfirmEmail();
+  const [confirmEmailByTwilio, isConfirmByTwilioLoading] = useConfirmEmailByTwilio();
 
-  const emailToken = useMemo(() => {
+  const [emailToken, subject, targetEmail, redirectUrl] = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get('emailConfirmationToken');
 
-    return searchParams.get('emailConfirmationToken');
+    if (token) {
+      const parsedToken: any = jwt_decode(token);
+
+      return [token, parsedToken.sub, parsedToken.email, parsedToken.redirect];
+    }
+
+    return [token, undefined, undefined, undefined];
   }, [location.search]);
 
   const navigateToRoot = useCallback(() => {
-    History.replace('/');
-  }, []);
+    if (redirectUrl) {
+      window.location.replace(redirectUrl);
+    } else {
+      History.replace(AuthorizedRoutePaths.BASE_PATH);
+    }
+  }, [redirectUrl]);
+
+  const handleConfirmContinue = useCallback(
+    async (res: {} | AuthResponseData) => {
+      const user = isNotEmpty(res) && res.user;
+
+      if (isNotEmpty(res) && res.isSubscriptionRecover) {
+        await getCurrentUser(undefined);
+        Toast.success('Subscriptions have been recovered');
+      }
+
+      Toast.success('Email confirmed');
+
+      if (subject) {
+        DataLayerAnalytics.fireConfirmedRegistrationEvent(subject);
+      }
+
+      (!user || (user && !isNewTrialUser(user))) && navigateToRoot();
+    },
+    [getCurrentUser, navigateToRoot, subject],
+  );
+
+  const handleEmailConfirmByTwilio = useCallback(
+    async code => {
+      try {
+        const res = await confirmEmailByTwilio({ code, email: targetEmail });
+
+        handleConfirmContinue(res);
+      } catch (error) {
+        Toast.handleErrors(error);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [confirmEmailByTwilio, emailToken, navigateToRoot],
+  );
+
+  const [showTwoFactorModal, closeTwoFactorModal] = useModal(
+    () => (
+      <UIModal
+        onClose={() => {
+          closeTwoFactorModal();
+        }}
+      >
+        <TwoFactorForm
+          formClassName="profile__verify-form"
+          twoFactorType={TwoFactorTypes.TWILLIO}
+          isLoading={isConfirmByTwilioLoading}
+          onSubmit={async ({ code }) => {
+            const phoneCode = parseInt(code, 10);
+
+            await handleEmailConfirmByTwilio(phoneCode);
+
+            closeTwoFactorModal();
+          }}
+        />
+      </UIModal>
+    ),
+    [handleEmailConfirmByTwilio],
+  );
 
   const handleEmailConfirm = useCallback(async () => {
     try {
-      await confirmEmail(undefined);
-      Toast.success('Email confirmed');
+      const res = await confirmEmail(undefined);
 
-      DataLayerAnalytics.fireConfirmedRegistrationEvent();
-      navigateToRoot();
+      if (isNotEmpty(res) && isTwoFactorResponseData(res)) {
+        showTwoFactorModal();
+        return;
+      }
+
+      handleConfirmContinue(res);
     } catch (error) {
-      Toast.handleErrors(error);
+      Toast.error(error.message, { toastId: 'confirm_email_error' });
     }
-  }, [confirmEmail, navigateToRoot]);
+  }, [confirmEmail, handleConfirmContinue, showTwoFactorModal]);
 
   useEffect(() => {
     if (!emailToken || isEmailConfirmed) {
@@ -60,8 +144,8 @@ function ConfirmEmail({ location }: RouteChildrenProps) {
             title="Retry"
             handleClick={handleEmailConfirm}
             type="submit"
-            disabled={isConfirmLoading}
-            isLoading={isConfirmLoading}
+            disabled={isConfirmLoading || isEmailConfirmed}
+            isLoading={isConfirmLoading || isEmailConfirmed}
           />
         </div>
       </form>

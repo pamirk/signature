@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'react-final-form';
-import { FieldSelect, FieldCheckbox } from 'Components/FormFields';
+import { FieldSelect } from 'Components/FormFields';
 import { SelectableOption } from 'Interfaces/Common';
 import { DateFormats } from 'Interfaces/User';
 import { timezones } from 'Utils/timezones';
@@ -10,6 +10,7 @@ import classNames from 'classnames';
 const dateFormatOptions: SelectableOption<DateFormats>[] = [
   { label: 'DD / MM / YYYY', value: DateFormats.DD_MM_YYYY },
   { label: 'MM / DD / YYYY', value: DateFormats.MM_DD_YYYY },
+  { label: 'YYYY / MM / DD', value: DateFormats.YYYY_MM_DD },
   { label: 'MM / DD / YY', value: DateFormats.MM_DD_YY },
   { label: 'DD / MM / YY', value: DateFormats.DD_MM_YY },
 ];
@@ -26,6 +27,9 @@ const PreferencesFields = () => {
           label="Date Format"
           placeholder="Select date format"
           component={FieldSelect}
+          className={classNames('settings__field', {
+            mobile: isMobile,
+          })}
         />
         <Field
           name="timezone"
@@ -33,6 +37,9 @@ const PreferencesFields = () => {
           label="Time zone"
           placeholder="Select time zone"
           component={FieldSelect}
+          className={classNames('settings__field', {
+            mobile: isMobile,
+          })}
         />
       </div>
       {/* TODO: Implement later */}

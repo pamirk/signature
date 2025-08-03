@@ -7,6 +7,7 @@ import RequestHistoryTableItem from './RequestHistoryTableItem';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { RequestHistoryItem } from 'Interfaces/RequestsHistory';
 import History from 'Services/History';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface RequestHistoryProps {
   requestHistory: RequestHistoryItem[];
@@ -35,7 +36,7 @@ function RequestHistoryList({
     return (
       <div className="documents__empty-table">
         <EmptyTable
-          onClick={() => History.push('/settings/api')}
+          onClick={() => History.push(AuthorizedRoutePaths.SETTINGS_API)}
           iconClassName="empty-table__icon--document"
           buttonText="Back to api settings"
           headerText="There is no request history"

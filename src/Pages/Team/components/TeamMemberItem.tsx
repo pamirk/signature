@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import classNames from 'classnames';
-import * as _ from 'lodash';
+import { capitalize } from 'lodash';
 import { TeamMember } from 'Interfaces/Team';
 import { UserRoles } from 'Interfaces/User';
 
@@ -103,7 +103,7 @@ const TeamMemberItem = ({
       </div>
       <div className="table__column table__column--team-email">{teamMember.email}</div>
       <div className="table__column table__column--status">
-        {_.capitalize(teamMember.role)}
+        {capitalize(teamMember.role)}
       </div>
       {(isEditEnabled || isChangingRoleEnabled) && (
         <div

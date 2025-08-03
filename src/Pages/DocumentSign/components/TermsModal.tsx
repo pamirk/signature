@@ -39,11 +39,20 @@ const TermsModal = ({
         agree to be legally bound to this document and the eSignature&nbsp;
         <a
           className="auth__link"
+          href="https://signaturely.com/electronic-signature-disclosure-and-consent"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Disclosure and Consent Agreement
+        </a>
+        &nbsp;and&nbsp;
+        <a
+          className="auth__link"
           href="https://signaturely.com/terms/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Terms & Conditions
+          Signaturely Terms & Conditions
         </a>
         .
       </div>

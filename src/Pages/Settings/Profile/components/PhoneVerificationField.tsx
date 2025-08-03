@@ -5,11 +5,13 @@ import UIButton from 'Components/UIComponents/UIButton';
 import { phoneNumberLength, required } from 'Utils/validation';
 import { phoneNumberMaskedProps, phoneCodeMaskedProps } from 'Utils/formatters';
 import { composeValidators } from 'Utils/functions';
+import ReCAPTCHA from 'react-google-recaptcha';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import PhoneVerificationFieldMobileView from './PhoneVerificationFieldMobileView';
+import { REACT_APP_GOOGLE_RECAPTCHA_SITEKEY } from 'Utils/constants';
 
 export interface PhoneVerificationFieldProps {
-  onNumberSend: (phone: string) => void;
+  onNumberSend: (param: { phone: string; recaptcha: string }) => void;
   isLoading?: boolean;
 }
 
@@ -17,7 +19,10 @@ const PhoneVerificationField = ({ onNumberSend }: PhoneVerificationFieldProps) =
   const isMobile = useIsMobile();
   const handleVerify = useCallback(
     async values => {
-      await onNumberSend(`${values.code}${values.number}`);
+      await onNumberSend({
+        phone: `${values.code}${values.number}`,
+        recaptcha: values.recaptcha,
+      });
     },
     [onNumberSend],
   );
@@ -46,15 +51,27 @@ const PhoneVerificationField = ({ onNumberSend }: PhoneVerificationFieldProps) =
                 validate={composeValidators(required, phoneNumberLength)}
               />
             </div>
-            <div className="profile__button profile__button--verify">
-              <UIButton
-                priority="secondary"
-                title="Activate 2FA"
-                handleClick={handleSubmit}
-                isLoading={submitting}
-                disabled={submitting || hasValidationErrors}
-              />
-            </div>
+          </div>
+          <div className="profile__sms-recaptcha-wrapper">
+            <Field
+              validate={required}
+              name="recaptcha"
+              render={({ input: { onChange } }) => (
+                <ReCAPTCHA
+                  sitekey={REACT_APP_GOOGLE_RECAPTCHA_SITEKEY}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </div>
+          <div className="profile__button profile__button--verify">
+            <UIButton
+              priority="secondary"
+              title="Activate 2FA"
+              handleClick={handleSubmit}
+              isLoading={submitting}
+              disabled={submitting || hasValidationErrors}
+            />
           </div>
           <p className="settings__text settings__text--grey">
             There may be carrier&apos;s fees for this SMS service.

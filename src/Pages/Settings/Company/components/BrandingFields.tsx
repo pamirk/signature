@@ -10,14 +10,12 @@ import { composeValidators, resizeFile } from 'Utils/functions';
 import { notOnlySpaces, urlProtocol } from 'Utils/validation';
 import { FieldTextInput, FieldTextArea } from 'Components/FormFields';
 import { Field } from 'react-final-form';
-import { toLowerCase } from 'Utils/formatters';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
 import Billet from './Billet';
-import LogoField from './LogoField';
+import { LogoField } from './LogoField';
 import { useSelector } from 'react-redux';
 import { selectUser, selectUserPlan } from 'Utils/selectors';
 
-import Tooltip from 'Components/Tooltip';
 import { PlanTypes } from 'Interfaces/Billing';
 import CropModal from 'Components/CropModal';
 import { useModal } from 'Hooks/Common';
@@ -30,6 +28,7 @@ interface BrandingFieldsProps {
   setIsDropdownOpen: (value: boolean) => void;
   handleUpgradeClick: () => void;
   disabled?: boolean;
+  logoFile?: File | null;
   setLogoFile: (file: File | null) => void;
   openUpgradeModal: () => void;
   initialRedirectionPage?: string | null;
@@ -41,6 +40,7 @@ const BrandingFields = ({
   isDropdownOpen,
   form,
   setIsDropdownOpen,
+  logoFile,
   setLogoFile,
   handleUpgradeClick,
   openUpgradeModal,
@@ -53,7 +53,7 @@ const BrandingFields = ({
   );
   const userPlan = useSelector(selectUserPlan);
   const [isLogoProcessed, setIsLogoProcessed] = useState<boolean>(false);
-  const { id: userId, companyLogoKey }: User = useSelector(selectUser);
+  const { id: userId, companyLogoKey, teamId }: User = useSelector(selectUser);
 
   const [logo, setLogo] = useState<File | null>(null);
   const [isCropCancelled, setIsCropCancelled] = useState<boolean>(false);
@@ -62,13 +62,13 @@ const BrandingFields = ({
   const companyLogoName = companyLogoKey && parsePath(companyLogoKey).name;
 
   const handleBusinessPlanCheck = useCallback(() => {
-    if (userPlan.type !== PlanTypes.BUSINESS) {
+    if (userPlan.type !== PlanTypes.BUSINESS && !teamId) {
       openUpgradeModal();
       return false;
     }
 
     return true;
-  }, [openUpgradeModal, userPlan.type]);
+  }, [openUpgradeModal, userPlan.type, teamId]);
 
   const handleCloseDropdown = useCallback(() => {
     setIsDropdownOpen(false);
@@ -159,6 +159,7 @@ const BrandingFields = ({
       handleBusinessPlanCheck={handleBusinessPlanCheck}
       handleFileUpload={handleFileUpload}
       handleUploadCancel={handleUploadCancel}
+      logoFile={logoFile}
       handleFileUploadFailure={handleFileUploadFailure}
       companyLogoName={companyLogoName}
       isLogoProcessed={isLogoProcessed}
@@ -190,6 +191,8 @@ const BrandingFields = ({
           <Field
             name="companyLogoKey"
             component={LogoField}
+            companyLogoKey={companyLogoFormValue}
+            logoFile={logoFile}
             onUpload={handleFileUpload}
             onUploadFailure={handleFileUploadFailure}
             onUploadCancel={handleUploadCancel}

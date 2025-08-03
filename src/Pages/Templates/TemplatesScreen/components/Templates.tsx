@@ -23,6 +23,7 @@ interface TemplatesProps {
   onTemplateCreateClick: () => void;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const defaultPaginationProps: TablePaginationProps = {
   pageCount: 0,
   pageNumber: 0,

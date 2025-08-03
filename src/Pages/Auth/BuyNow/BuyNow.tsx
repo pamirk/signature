@@ -1,26 +1,34 @@
-import CardFields from 'Components/CardFields';
-import { FieldTextInput } from 'Components/FormFields';
+import {
+  CONFIRMATION_CODE_LENGTH,
+  IS_BLACK_FRIDAY,
+  IS_END_OF_YEAR,
+} from 'Utils/constants';
+import { FieldTextInput, MaskedTextInput } from 'Components/FormFields';
 import UIButton from 'Components/UIComponents/UIButton';
 import UIRadioBtn from 'Components/UIComponents/UIRadioBtn';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Field, Form } from 'react-final-form';
 import { ReactSVG } from 'react-svg';
 import { composeValidators, isNotEmpty } from 'Utils/functions';
-import { required, name, email, password } from 'Utils/validation';
+import { required, name, email, password, postalCode } from 'Utils/validation';
 import Leaf from 'Assets/images/icons/leaf.svg';
 import Check from 'Assets/images/icons/check.svg';
 import classNames from 'classnames';
-import { testimonials } from '../SignUp/SignUp';
+import { testimonials } from '../SignUp/SignUpFirstStep';
 import TestimonialItem, {
   TestimonialsViewMode,
 } from '../SignUp/components/TestimonialItem';
 import Slider from 'Components/Slider';
+import { useSignUpWithConfrimCode, useSignUpWithPlanPrepare } from 'Hooks/Auth';
 import {
-  usePrimarySignIn,
-  useSignUpWithConfrimCode,
-  useSignUpWithPlanPrepare,
-} from 'Hooks/Auth';
-import { PlanDurations, PlanTypes } from 'Interfaces/Billing';
+  AnnuallyDiscount,
+  Coupon,
+  PlanDurations,
+  PlanTypes,
+  defaultPlanPrices,
+  discountByDuration,
+  discountPlanPrices,
+} from 'Interfaces/Billing';
 import { isCodeSend } from 'Utils/typeGuards';
 import Toast from 'Services/Toast';
 import {
@@ -29,32 +37,35 @@ import {
 } from 'Pages/Settings/Billing/screens/BillingDefaultPlanScreen/planTableItems';
 import { useModal } from 'Hooks/Common';
 import { ConfirmCodeModal } from 'Pages/DocumentSign/components';
-import { useCreateCard, usePlanChange } from 'Hooks/Billing';
-import Storage from 'Services/Storage';
+import { useCardAttach, useCreateCard, usePlanChange } from 'Hooks/Billing';
 import History from 'Services/History';
-import { CONFIRMATION_CODE_LENGTH } from 'Utils/constants';
+import useIsMobile from 'Hooks/Common/useIsMobile';
+import { postalCodeMask, removeEmptyCharacters } from 'Utils/formatters';
+import {
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+} from '@stripe/react-stripe-js';
+import ClearableTextInput from 'Components/FormFields/ClearableTextInput';
+import { PromoCodeField } from 'Pages/Settings/Billing/components';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
+
 interface BuyNowProps {
   currentPlan?: PlanTypes.PERSONAL | PlanTypes.BUSINESS;
 }
 
-const planPrices = {
-  business: {
-    [PlanDurations.MONTHLY]: 30,
-    [PlanDurations.ANNUALLY]: 288,
+const planTitles = {
+  [PlanTypes.BUSINESS]: {
+    [PlanDurations.MONTHLY]: 'Business',
+    [PlanDurations.ANNUALLY]: 'Business Annually',
   },
-  personal: {
-    [PlanDurations.MONTHLY]: 20,
-    [PlanDurations.ANNUALLY]: 192,
+  [PlanTypes.PERSONAL]: {
+    [PlanDurations.MONTHLY]: 'Personal',
+    [PlanDurations.ANNUALLY]: 'Personal Annually',
   },
 };
 
-interface CardForm {
-  number: string;
-  cardholderName: string;
-  cvv: string;
-  expirationDate: string;
-  postalCode: string;
-}
+const buynowPathRegEx = /\/signup\/(business|personal)(-annually)?$/g;
 
 interface UserForm {
   id: string;
@@ -66,14 +77,31 @@ interface UserForm {
 const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
   const [prepareSignUp, isPreparing] = useSignUpWithPlanPrepare();
   const [sendConfrimCode, isCodeSending] = useSignUpWithConfrimCode();
-  const [createCard, isCardCreating] = useCreateCard();
-  const [changePlan, isPlanChanging] = usePlanChange();
-  const [cardFormValue, setCardFormValue] = useState<CardForm | null>(null);
   const [user, setUser] = useState<UserForm | null>(null);
   const [selectedDuration, setSelectedDuration] = useState<
     PlanDurations.MONTHLY | PlanDurations.ANNUALLY
   >(PlanDurations.MONTHLY);
-  const [callSignIn, isLoading] = usePrimarySignIn();
+  const [changePlan, isChangingPlan] = usePlanChange();
+  const createCard = useCreateCard();
+  const [attachCard, isAttachingCard] = useCardAttach();
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | undefined>();
+  const isMobile = useIsMobile();
+  const isSomeSale = IS_BLACK_FRIDAY || IS_END_OF_YEAR;
+
+  const planPaths = useMemo(
+    () => ['business', 'personal', 'business-annually', 'personal-annually'],
+    [],
+  );
+
+  useEffect(() => {
+    if (!buynowPathRegEx.test(History.location.pathname)) {
+      return History.push(`${UnauthorizedRoutePaths.SIGN_UP}/${currentPlan}`);
+    }
+
+    if (History.location.pathname.indexOf('-annually') > 0) {
+      return setSelectedDuration(PlanDurations.ANNUALLY);
+    }
+  }, [currentPlan, planPaths]);
 
   const [openCodeConfirmationModal, closeCodeConfirmationModal] = useModal(
     () => (
@@ -82,20 +110,20 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
         sendCode={handleConfirmCodeSend}
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         resendCode={handleResendCode}
-        isSending={isCodeSending || isCardCreating || isPlanChanging || isPreparing}
+        isSending={isCodeSending || isPreparing || isAttachingCard || isChangingPlan}
         title="Please enter confirmation code"
         subtitle="We have sent you an email with a confirmation code. Please check the specified email."
         onClose={closeCodeConfirmationModal}
         codeLength={CONFIRMATION_CODE_LENGTH}
       />
     ),
-    [cardFormValue, user, isPreparing, isCodeSending, isCardCreating, isPlanChanging],
+    [user, isPreparing, isCodeSending, isAttachingCard, isChangingPlan],
   );
 
   const handleSignUp = useCallback(
     async values => {
       try {
-        const { name, email, password, ...creditCard } = values;
+        const { name, email, password } = values;
 
         const response = await prepareSignUp({
           name,
@@ -106,7 +134,7 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
         if (!isNotEmpty(response)) {
           return Toast.error('Something went wrong. Please try again.');
         }
-        setCardFormValue(creditCard);
+
         setUser({ id: response.id, name, email, password });
 
         if (isCodeSend(response)) {
@@ -151,7 +179,6 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
             return Toast.error('Something went wrong. Please try again.');
           }
 
-          await Storage.setAccessToken(response.accessToken);
           Toast.success('User created');
 
           return response;
@@ -163,35 +190,25 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
     [sendConfrimCode, user],
   );
 
-  const updatePlan = useCallback(async () => {
+  const openCheckoutSession = useCallback(async () => {
     try {
-      if (cardFormValue) {
-        await createCard(cardFormValue);
-        Toast.success('Credit card is added');
+      const token = await createCard();
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      token && (await attachCard(token));
 
-        await changePlan({
-          type: currentPlan,
-          duration: selectedDuration,
-        });
-        Toast.success('Plan is updated');
-      }
+      Toast.success('Card attached');
+
+      await changePlan({
+        type: currentPlan,
+        duration: selectedDuration,
+        couponId: appliedCoupon && appliedCoupon.id,
+      });
+
+      Toast.success('Plan upgraded');
     } catch (err) {
       Toast.handleErrors(err);
-    } finally {
-      closeCodeConfirmationModal();
-      user && (await callSignIn(user));
-      History.push('/settings/billing');
     }
-  }, [
-    callSignIn,
-    cardFormValue,
-    changePlan,
-    closeCodeConfirmationModal,
-    createCard,
-    currentPlan,
-    selectedDuration,
-    user,
-  ]);
+  }, [appliedCoupon, attachCard, changePlan, createCard, currentPlan, selectedDuration]);
 
   const handleConfirmCodeSend = useCallback(
     async confirmCode => {
@@ -200,17 +217,18 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
       if (!response) {
         return;
       }
-      await updatePlan();
+
+      await openCheckoutSession();
     },
-    [sendConfirmCode, updatePlan],
+    [openCheckoutSession, sendConfirmCode],
   );
 
   return (
     <div className="buynow">
-      <div className="buynow__wrapper">
-        <div className="buynow__content">
-          <div className="buynow__content-left">
-            <div className="label">
+      <div className={classNames('buynow__wrapper', { mobile: isMobile })}>
+        <div className={classNames('buynow__content', { mobile: isMobile })}>
+          <div className={classNames('buynow__content-left', { mobile: isMobile })}>
+            <div className={classNames('label', { mobile: isMobile })}>
               <div className="label-title">
                 Subscribe to <span>{currentPlan}</span> Plan
               </div>
@@ -221,12 +239,16 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
             <Form
               onSubmit={handleSignUp}
               render={({ handleSubmit, submitting }) => (
-                <form className="credentials">
+                <form className={classNames('credentials', { mobile: isMobile })}>
                   <div className="credentials__container">
                     <div className="credentials-personal">
                       <div className="credentials__label">Your information</div>
                       <div className="credentials-personal__items">
-                        <div className="credentials-personal-item">
+                        <div
+                          className={classNames('credentials-personal-item', {
+                            mobile: isMobile,
+                          })}
+                        >
                           <Field
                             name="name"
                             label="Name"
@@ -237,16 +259,25 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                             formatOnBlur
                           />
                         </div>
-                        <div className="credentials-personal-item">
+                        <div
+                          className={classNames('credentials-personal-item', {
+                            mobile: isMobile,
+                          })}
+                        >
                           <Field
                             name="email"
                             label="Email Address"
                             placeholder="username@gmail.com"
                             component={FieldTextInput}
+                            parse={removeEmptyCharacters}
                             validate={composeValidators<string>(required, email)}
                           />
                         </div>
-                        <div className="credentials-personal-item">
+                        <div
+                          className={classNames('credentials-personal-item', {
+                            mobile: isMobile,
+                          })}
+                        >
                           <Field
                             name="password"
                             type="password"
@@ -262,10 +293,15 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                       <div className="credentials__label">
                         Customize your subscription
                       </div>
-                      <div className="credentials-subscription__items">
+                      <div
+                        className={classNames('credentials-subscription__items', {
+                          mobile: isMobile,
+                        })}
+                      >
                         <div
                           className={classNames('credentials-subscription-item', {
                             active: selectedDuration === PlanDurations.MONTHLY,
+                            mobile: isMobile,
                           })}
                         >
                           <div className="label">
@@ -279,17 +315,19 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                               />
                             </div>
                             <div className="credentials-subscription--price">
-                              Pay ${planPrices[currentPlan]['monthly']}/month, billed
-                              monthly.
+                              Pay $
+                              {discountPlanPrices[currentPlan][PlanDurations.MONTHLY]}
+                              /month, billed monthly.
                             </div>
                           </div>
                         </div>
                         <div
                           className={classNames('credentials-subscription-item', {
                             active: selectedDuration === PlanDurations.ANNUALLY,
+                            mobile: isMobile,
                           })}
                         >
-                          <div className="save">Save 20%</div>
+                          <div className="save">Save {AnnuallyDiscount}%</div>
                           <div className="label">
                             <div className="credentials-subscription--name">
                               <UIRadioBtn
@@ -301,8 +339,9 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                               />
                             </div>
                             <div className="credentials-subscription--price">
-                              Pay ${planPrices[currentPlan]['annually'] / 12}/month,
-                              billed annually.
+                              Pay $
+                              {discountPlanPrices[currentPlan][PlanDurations.ANNUALLY]}
+                              /month, billed annually.
                             </div>
                           </div>
                         </div>
@@ -310,20 +349,117 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                     </div>
                     <div className="credentials-card">
                       <div className="credentials__label">Card details</div>
-                      <div className="credentials-card__container">
-                        <CardFields />
+                      <div
+                        className={classNames('credentials-card__container', {
+                          mobile: isMobile,
+                        })}
+                      >
+                        <div className="card-form">
+                          <div className={`card-form__group${isMobile ? '-mobile' : ''}`}>
+                            <div
+                              className={classNames(
+                                'card-form__field',
+                                'card-form__field--flex',
+                                'card-form__field--cardNumber',
+                                { 'credentials-card__form': isMobile },
+                              )}
+                            >
+                              <label className="form__label">Card Number</label>
+                              <div className="form__input-wrapper">
+                                <div className="form__input">
+                                  <CardNumberElement
+                                    options={{
+                                      placeholder: '1234 5678 9101 1129',
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className={`card-form__sub-group${
+                                isMobile ? '-mobile' : ''
+                              }`}
+                            >
+                              <div className="card-form__field card-form__field--expiration">
+                                <label className="form__label">Expiration</label>
+                                <div className="form__input-wrapper">
+                                  <div className="form__input">
+                                    <CardExpiryElement
+                                      options={{
+                                        placeholder: '01 / 2000',
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="card-form__field card-form__field--cvv">
+                                <label className="form__label">CVV</label>
+                                <div className="form__input-wrapper">
+                                  <div className="form__input">
+                                    <CardCvcElement
+                                      options={{
+                                        placeholder: '123',
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={`card-form__group${isMobile ? '-mobile' : ''}`}>
+                            <div
+                              className={classNames(
+                                'card-form__field',
+                                'card-form__field--flex',
+                                { 'credentials-card__form': isMobile },
+                              )}
+                            >
+                              <Field
+                                name="cardholderName"
+                                placeholder="Your Name"
+                                label="Cardholder Name"
+                                component={FieldTextInput}
+                                validate={composeValidators<string>(required, name)}
+                              />
+                            </div>
+                            <div className="card-form__field card-form__field--postal">
+                              <Field
+                                name="postalCode"
+                                placeholder="00000"
+                                label="Billing ZIP Code"
+                                mask={postalCodeMask}
+                                inputComponent={MaskedTextInput}
+                                component={ClearableTextInput}
+                                validate={composeValidators<string>(required, postalCode)}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <PromoCodeField
+                      plan={{
+                        duration: selectedDuration,
+                        type: currentPlan,
+                        title: planTitles[currentPlan][selectedDuration],
+                      }}
+                      onUpdateCoupon={coupon => setAppliedCoupon(coupon)}
+                      className={classNames('buynow__promocode', { mobile: isMobile })}
+                    />
                     <div className="buynow__footer">
                       <UIButton
+                        className={classNames('buynow__button', { mobile: isMobile })}
                         handleClick={handleSubmit}
                         priority="primary"
                         title="Purchase now"
-                        className="buynow__button"
                         disabled={submitting || isPreparing}
                         isLoading={isPreparing}
                       />
-                      <div className="buynow__footer-policy">
+                      <div
+                        className={classNames('buynow__footer-policy', {
+                          mobile: isMobile,
+                        })}
+                      >
                         By clicking the &quot;Purchase now&quot; button, I agree to
                         the&nbsp;
                         <a
@@ -358,10 +494,12 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
               )}
             />
           </div>
+          <div className="buynow__divisor" />
           <div className="buynow__content-right">
             <div
               className={classNames('plan-badge', {
                 business: currentPlan === PlanTypes.BUSINESS,
+                mobile: isMobile,
               })}
             >
               {currentPlan === PlanTypes.BUSINESS && (
@@ -371,7 +509,7 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                 <div className="plan-badge__label">
                   <div className="plan-badge__name">{currentPlan}</div>
                   <div className="plan-badge__price">
-                    ${planPrices[currentPlan][selectedDuration]}
+                    ${discountPlanPrices[currentPlan][selectedDuration]}
                     &nbsp;
                     <span>
                       /{selectedDuration === PlanDurations.MONTHLY ? 'month' : 'annually'}
@@ -380,13 +518,34 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                   {currentPlan === PlanTypes.BUSINESS && (
                     <div className="plan-badge__price-suffix">Per user</div>
                   )}
+                  {isSomeSale && (
+                    <div
+                      className={classNames('plan-badge__defaultPrice-container', {
+                        mobile: isMobile,
+                      })}
+                    >
+                      <div className="plan-badge__defaultPrice-price-container">
+                        <div className="plan-badge__defaultPrice-price">
+                          ${defaultPlanPrices[currentPlan][selectedDuration]}
+                        </div>
+                      </div>
+                      <div className="plan-badge__defaultPrice-discount">
+                        {discountByDuration[selectedDuration]}% OFF
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="plan-badge__options">
                   <ul>
                     {planInformationItems
                       .filter(option => option[`${currentPlan}Value`])
                       .map(option => (
-                        <li className="plan-badge__options-item" key={option.name}>
+                        <li
+                          className={classNames('plan-badge__options-item', {
+                            mobile: isMobile,
+                          })}
+                          key={option.name}
+                        >
                           {option.name}
                           {option.type === PlanFieldTypes.TEXT ? (
                             <span
@@ -411,18 +570,20 @@ const BuyNow = ({ currentPlan = PlanTypes.PERSONAL }: BuyNowProps) => {
                 </div>
               </div>
             </div>
-            <div className="eco-badge">
+            <div className={classNames('eco-badge', { mobile: isMobile })}>
               <div className="eco-badge__content">
                 <ReactSVG src={Leaf} />
                 <div>
-                  <div className="eco-badge__math">1 Subscription = 1 Tree Planted</div>
-                  <div className="eco-badge__promise">
+                  <div className={classNames('eco-badge__math', { mobile: isMobile })}>
+                    1 Subscription = 1 Tree Planted
+                  </div>
+                  <div className={classNames('eco-badge__promise', { mobile: isMobile })}>
                     We’ll plant a tree with your purchase
                   </div>
                 </div>
               </div>
             </div>
-            <div className="buynow__slider">
+            <div className={classNames('buynow__slider', { mobile: isMobile })}>
               <Slider hideArrows>
                 {testimonials.map(testimonial => (
                   <TestimonialItem

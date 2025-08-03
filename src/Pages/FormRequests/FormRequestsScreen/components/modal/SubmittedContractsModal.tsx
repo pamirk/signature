@@ -1,8 +1,7 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import UIModal from 'Components/UIComponents/UIModal';
-import { Signer, Document } from 'Interfaces/Document';
-import * as _ from 'lodash';
+import { Document, DocumentStatuses } from 'Interfaces/Document';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { useDocumentsDelete, useFormRequestGetContracts } from 'Hooks/Document';
 import { selectFormRequestsContracts } from 'Utils/selectors';
@@ -15,10 +14,12 @@ import { ReactSVG } from 'react-svg';
 import DeleteModal from 'Components/DeleteModal';
 import { useModal } from 'Hooks/Common';
 import IconEye from 'Assets/images/icons/eye-icon.svg';
+import IconKey from 'Assets/images/icons/key-icon.svg';
 import HistoryService from 'Services/History';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
 import SubmittedContractsMobileView from './SubmittedContractsMobileView';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface SigningLinkModalProps {
   documentId: Document['id'];
@@ -27,13 +28,13 @@ interface SigningLinkModalProps {
 
 const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps) => {
   const [getFormRequestContracts, isGettingContracts] = useFormRequestGetContracts();
-  const [deleteDocuments, isDeleteLoading] = useDocumentsDelete();
+  const [deleteDocuments] = useDocumentsDelete();
   const [deleteDocumentId, setDeleteDocumentId] = useState('');
   const isMobile = useIsMobile();
 
   const contracts = useSelector(selectFormRequestsContracts);
 
-  const [downloadDocument, isDownloadingDocument] = useDocumentDownload();
+  const [downloadDocument] = useDocumentDownload();
 
   const handleDocumentDownload = useCallback(
     async documentId => {
@@ -51,7 +52,7 @@ const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps)
     getFormRequestContracts({ documentId });
   };
 
-  const [showDeleteModal, hideDeleteModal, isDeleteModalOpen] = useModal(
+  const [showDeleteModal, hideDeleteModal] = useModal(
     () => (
       <DeleteModal
         onClose={hideDeleteModal}
@@ -80,11 +81,22 @@ const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps)
   };
 
   const navigateToPreview = useCallback(documentId => {
-    HistoryService.push(`/documents/${documentId}/preview`);
+    HistoryService.push(`${AuthorizedRoutePaths.DOCUMENTS}/${documentId}/preview`);
   }, []);
   useEffect(() => {
     getFormRequestContracts({ documentId });
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleCopyCodeAccess = useCallback(async (document: Document) => {
+    try {
+      if (document.codeAccess) {
+        await navigator.clipboard.writeText(document.codeAccess);
+        Toast.success('Copied to clipboard');
+      }
+    } catch (err) {
+      Toast.handleErrors(err);
+    }
   }, []);
 
   return (
@@ -118,6 +130,7 @@ const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps)
             <SubmittedContractsMobileView
               contracts={contracts}
               handleDocumentDownload={handleDocumentDownload}
+              handleCopyCodeAccess={handleCopyCodeAccess}
               navigateToPreview={navigateToPreview}
               openDeleteModal={openDeleteModal}
             />
@@ -159,11 +172,21 @@ const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps)
                         <div className="table__actions">
                           <div
                             className="table__actions-item"
-                            onClick={() => handleDocumentDownload(contract.document.id)}
+                            onClick={() =>
+                              contract.document.status === DocumentStatuses.COMPLETED &&
+                              handleDocumentDownload(contract.document.id)
+                            }
                           >
                             <ReactSVG
                               src={DownloadIcon}
-                              className="submittedContractsModal__tableAction-icon"
+                              className={classNames(
+                                'submittedContractsModal__tableAction-icon',
+                                {
+                                  disable:
+                                    contract.document.status !==
+                                    DocumentStatuses.COMPLETED,
+                                },
+                              )}
                             />
                           </div>
                           <div
@@ -175,6 +198,17 @@ const SubmittedContractsModal = ({ onClose, documentId }: SigningLinkModalProps)
                               className="submittedContractsModal__tableAction-icon"
                             />
                           </div>
+                          {contract.document.codeAccess && (
+                            <div
+                              className="table__actions-item"
+                              onClick={() => handleCopyCodeAccess(contract.document)}
+                            >
+                              <ReactSVG
+                                src={IconKey}
+                                className="submittedContractsModal__tableAction-icon"
+                              />
+                            </div>
+                          )}
                           <button
                             onClick={() => openDeleteModal(contract.document.id)}
                             className="tableControls__control tableControls__control--red"

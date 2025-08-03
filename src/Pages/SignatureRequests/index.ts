@@ -1,0 +1,3 @@
+import SignatureRequestsScreendd from './SignatureRequestsScreen/SignatureRequestsScreen'
+
+export const SignatureRequestsScreen = SignatureRequestsScreendd

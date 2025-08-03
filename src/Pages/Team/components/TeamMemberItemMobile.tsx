@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import classNames from 'classnames';
-import * as _ from 'lodash';
+import { capitalize } from 'lodash';
 import { TeamMember } from 'Interfaces/Team';
 import { Avatar } from 'Components/Avatar/Avatar';
 import KeyIcon from 'Assets/images/icons/key-icon.svg';
@@ -12,17 +12,24 @@ import Toast from 'Services/Toast';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { useModal } from 'Hooks/Common';
 import DeleteModal from 'Components/DeleteModal';
+import UICheckbox from 'Components/UIComponents/UICheckbox';
 
 interface TeamMemberItemMobileProps {
   teamMember: TeamMember;
   isChangingRoleEnabled: boolean;
   isEditEnabled: boolean;
+  toggleSelect?: () => void;
+  isSelectable?: boolean;
+  isSelected?: boolean;
 }
 
 const TeamMemberItemMobile = ({
   teamMember,
   isChangingRoleEnabled,
   isEditEnabled,
+  isSelected,
+  toggleSelect = () => {},
+  isSelectable,
 }: TeamMemberItemMobileProps) => {
   const [upgradeToAdmin, isUpgradingToAdmin] = useToAdminUpgrade();
   const [downgradeToUser, isDowngradeToUser] = useToUserDowngrade();
@@ -39,7 +46,7 @@ const TeamMemberItemMobile = ({
     }
   }, [deleteTeamMembers, teamMember]);
 
-  const [showDeleteModal, hideDeleteModal, isDeleteModalOpen] = useModal(
+  const [showDeleteModal, hideDeleteModal] = useModal(
     () => (
       <DeleteModal
         onClose={hideDeleteModal}
@@ -127,21 +134,26 @@ const TeamMemberItemMobile = ({
   ]);
 
   return (
-    <div className="table__row table__dataRow mobile">
-      <div className="table__column table__column--text team__column-member mobile">
-        <div className="team__member mobile">
-          <Avatar
-            name={teamMember.name}
-            email={teamMember.email}
-            avatarUrl={teamMember.avatarUrl}
-          />
-        </div>
+    <div className="table__row table__dataRow--teammateItem mobile">
+      <div className="table__column table__column--check">
+        {isSelectable && (
+          <UICheckbox handleClick={() => toggleSelect()} check={isSelected} />
+        )}
       </div>
-      <div className="table__column table__column--text">
-        <div className="team__member-name">{teamMember.name}</div>
-        <div className="table__column table__column--team-email">{teamMember.email}</div>
+      <div className="team__member mobile">
+        <Avatar
+          name={teamMember.name}
+          email={teamMember.email}
+          avatarUrl={teamMember.avatarUrl}
+        />
+      </div>
+      <div className="table__column table__column--text mobileTeamPage">
+        <div className="team__member-name mobile">{teamMember.name}</div>
         <div className="table__column table__column--status">
-          {_.capitalize(teamMember.role)}
+          {capitalize(teamMember.role)}
+        </div>
+        <div className="table__column table__column--team-email mobile">
+          {teamMember.email}
         </div>
       </div>
       {(isEditEnabled || isChangingRoleEnabled) && (

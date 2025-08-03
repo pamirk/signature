@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import UIButton from 'Components/UIComponents/UIButton';
 import { BillingDetailsUpdatePayload } from 'Interfaces/Billing';
 import { Form, Field, FormRenderProps } from 'react-final-form';
-import { FieldTextArea } from 'Components/FormFields';
+import { FieldTextArea, FieldTextInput } from 'Components/FormFields';
 import Toast from 'Services/Toast';
 import { useProfileInfoUpdate } from 'Hooks/User';
 import { selectUser } from 'Utils/selectors';
@@ -12,7 +12,7 @@ import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
 
 const BillingDetails = () => {
-  const { billingDetails }: User = useSelector(selectUser);
+  const { billingDetails, taxId }: User = useSelector(selectUser);
   const [updateBillingDetails, isLoading] = useProfileInfoUpdate();
   const isMobile = useIsMobile();
 
@@ -31,7 +31,7 @@ const BillingDetails = () => {
   return (
     <Form
       onSubmit={handleUpdateDetails}
-      initialValues={{ billingDetails }}
+      initialValues={{ billingDetails, taxId }}
       render={({
         handleSubmit,
         pristine,
@@ -59,6 +59,14 @@ const BillingDetails = () => {
                 placeholder="Enter billing details here"
                 parse={value => value || null}
                 component={FieldTextArea}
+              />
+            </div>
+            <div className="settings__subtitle settings__subtitle--small">Tax ID</div>
+            <div className={classNames('billing__details-field', { mobile: isMobile })}>
+              <Field
+                name="taxId"
+                parse={value => value || null}
+                component={FieldTextInput}
               />
             </div>
             <div className="billing__details-button">

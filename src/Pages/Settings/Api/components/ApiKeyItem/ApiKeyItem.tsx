@@ -11,6 +11,9 @@ import Toast from 'Services/Toast';
 import DeleteModal from 'Components/DeleteModal';
 import { useModal } from 'Hooks/Common';
 import History from 'Services/History';
+import useIsMobile from 'Hooks/Common/useIsMobile';
+import ApiKeyItemMobile from './ApiKeyItemMobile';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 interface ApiKeyItemProps {
   apiKey: ApiKey;
   className?: string;
@@ -18,6 +21,7 @@ interface ApiKeyItemProps {
 }
 
 const ApiKeyItem = ({ apiKey, className, onDeleteSuccess }: ApiKeyItemProps) => {
+  const isMobile = useIsMobile();
   const [revokeApiKey] = useApiKeyRevoke();
   const [deleteApiKey] = useApiKeyDelete();
   const [recoverApiKey] = useApiKeyRecover();
@@ -76,7 +80,10 @@ const ApiKeyItem = ({ apiKey, className, onDeleteSuccess }: ApiKeyItemProps) => 
       {
         name: 'View History',
         icon: IconPencil,
-        onClick: () => History.push(`/settings/api/${apiKey.id}/request_history`),
+        onClick: () =>
+          History.push(
+            `${AuthorizedRoutePaths.SETTINGS_API}/${apiKey.id}/request_history`,
+          ),
         hidden: !apiKey.requests,
       },
       {
@@ -104,7 +111,9 @@ const ApiKeyItem = ({ apiKey, className, onDeleteSuccess }: ApiKeyItemProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiKey.deletedAt]);
 
-  return (
+  return isMobile ? (
+    <ApiKeyItemMobile className={className} apiKey={apiKey} options={options} />
+  ) : (
     <div className={classNames('table__row', 'table__dataRow', className)}>
       <div className="table__column table__column--text apiKeys__column--medium">
         {apiKey.name}

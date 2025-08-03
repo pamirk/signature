@@ -6,6 +6,9 @@ import UIButton from 'Components/UIComponents/UIButton';
 import { required, email } from 'Utils/validation';
 import { AuthData } from 'Interfaces/Auth';
 import { composeValidators } from 'Utils/functions';
+import { toLowerCaseAndRemoveEmptyCharacters } from 'Utils/formatters';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { REACT_APP_GOOGLE_RECAPTCHA_SITEKEY } from 'Utils/constants';
 
 interface ResetFormProps {
   onSubmit: (values: AuthData) => void;
@@ -33,8 +36,21 @@ function ResetForm({ onSubmit }: ResetFormProps) {
               label="Email Address"
               component={FieldTextInput}
               placeholder="username@gmail.com"
+              parse={toLowerCaseAndRemoveEmptyCharacters}
               validate={composeValidators<string>(required, email)}
             />
+            <div className="recaptcha__wrapper">
+              <Field
+                validate={required}
+                name="recaptcha"
+                render={({ input: { onChange } }) => (
+                  <ReCAPTCHA
+                    sitekey={REACT_APP_GOOGLE_RECAPTCHA_SITEKEY}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </div>
             <div className="auth__submitButton">
               <UIButton
                 priority="primary"

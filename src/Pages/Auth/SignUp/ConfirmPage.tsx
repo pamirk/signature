@@ -11,6 +11,7 @@ import { selectUser } from 'Utils/selectors';
 import { User } from 'Interfaces/User';
 import { RouteComponentProps } from 'react-router-dom';
 import { StaticContext } from 'react-router';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface SignUpConfirmationProps {
   confirmationRequired: boolean;
@@ -24,7 +25,7 @@ const SignUpConfirm = ({
 
   useEffect(() => {
     if (!location.state || !location.state.confirmationRequired) {
-      history.push('/');
+      history.push(UnauthorizedRoutePaths.BASE_PATH);
     }
   });
 

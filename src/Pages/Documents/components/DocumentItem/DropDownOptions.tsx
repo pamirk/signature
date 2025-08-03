@@ -9,6 +9,8 @@ interface DropDownOption {
   icon: string;
   name: string;
   onClick: () => void;
+  classNameText?: string;
+  classNameIcon?: string;
 }
 
 interface DropDownOptionsInterface {
@@ -77,8 +79,16 @@ const DropDownOptions = ({ options, anchorClassName }: DropDownOptionsInterface)
                 close();
               }}
             >
-              <div className="documents__dropdownOption">
-                <ReactSVG src={option.icon} className="documents__dropdownOption-icon" />
+              <div
+                className={classNames('documents__dropdownOption', option.classNameText)}
+              >
+                <ReactSVG
+                  src={option.icon}
+                  className={classNames(
+                    'documents__dropdownOption-icon',
+                    option.classNameIcon,
+                  )}
+                />
                 <span>{option.name}</span>
               </div>
             </button>

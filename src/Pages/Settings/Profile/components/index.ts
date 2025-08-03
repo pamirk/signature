@@ -1,13 +1,11 @@
-import DeleteAccountModal from "./DeleteAccountModal";
-import PersonalFields from "./PersonalFields";
-import PreferencesFields from "./PreferencesFields";
-import NotificationsFields from "./NotificationsFields";
-import PhoneVerificationField from "./PhoneVerificationField";
-
-export {
-    DeleteAccountModal,
-    PersonalFields,
-    PreferencesFields,
-    NotificationsFields,
-    PhoneVerificationField
-};
+export { AvatarField } from './AvatarField';
+export { default as ChangeEmailFields } from './ChangeEmailFields';
+export { default as ChangeEmailForm } from './ChangeEmailForm';
+export { default as DeleteAccountModal } from './DeleteAccountModal';
+export { default as NotificationsFields } from './NotificationsFields';
+export { default as PersonalFields } from './PersonalFields';
+export { default as PersonalFieldsMobileView } from './PersonalFieldsMobileView';
+export { default as PhoneVerificationField } from './PhoneVerificationField';
+export { default as PhoneVerificationFieldMobileView } from './PhoneVerificationFieldMobileView';
+export { default as PhoneVerificationUnsubscribe } from './PhoneVerificationUnsubscribe';
+export { default as PreferencesFields } from './PreferencesFields';

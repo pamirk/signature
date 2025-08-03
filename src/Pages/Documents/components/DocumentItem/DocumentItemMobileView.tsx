@@ -10,7 +10,7 @@ interface DocumentItemMobileViewProps {
   isActiveEditForm: boolean;
   options: any;
   className?: string;
-  handleUpdateDocument: (value: any) => Promise<void>;
+  handleUpdateDocument: (value: any) => void;
 }
 
 const DocumentItemMobileView = ({
@@ -38,7 +38,7 @@ const DocumentItemMobileView = ({
         </div>
         <div className="table__column table__column--status mobile">
           <div
-            className={`documents__documentStatus documents__documentStatus--${document.status}`}
+            className={`documents__documentStatus mobile documents__documentStatus--${document.status}`}
           >
             <span className="documents__documentStatus-text">
               {document.status === DocumentStatuses.PREPARING

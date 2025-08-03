@@ -1,59 +1,83 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import CardFields from 'Components/CardFields';
 import {
   AppSumoBillingTable,
   BillingDetails,
   InvoiceTable,
-  SubscriptionInfoBlock,
+  LifeTimeDealInfoBlock,
 } from '../../components';
-import { Form, FormRenderProps } from 'react-final-form';
 import UIButton from 'Components/UIComponents/UIButton';
 import {
-  useUpdateCard,
-  useCardGet,
-  useCreateCard,
-  useInvoicesGet,
   useSubscriptionDataGet,
   usePlansGet,
+  useInvoicesGet,
+  useBillingPortalCreate,
+  useLatestInvoiceGet,
   usePlanChange,
 } from 'Hooks/Billing';
 import Toast from 'Services/Toast';
 import {
-  selectCardFormValues,
-  selectCardType,
   selectInvoices,
-  selectSubsciptionInfo,
+  selectInvoicesPaginationData,
+  selectSubscriptionInfo,
   selectUser,
   selectUserPlan,
 } from 'Utils/selectors';
 import {
-  CardFormValues,
   PlanTypes,
   PlanDurations,
   InvoiceTypes,
+  PlanChangePayload,
+  SpecialOfferKinds,
 } from 'Interfaces/Billing';
-import ConfirmModal from 'Components/ConfirmModal';
-import { useModal } from 'Hooks/Common';
-import { User } from 'Interfaces/User';
+import {
+  useDataOrdering,
+  useModal,
+  useNewTabOpen,
+  usePagination,
+  useUrlParamsGet,
+} from 'Hooks/Common';
+import { User, UserStatuses } from 'Interfaces/User';
 import CardForm from 'Components/CardForm';
 import SubscriptionInfoBlockMobile from '../../components/SubscriptionInfoBlockMobile';
+import { CancelPlanModal } from '../../components/modals/CancelPlanModal';
 import classNames from 'classnames';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import { PastDueForm } from 'Components/PastDueForm';
+import { isNotEmpty } from 'Utils/functions';
+import History from 'Services/History';
+import { DataLayerAnalytics, FacebookPixel } from 'Services/Integrations';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
+import { OrderingDirection } from 'Interfaces/Common';
 
 const BillingMainScreen = () => {
   const [getInvoices, isInvoicesLoading] = useInvoicesGet();
   const userPlan = useSelector(selectUserPlan);
-  const { appSumoStatus }: User = useSelector(selectUser);
-  const [getCard, isGettingCard] = useCardGet();
+  const { appSumoStatus, status, ltdTierId }: User = useSelector(selectUser);
   const [getPlans] = usePlansGet();
-  const [changePlan, isChangingPlan] = usePlanChange();
-  const [getSubscriptionData, isGettingSubscriptionData] = useSubscriptionDataGet();
-  const subscriptionInfo = useSelector(selectSubsciptionInfo);
+  const [getSubscriptionData] = useSubscriptionDataGet();
+  const [createBillingPortal, isCreatingBillingPortal] = useBillingPortalCreate();
+  const subscriptionInfo = useSelector(selectSubscriptionInfo);
   const invoices = useSelector(selectInvoices);
-  const cardInitialValues = useSelector(selectCardFormValues);
-  const cardType = useSelector(selectCardType);
   const isMobile = useIsMobile();
+  const [openNewTab] = useNewTabOpen();
+  const urlParams = useUrlParamsGet();
+  const { requestOrdering, orderingConfig } = useDataOrdering(invoices, {
+    key: 'createdAt',
+    direction: OrderingDirection.DESC,
+  });
+  const [paginationProps, setPageNumber] = usePagination({
+    paginationSelector: selectInvoicesPaginationData,
+    itemsLimit: 5,
+  });
+
+  useEffect(() => {
+    if (urlParams.success_payment) {
+      History.push(AuthorizedRoutePaths.SETTINGS_BILLING);
+      Toast.success('Payment was successful');
+    }
+  }, [urlParams]);
+
   const handleSubscriptionDataGet = useCallback(async () => {
     try {
       await getSubscriptionData(undefined);
@@ -62,18 +86,6 @@ const BillingMainScreen = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleSubscriptionCancel = useCallback(async () => {
-    try {
-      await changePlan({
-        type: PlanTypes.FREE,
-        duration: PlanDurations.MONTHLY,
-      });
-      await handleSubscriptionDataGet();
-    } catch (error) {
-      Toast.handleErrors(error);
-    }
-  }, [changePlan, handleSubscriptionDataGet]);
 
   const handlePlansGet = useCallback(async () => {
     try {
@@ -84,59 +96,88 @@ const BillingMainScreen = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleCardGet = useCallback(async () => {
-    try {
-      await getCard(undefined);
-    } catch (error) {
-      Toast.handleErrors(error);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const handleInvoicesGet = useCallback(async () => {
     try {
-      await getInvoices(InvoiceTypes.DEFAULT);
+      await getInvoices({
+        types: ltdTierId
+          ? [InvoiceTypes.DEFAULT, InvoiceTypes.LTD]
+          : [InvoiceTypes.DEFAULT],
+        page: paginationProps.pageNumber + 1,
+        limit: paginationProps.itemsLimit,
+        orderingKey: orderingConfig.key,
+        orderingDirection: orderingConfig.direction.toUpperCase(),
+      });
     } catch (error) {
       Toast.handleErrors(error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [paginationProps.itemsLimit, paginationProps.pageNumber, orderingConfig]);
+
+  const [changePlan, isChangePlanLoading] = usePlanChange();
+  const [getLatestInvoice] = useLatestInvoiceGet();
+
+  const handleChangePlan = useCallback(async () => {
+    try {
+      const payload: Readonly<PlanChangePayload> = {
+        type: userPlan.type,
+        duration: userPlan.duration,
+        specialOfferKind: SpecialOfferKinds.PLAN_CANCEL,
+      };
+
+      await changePlan(payload);
+      const latestInvoice = await getLatestInvoice(undefined);
+      if (payload.type !== PlanTypes.FREE) {
+        FacebookPixel.firePlanChangeEvent(payload);
+      }
+
+      if (isNotEmpty(latestInvoice)) {
+        DataLayerAnalytics.fireSubscriptionEvent(
+          `${payload.type} ${payload.duration}`,
+          latestInvoice.transactionId,
+        );
+      }
+
+      Toast.success('Plan has been successfully changed.');
+      await getSubscriptionData(undefined);
+    } catch (error) {
+      Toast.handleErrors(error);
+    }
+  }, [
+    changePlan,
+    getLatestInvoice,
+    getSubscriptionData,
+    userPlan.duration,
+    userPlan.type,
+  ]);
 
   const [showSubscriptionCancelModal, hideSubscriptionCancelModal] = useModal(
     () => (
-      //  @ts-ignore
-      <ConfirmModal
+      <CancelPlanModal
         onClose={hideSubscriptionCancelModal}
-        isCancellable
-        confirmButtonProps={{
-          isLoading: isChangingPlan || isGettingSubscriptionData,
-          disabled: isChangingPlan || isGettingSubscriptionData,
-          priority: 'primary',
-          handleClick: async () => {
-            await handleSubscriptionCancel();
-            hideSubscriptionCancelModal();
-          },
-          title: 'Cancel Subscription',
-        }}
-        onCancel={hideSubscriptionCancelModal}
-      >
-        <div className="billing__plan-modal">
-          <div className="billing__plan-modal-title">Cancel Subscription</div>
-          <div className="billing__plan-modal-subtitle">
-            Do you want to cancel subscription?
-          </div>
-        </div>
-      </ConfirmModal>
+        onSubmitDiscountIncrease={handleChangePlan}
+        isDiscountIncreaseLoading={isChangePlanLoading}
+      />
     ),
-    [handleSubscriptionCancel, isChangingPlan, isGettingSubscriptionData],
+    [],
   );
 
   useEffect(() => {
-    handleCardGet();
     handlePlansGet();
     handleInvoicesGet();
     handleSubscriptionDataGet();
-  }, [handleCardGet, handleInvoicesGet, handlePlansGet, handleSubscriptionDataGet]);
+  }, [handleInvoicesGet, handlePlansGet, handleSubscriptionDataGet]);
+
+  const handleOpenBillingPortal = useCallback(async () => {
+    try {
+      const response = await createBillingPortal(undefined);
+
+      if (isNotEmpty(response)) {
+        openNewTab(response.checkoutUrl);
+      }
+    } catch (err) {
+      Toast.handleErrors(err);
+    }
+  }, [createBillingPortal, openNewTab]);
 
   return (
     <div className="billing">
@@ -147,20 +188,30 @@ const BillingMainScreen = () => {
             mobile: isMobile,
           })}
         >
-          <CardForm
-            isLoading={isGettingCard}
-            cardType={cardType}
-            cardInitialValues={cardInitialValues}
-          />
+          <PastDueForm />
+        </div>
+        <div
+          className={classNames('billing__card settings__block--small', {
+            mobile: isMobile,
+          })}
+        >
+          <CardForm />
         </div>
       </div>
-      <div className="settings__block">
-        <SubscriptionInfoBlockMobile
-          appSumoStatus={appSumoStatus}
-          subscriptionInfo={subscriptionInfo}
-          plan={userPlan}
-        />
-      </div>
+      {ltdTierId ? (
+        <div className="settings__block">
+          <LifeTimeDealInfoBlock ltdId={ltdTierId} />
+        </div>
+      ) : (
+        <div className="settings__block">
+          <SubscriptionInfoBlockMobile
+            appSumoStatus={appSumoStatus}
+            subscriptionInfo={subscriptionInfo}
+            plan={userPlan}
+            isFreezed={status === UserStatuses.FREEZE}
+          />
+        </div>
+      )}
       {appSumoStatus && (
         <div className="settings__block">
           <AppSumoBillingTable isAlignLeftTitle />
@@ -172,9 +223,23 @@ const BillingMainScreen = () => {
         </div>
       </div>
       <div className="settings__block">
-        <InvoiceTable invoiceItems={invoices} isLoading={isInvoicesLoading} />
+        <InvoiceTable
+          invoiceItems={invoices}
+          isLoading={isInvoicesLoading}
+          requestOrdering={requestOrdering}
+          paginationProps={paginationProps}
+          setPageNumber={setPageNumber}
+        />
+        <UIButton
+          priority="secondary"
+          className="settings__button-cancel"
+          title="Open Billing Portal"
+          handleClick={handleOpenBillingPortal}
+          isLoading={isCreatingBillingPortal}
+          disabled={isCreatingBillingPortal}
+        />
       </div>
-      {!appSumoStatus && (
+      {!appSumoStatus && !ltdTierId && (
         <div className="settings__block">
           <div className="billing__header">Cancel subscription</div>
           <div className={classNames('billing__details-description', { mobile: true })}>
@@ -187,8 +252,11 @@ const BillingMainScreen = () => {
             className="settings__button-cancel"
             title="Cancel subscription"
             handleClick={showSubscriptionCancelModal}
-            isLoading={isChangingPlan}
-            disabled={userPlan.type === PlanTypes.FREE}
+            disabled={
+              userPlan.type === PlanTypes.FREE ||
+              userPlan.duration === PlanDurations.FOREVER ||
+              !subscriptionInfo.neverExpires
+            }
           />
         </div>
       )}

@@ -67,6 +67,12 @@ const NotificationsFields = () => {
           className="settings__form-checkbox"
           component={FieldCheckbox}
         />
+        <Field
+          name="isSubscribedOnProcessingToAwaitingConvert"
+          label="After document change status on processing"
+          className="settings__form-checkbox"
+          component={FieldCheckbox}
+        />
       </div>
       <div
         className={classNames(
@@ -77,17 +83,17 @@ const NotificationsFields = () => {
         )}
       >
         <h2 className="settings__subtitle settings__subtitle--small">
-          Send a document PDF copy...
+          Send a PDF copy of the Document when the Document is Completed ...
         </h2>
         <Field
-          name="isReceivingCompletedDocument"
-          label="When document is completed - Email me a copy"
+          name="isSendingCompletedDocument"
+          label="To all the Signers"
           className="settings__form-checkbox"
           component={FieldCheckbox}
         />
         <Field
-          name="isSendingCompletedDocument"
-          label="When document is completed - Email them a copy"
+          name="isReceivingCompletedDocument"
+          label="To Me"
           className="settings__form-checkbox"
           component={FieldCheckbox}
         />

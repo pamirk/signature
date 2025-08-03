@@ -13,6 +13,7 @@ interface TemplatesProps {
   isLoading: boolean;
   isDeleteModalOpen: boolean;
   handleFormDelete: (formIds: Document['id'][]) => void;
+  handleGetForms: () => void;
 }
 
 const defaultPaginationProps: TablePaginationProps = {
@@ -30,6 +31,7 @@ function FormRequestsMobile({
   isLoading,
   isDeleteModalOpen,
   handleFormDelete,
+  handleGetForms,
 }: TemplatesProps) {
   const { pageNumber, itemsCount, itemsLimit, totalItems } = paginationProps;
 
@@ -63,11 +65,11 @@ function FormRequestsMobile({
                   template={template}
                   toggleSelect={() => toggleItemSelection(template.id)}
                   isSelected={isSelected}
-                  onDelete={handleFormDelete}
                   className={classNames({
                     'table__dataRow--delete': isDeleteModalOpen && isSelected,
                     'table__dataRow--inactive': isDeleteModalOpen && !isSelected,
                   })}
+                  handleGetForms={handleGetForms}
                 />
               );
             })

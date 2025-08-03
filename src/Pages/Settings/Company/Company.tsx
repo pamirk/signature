@@ -4,21 +4,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import History from 'Services/History';
 import { redirectToBilling } from 'Store/ducks/company/actionCreators';
 import { PlanTypes, PlanDetails } from 'Interfaces/Billing';
-import { selectCompanyData, selectUserPlan } from 'Utils/selectors';
+import { selectCompanyData, selectUser, selectUserPlan } from 'Utils/selectors';
 import UIButton from 'Components/UIComponents/UIButton';
-import { PreferencesFields } from './components';
+import { PreferencesFields, ReportFields } from './components';
 import BrandingFields from './components/BrandingFields';
 import Toast from 'Services/Toast';
-import { Company } from 'Interfaces/User';
+import { Company, User } from 'Interfaces/User';
 import useCompanyInfoUpdate from 'Hooks/User/useCompanyInfoUpdate';
 import { useModal } from 'Hooks/Common';
 import UpgradeModal from 'Components/UpgradeModal';
 import { useCompanyLogoPut, useSignedPutAssetUrl } from 'Hooks/User';
 import { SignedUrlResponse, UploadStatuses } from 'Interfaces/Common';
 import { resizeFile } from 'Utils/functions';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 const CompanyPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user: User = useSelector(selectUser);
   const initialCompanyData = useSelector(selectCompanyData);
   const [updateCompanyInfo, isUpdateLoading] = useCompanyInfoUpdate();
   const [logoFile, setLogoFile] = useState<File | null>();
@@ -28,9 +30,10 @@ const CompanyPage = () => {
   const [getSignedPutAssetUrl] = useSignedPutAssetUrl();
   const [putCompanyLogo] = useCompanyLogoPut();
 
-  const isBusinessPlan = useMemo(() => userPlan.type === PlanTypes.BUSINESS, [
-    userPlan.type,
-  ]);
+  const isBusinessPlan = useMemo(
+    () => userPlan.type === PlanTypes.BUSINESS || user.teamId,
+    [userPlan.type, user.teamId],
+  );
 
   const [showUpgradeModal, hideUpgradeModal] = useModal(() => {
     return (
@@ -64,7 +67,7 @@ const CompanyPage = () => {
   const handleSubmitForm = useCallback(
     async (values: Company) => {
       try {
-        if (userPlan.type === PlanTypes.FREE) {
+        if (userPlan.type === PlanTypes.FREE && !user.teamId) {
           return setIsDropdownOpen(true);
         }
         if (logoFile && values.companyLogoKey) {
@@ -78,12 +81,12 @@ const CompanyPage = () => {
         Toast.handleErrors(error);
       }
     },
-    [handleFileUpload, logoFile, updateCompanyInfo, userPlan.type],
+    [handleFileUpload, logoFile, updateCompanyInfo, userPlan.type, user.teamId],
   );
 
   const handleUpgradeClick = useCallback(() => {
     dispatch(redirectToBilling(true));
-    History.push('/settings/billing/plan');
+    History.push(AuthorizedRoutePaths.SETTINGS_BILLING_PLAN);
   }, [dispatch]);
 
   return (
@@ -105,6 +108,7 @@ const CompanyPage = () => {
                 form={form}
                 initialRedirectionPage={initialCompanyData.redirectionPage}
                 openUpgradeModal={showUpgradeModal}
+                logoFile={logoFile}
                 setLogoFile={setLogoFile}
                 handleUpgradeClick={handleUpgradeClick}
                 isDropdownOpen={isDropdownOpen}
@@ -114,6 +118,12 @@ const CompanyPage = () => {
             </div>
             <div className="settings__block">
               <PreferencesFields
+                openUpgradeModal={showUpgradeModal}
+                disabled={!isBusinessPlan}
+              />
+            </div>
+            <div className="settings__block">
+              <ReportFields
                 openUpgradeModal={showUpgradeModal}
                 disabled={!isBusinessPlan}
               />
