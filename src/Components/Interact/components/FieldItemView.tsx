@@ -5,6 +5,8 @@ import { DocumentFieldTypes } from 'Interfaces/DocumentFields';
 import { TextFieldSign, RequisiteField, CheckboxField, DateField } from './FieldTypes';
 import { RequisiteType } from 'Interfaces/Requisite';
 import { FieldColorNames } from 'Hooks/DocumentFields/useDocumentFieldColor';
+import { FieldModalPosition } from './FieldItem';
+import NameField from './FieldTypes/NameField';
 
 interface FieldItemViewProps {
   style: CSSProperties;
@@ -20,6 +22,8 @@ interface FieldItemViewProps {
   isResizable?: boolean;
   inFocus?: boolean;
   isFilled?: boolean;
+  selectedScale: number;
+  fieldModalPosition: FieldModalPosition;
   [key: string]: any;
 }
 
@@ -38,6 +42,8 @@ const FieldItemView = (
     isMenuOpen = false,
     isResizable = false,
     isFilled = false,
+    selectedScale,
+    fieldModalPosition,
     ...restProps
   }: FieldItemViewProps,
   ref,
@@ -48,8 +54,50 @@ const FieldItemView = (
     [fieldColor],
   );
 
+  const translateModalX = useMemo(() => {
+    switch (fieldModalPosition) {
+      case FieldModalPosition.BOTTOM:
+        return ((1 - selectedScale) * 100) / 2;
+      case FieldModalPosition.LEFT:
+        return ((1 - selectedScale) * -100) / 2;
+      case FieldModalPosition.TOP:
+        return ((1 - selectedScale) * 100) / 2;
+      case FieldModalPosition.TOP_LEFT:
+        return ((1 - selectedScale) * -100) / 2;
+      default:
+        return 0;
+    }
+  }, [fieldModalPosition, selectedScale]);
+
+  const translateModalY = useMemo(() => {
+    switch (fieldModalPosition) {
+      case FieldModalPosition.BOTTOM:
+        return ((1 - selectedScale) * 100) / 2;
+      case FieldModalPosition.LEFT:
+        return ((1 - selectedScale) * 100) / 2;
+      case FieldModalPosition.TOP:
+        return ((1 - selectedScale) * -100) / 2;
+      case FieldModalPosition.TOP_LEFT:
+        return ((1 - selectedScale) * -100) / 2;
+      default:
+        return 0;
+    }
+  }, [fieldModalPosition, selectedScale]);
+
   const defaultFieldTriggerRender = useCallback(() => {
     switch (fieldType) {
+      case DocumentFieldTypes.Name: {
+        return (
+          <NameField
+            fieldColor={FieldColorNames.EMPTY}
+            disabled
+            style={{
+              fontSize: 14,
+              fontFamily: 'Arial',
+            }}
+          />
+        );
+      }
       case DocumentFieldTypes.Signature:
       case DocumentFieldTypes.Initials: {
         return (
@@ -137,6 +185,10 @@ const FieldItemView = (
       {isMenuOpen && (
         <div
           ref={dropdownMenuRef}
+          style={{
+            transform: `scale(${1 /
+              selectedScale}) translate(${translateModalX}%, ${translateModalY}%)`,
+          }}
           className={classNames('fieldDropDown__content-wrapper', dropdownClassName)}
         >
           <p className="fieldDropDown__title">

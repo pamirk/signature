@@ -1,4 +1,1 @@
-import {RequisiteActionOption, RequisiteActionTypes} from "./RequisiteActionsDropdown";
-
-export {RequisiteActionTypes};
-export type {RequisiteActionOption};
+export { RequisiteActionTypes } from  "./RequisiteActionsDropdown";

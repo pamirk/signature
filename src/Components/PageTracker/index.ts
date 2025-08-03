@@ -1,3 +1,3 @@
-import PageTracker from "./PageTracker";
+import Index from "./PageTracker";
 
-export default PageTracker
+export default Index

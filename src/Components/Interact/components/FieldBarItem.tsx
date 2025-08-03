@@ -1,24 +1,25 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ReactSVG } from 'react-svg';
+import { capitalize } from 'lodash';
 import classNames from 'classnames';
 import interact from 'interactjs';
 import { DocumentFieldShape, DocumentFieldTypes } from 'Interfaces/DocumentFields';
-import { capitalize } from 'Utils/formatters';
 
 export interface FieldBarItemProps {
-  handleSelectField: (string) => void;
   selectedFieldType?: string;
   fieldShape: DocumentFieldShape;
-  onCursorMove: (event, fieldType: DocumentFieldTypes) => void;
   disabled?: boolean;
+  handleSelectField: (string) => void;
+  onCursorMove: (event, fieldType: DocumentFieldTypes) => void;
+  handleClick: (e: any, type: DocumentFieldTypes, renderShape?: boolean) => void;
 }
 
 function FieldBarItem({
-  handleSelectField,
   selectedFieldType,
-  fieldShape: { type, iconType, icon },
+  fieldShape: { label, type, iconType, icon },
   onCursorMove,
   disabled = false,
+  handleClick,
 }: FieldBarItemProps) {
   const fieldTypeItemRef = useRef<HTMLLIElement>(null);
   const [isPointerCaptured, setIsPointerCaptured] = useState(false);
@@ -26,9 +27,9 @@ function FieldBarItem({
   useEffect(() => {
     if (fieldTypeItemRef.current && !disabled) {
       const interactableListItem = interact(fieldTypeItemRef.current)
-        .on('down', () => {
+        .on('down', event => {
           setIsPointerCaptured(true);
-          handleSelectField(type);
+          handleClick(event, type);
         })
         .on('move', event => {
           isPointerCaptured && onCursorMove(event, type);
@@ -37,20 +38,7 @@ function FieldBarItem({
 
       return () => interactableListItem.unset();
     }
-  }, [
-    fieldTypeItemRef,
-    isPointerCaptured,
-    type,
-    onCursorMove,
-    disabled,
-    handleSelectField,
-  ]);
-
-  const handleItemClick = useCallback(() => !disabled && handleSelectField(type), [
-    type,
-    disabled,
-    handleSelectField,
-  ]);
+  }, [fieldTypeItemRef, isPointerCaptured, type, onCursorMove, disabled, handleClick]);
 
   return (
     <li
@@ -61,10 +49,10 @@ function FieldBarItem({
         'interactModal__fieldBar-fieldItem--fill': iconType === 'fill',
         'interactModal__fieldBar-fieldItem--disabled': disabled,
       })}
-      onClick={handleItemClick}
+      onClick={event => !disabled && handleClick(event, type, true)}
     >
       <ReactSVG src={icon} className="interactModal__fieldBar-fieldItem-icon" />
-      {capitalize(type)}
+      {capitalize(label)}
     </li>
   );
 }

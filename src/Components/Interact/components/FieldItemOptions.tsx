@@ -1,27 +1,33 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { ReactSVG } from 'react-svg';
 import { useSelector } from 'react-redux';
-import { fontFamilyOptions, fontFamilyByValue } from 'Services/Fonts';
+import { fontFamilyByValue } from 'Services/Fonts';
 import { useDocumentFieldSignerChange } from 'Hooks/DocumentFields';
 import { SelectableOption } from 'Interfaces/Common';
 import {
   DocumentField,
+  DocumentFieldsCRUDMeta,
   DocumentFieldShape,
   DocumentFieldTypes,
 } from 'Interfaces/DocumentFields';
 import { selectDocument } from 'Utils/selectors';
-import { capitalize } from 'Utils/formatters';
+import { capitalize } from 'lodash';
 import { fieldShapes } from '../common/fieldShapes';
 import { checkIfDateOrText } from 'Utils/functions';
 
 import UISelect from 'Components/UIComponents/UISelect';
 import UICheckbox from 'Components/UIComponents/UICheckbox';
+import UITextArea from 'Components/UIComponents/UITextArea';
+import UITextInput from 'Components/UIComponents/UITextInput';
 
 import RemoveIcon from 'Assets/images/icons/remove-icon.svg';
 import { UpdateDocumentField } from 'Hooks/DocumentFields/useDocumentFieldUpdate';
 import { DeleteDocumentField } from 'Hooks/DocumentFields/useDocumentFieldDelete';
-import UITextArea from 'Components/UIComponents/UITextArea';
+import UIButton from 'Components/UIComponents/UIButton';
+import { DocumentTypes } from 'Interfaces/Document';
+import FontSizeSelect from './FontSizeSelect';
+import FontFamilySelect from './FontFamilySelect';
 
 interface FieldItemOptionsProps {
   field: DocumentField;
@@ -29,8 +35,10 @@ interface FieldItemOptionsProps {
   onUpdate: UpdateDocumentField;
   onChangeSigner: (signerId: string) => void;
   onDelete: DeleteDocumentField;
-  onStartPlaceholderTyping: () => void;
-  onStopPlaceholderTyping: () => void;
+  onStartInputTyping: () => void;
+  onStopInputTyping: () => void;
+  validateTag: (id: string, tag: string) => boolean;
+  onApplyFontToEachField: (fontFamily: string, fontSize: number) => void;
 }
 
 const FieldItemOptions = ({
@@ -39,10 +47,13 @@ const FieldItemOptions = ({
   onUpdate,
   onChangeSigner,
   onDelete,
-  onStartPlaceholderTyping,
-  onStopPlaceholderTyping,
+  onStartInputTyping,
+  onStopInputTyping,
+  validateTag,
+  onApplyFontToEachField,
 }: FieldItemOptionsProps) => {
-  const { id, signerId, required, checked } = field;
+  const { id, signerId, required, checked, minimizeWidth } = field;
+  const [isTagInvalid, setIsTagInvalid] = useState(false);
   const getFieldSignerUpdateData = useDocumentFieldSignerChange(field);
   const document = useSelector(state =>
     selectDocument(state, { documentId: field.documentId }),
@@ -61,8 +72,8 @@ const FieldItemOptions = ({
   }, [id, onDelete]);
 
   const changeCurrentFieldData = useCallback(
-    (data: Partial<DocumentField>) => {
-      onUpdate({ id: field.id, ...data });
+    (data: Partial<DocumentField>, meta?: DocumentFieldsCRUDMeta) => {
+      onUpdate({ id: field.id, ...data }, meta);
     },
     [onUpdate, field],
   );
@@ -76,6 +87,18 @@ const FieldItemOptions = ({
     changeCurrentFieldData({ checked: !checked });
   }, [checked, changeCurrentFieldData]);
 
+  const handleFieldMinimizeWidthChange = useCallback(() => {
+    changeCurrentFieldData({ minimizeWidth: !minimizeWidth });
+  }, [changeCurrentFieldData, minimizeWidth]);
+
+  const handleTagFieldChange = useCallback(
+    (tag: string) => {
+      changeCurrentFieldData({ tag: tag });
+      setIsTagInvalid(!validateTag(id, tag));
+    },
+    [validateTag, id, changeCurrentFieldData],
+  );
+
   const changeFontFamily = useCallback(
     fontFamily => {
       if (fontFamily)
@@ -85,6 +108,23 @@ const FieldItemOptions = ({
             fontFamily: fontFamilyByValue[fontFamily],
           },
         });
+    },
+    [changeCurrentFieldData],
+  );
+
+  const changeFontSize = useCallback(
+    fontSize => {
+      if (fontSize)
+        changeCurrentFieldData(
+          {
+            fontSize,
+            fixedFontSize: true,
+            style: {
+              fontSize,
+            },
+          },
+          { stopFontAutoSize: true, pushToHistory: true },
+        );
     },
     [changeCurrentFieldData],
   );
@@ -105,6 +145,18 @@ const FieldItemOptions = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [changeCurrentFieldData, getFieldSignerUpdateData],
   );
+
+  const handleApplyToDocumentButton = (field: DocumentField) => () => {
+    onApplyFontToEachField(field.fontFamily || 'arial', field.fontSize || 14);
+  };
+
+  const showTagHint = useMemo(() => {
+    if (field.tag) {
+      return field.tag.length > 0;
+    }
+
+    return false;
+  }, [field.tag]);
 
   return (
     <li className="interactModal__fieldBar-selectField-item-wrapper">
@@ -144,36 +196,45 @@ const FieldItemOptions = ({
             <p className="interactModal__fieldBar-selectField-selector-title">
               Font Family:{' '}
             </p>
-            <UISelect
-              value={field.fontFamily || ''}
-              handleSelect={changeFontFamily}
-              options={fontFamilyOptions}
-              placeholder="Select font family"
+            <FontFamilySelect value={field.fontFamily} onSelect={changeFontFamily} />
+          </div>
+          <div className="interactModal__fieldBar-selectField-selector-wrapper">
+            <p className="interactModal__fieldBar-selectField-selector-title">
+              Font size:&nbsp;
+            </p>
+            <FontSizeSelect onSelect={changeFontSize} value={field.fontSize || null} />
+          </div>
+          <div className="interactModal__fieldBar-selectField-selector-apply">
+            <UIButton
+              priority="primary"
+              className="centered-text"
+              title="Apply to Document"
+              handleClick={handleApplyToDocumentButton(field)}
             />
           </div>
         </>
       )}
       {field.type === DocumentFieldTypes.Text && !signer?.isPreparer && (
         <div className="interactModal__fieldBar-selectField-inputField">
-          <p className="interactModal__fieldBar-selectField-inputField-title">
-            Placeholder text
-          </p>
+          <p className="interactModal__fieldBar-selectField-inputField-title">Label</p>
           <UITextArea
             value={field.placeholder}
-            placeholder="Enter your custom placeholder here"
+            placeholder="Enter your custom label here"
             onChange={event => handlePlaceholderChange(event.target.value)}
-            onFocus={onStartPlaceholderTyping}
-            onBlur={onStopPlaceholderTyping}
+            onFocus={onStartInputTyping}
+            onBlur={onStopInputTyping}
           />
         </div>
       )}
-      <div className="interactModal__fieldBar-selectField-checkbox">
-        <UICheckbox
-          handleClick={handleFieldRequiretyChange}
-          check={required}
-          label="Required"
-        />
-      </div>
+      {field.type !== DocumentFieldTypes.Name && (
+        <div className="interactModal__fieldBar-selectField-checkbox">
+          <UICheckbox
+            handleClick={handleFieldRequiretyChange}
+            check={required}
+            label="Required"
+          />
+        </div>
+      )}
       {field.type === DocumentFieldTypes.Checkbox && !signer?.isPreparer && (
         <div className="interactModal__fieldBar-selectField-checkbox">
           <UICheckbox
@@ -183,6 +244,37 @@ const FieldItemOptions = ({
           />
         </div>
       )}
+      {field.type === DocumentFieldTypes.Initials && signer?.isPreparer && (
+        <div className="interactModal__fieldBar-selectField-checkbox">
+          <UICheckbox
+            handleClick={handleFieldMinimizeWidthChange}
+            check={!!minimizeWidth}
+            label="Minimize width"
+          />
+        </div>
+      )}
+      {field.type !== DocumentFieldTypes.Signature &&
+        field.type !== DocumentFieldTypes.Initials &&
+        document?.type === DocumentTypes.TEMPLATE && (
+          <div className="interactModal__fieldBar-selectField-inputField">
+            <p className="interactModal__fieldBar-selectField-inputField-title">Tag</p>
+            <UITextInput
+              value={field.tag || ''}
+              placeholder="Tag"
+              error={isTagInvalid}
+              onChange={event => handleTagFieldChange(event.target.value)}
+              onFocus={onStartInputTyping}
+              onBlur={onStopInputTyping}
+            />
+            {showTagHint && (
+              <p className="interactModal__fieldBar-selectField-inputField-hint">
+                We recommend you to adjust font size and field size with example value in
+                placeholder. When you&apos;re using API to fill this fields, we don&apos;t
+                automatically adjust font size or field size.
+              </p>
+            )}
+          </div>
+        )}
     </li>
   );
 };

@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FieldArrayRenderProps } from 'react-final-form-arrays';
 import { Field } from 'react-final-form';
 import classNames from 'classnames';
-import { EmailRecipient } from 'Interfaces/Document';
-import { required, email } from 'Utils/validation';
+import { EmailRecipient, InteractExtraValues } from 'Interfaces/Document';
+import { required, email, checkViewersLimit } from 'Utils/validation';
 import { composeValidators } from 'Utils/functions';
 
 import { RecipientEmail } from './RecipientFields';
 import { UIAddButton } from 'Components/UIComponents/UIAddButton';
+import { removeEmptyCharacters } from 'Utils/formatters';
+import Toast from 'Services/Toast';
+import { useSelector } from 'react-redux';
+import { selectUser } from 'Utils/selectors';
+import { User } from 'Interfaces/User';
+import { PlanTypes } from 'Interfaces/Billing';
 
 interface IsDepetablePredicateArgument {
   itemIndex: number;
@@ -22,6 +28,7 @@ export interface EmailRecipientsArrayProps
   isAddable?: boolean;
   isItemsDeletable?: boolean;
   isItemDeletablePredicate?: (arg: IsDepetablePredicateArgument) => boolean;
+  handleSetRecipientsValues?: (values: InteractExtraValues) => void;
 }
 
 function EmailRecipientsArray({
@@ -32,7 +39,25 @@ function EmailRecipientsArray({
   isAddable = true,
   isItemsDeletable,
   isItemDeletablePredicate,
+  handleSetRecipientsValues,
 }: EmailRecipientsArrayProps) {
+  const user = useSelector(selectUser) as User;
+
+  useEffect(() => {
+    if (handleSetRecipientsValues && fields.value)
+      handleSetRecipientsValues({ recipients: fields.value as EmailRecipient[] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.value]);
+
+  const handleRecipientsAdd = useCallback(() => {
+    const checkLimit = checkViewersLimit(fields.value.length);
+    if ((user.isTrialSubscription || user.plan.type === PlanTypes.FREE) && checkLimit) {
+      return Toast.error(checkLimit);
+    }
+    fields.push({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.value]);
+
   return (
     <>
       {label && (
@@ -50,13 +75,14 @@ function EmailRecipientsArray({
                 : !!isItemsDeletable
             }
             onDelete={() => fields.remove(index)}
+            parse={removeEmptyCharacters}
             validate={composeValidators<string>(required, email)}
           />
         ))}
         {isAddable && (
           <UIAddButton
             label={addLabel}
-            onClick={() => fields.push({})}
+            onClick={handleRecipientsAdd}
             wrapperClassName="emailRecipients__add-wrapper"
             iconClassName="emailRecipients__add-icon"
             labelClassName="emailRecipients__add-label"

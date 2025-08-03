@@ -12,6 +12,7 @@ interface DropDownOption {
   hidden?: boolean;
   disabled?: boolean;
   className?: string;
+  classNameText?: string;
   iconClassName?: string;
 }
 
@@ -85,7 +86,11 @@ const DropDownOptions = ({ options, anchorClassName }: DropDownOptionsInterface)
                 }}
               >
                 <div
-                  className={classNames('documents__dropdownOption', option.className)}
+                  className={classNames(
+                    'documents__dropdownOption',
+                    option.classNameText,
+                    option.className,
+                  )}
                 >
                   <ReactSVG
                     src={option.icon}

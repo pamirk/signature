@@ -26,12 +26,15 @@ export const RequisiteListItem = ({
   onItemEdit,
 }: RequisiteListItemProps) => {
   const handleItemClick = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onItemClick && onItemClick(requisite);
   }, [onItemClick, requisite]);
   const handleItemDoubleClick = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onItemDoubleClick && onItemDoubleClick(requisite);
   }, [onItemDoubleClick, requisite]);
   const handleItemEdit = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onItemEdit && onItemEdit(requisite);
   }, [onItemEdit, requisite]);
 

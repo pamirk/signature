@@ -3,6 +3,7 @@ import TeamIcon from 'Assets/images/icons/team-icon.svg';
 import IntegrationsIcon from 'Assets/images/icons/integrations-icon.svg';
 import EditIcon from 'Assets/images/icons/edit-icon.svg';
 import BillingIcon from 'Assets/images/icons/billing-icon.svg';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface NavItem {
   path: string;
@@ -12,34 +13,34 @@ interface NavItem {
 }
 
 export const settingsNavItems: NavItem[] = [
- /* {
-    path: '/settings/company',
+  {
+    path: AuthorizedRoutePaths.SETTINGS_COMPANY,
     label: 'Company',
     icon: CompanyIcon,
     classNameMod: 'fill',
   },
   {
-    path: '/settings/profile',
+    path: AuthorizedRoutePaths.SETTINGS_PROFILE,
     label: 'Profile',
     icon: TeamIcon,
     classNameMod: 'stroke',
   },
   {
-    path: '/settings/api',
+    path: AuthorizedRoutePaths.SETTINGS_API,
     label: 'API',
     icon: IntegrationsIcon,
     classNameMod: 'stroke',
-  },*/
+  },
   {
-    path: '/settings/edit-signature',
+    path: AuthorizedRoutePaths.SETTINGS_EDIT_SIGNATURE,
     label: 'Edit Signature',
     icon: EditIcon,
     classNameMod: 'stroke',
   },
-/*  {
-    path: '/settings/billing',
+  {
+    path: AuthorizedRoutePaths.SETTINGS_BILLING,
     label: 'Billing',
     icon: BillingIcon,
     classNameMod: 'stroke',
-  },*/
+  },
 ];

@@ -2,29 +2,34 @@ import React, { useCallback } from 'react';
 import { ReactSVG } from 'react-svg';
 import { useDropzone } from 'react-dropzone';
 import classNames from 'classnames';
-import * as _ from 'lodash';
+import { uniq, values } from 'lodash';
 import { IntegrationTypes } from 'Interfaces/Integration';
-import { lessThan40MB, maxLength100 } from 'Utils/validation';
+import {
+  lessThan40MB,
+  maxLength100,
+  multipleFilesConstaint,
+  singleFileConstaint,
+} from 'Utils/validation';
 import Toast from 'Services/Toast';
 import { MIME_TYPES } from 'Utils/constants';
 import UIImportButton from './UIImportButton';
 import UIProgressBar from '../UIProgressBar';
 import UIButton from '../UIButton';
 import FileSVG from 'Assets/images/icons/documents-icon.svg';
-import Cancel from 'Assets/images/icons/cancel.svg';
 import { useSelector } from 'react-redux';
 import { selectUserIntegrations } from 'Utils/selectors';
 import { DocumentItem, FileItem } from 'Interfaces/Common';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { moveArrayItem } from 'Utils/functions';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import UICancelButton from '../UICancelButton';
 
-const defaultFormats = _.uniq(_.values(MIME_TYPES)).join(',');
+const defaultFormats = uniq(values(MIME_TYPES)).join(',');
 
 interface UIUploaderProps {
   importServices?: Array<IntegrationTypes>;
   onUpload?: (file: File) => void;
-  onCancel: (fileItem: FileItem) => void;
+  onCancel?: (fileItem: FileItem) => void;
   progress?: number;
   error?: string | null;
   acceptableFormats?: string;
@@ -39,6 +44,8 @@ interface UIUploaderProps {
   isLoading?: boolean;
   onFileReorder: (newOrders: FileItem[]) => void;
   disableReorder?: boolean;
+  isCleanFileData?: boolean;
+  filesLimit?: number;
 }
 
 function UIMultiUploader({
@@ -57,24 +64,38 @@ function UIMultiUploader({
   isLoading = false,
   onFileReorder,
   disableReorder = true,
+  isCleanFileData,
+  filesLimit,
 }: UIUploaderProps) {
   const userIntegrations = useSelector(selectUserIntegrations);
   const isMobile = useIsMobile();
 
   const onDrop = useCallback(
-    acceptedFiles => {
-      const fileMeta = acceptedFiles[0];
-
-      if (disabled || !fileMeta) return;
-
-      const error = lessThan40MB(fileMeta.size) || maxLength100(fileMeta.name);
+    (acceptedFiles: File[]) => {
+      const documentFiles = files.map(item => item.file);
+      const error =
+        filesLimit === 1
+          ? singleFileConstaint([...documentFiles, ...acceptedFiles])
+          : multipleFilesConstaint([...documentFiles, ...acceptedFiles], filesLimit);
 
       if (error) {
         return Toast.error(error);
       }
-      onUpload && onUpload(fileMeta);
+
+      acceptedFiles.forEach(file => {
+        const fileMeta = file;
+
+        if (disabled || !fileMeta) return;
+
+        const error = lessThan40MB(fileMeta.size) || maxLength100(fileMeta.name);
+
+        if (error) {
+          return Toast.error(error);
+        }
+        onUpload && onUpload(fileMeta);
+      });
     },
-    [disabled, onUpload],
+    [disabled, files, filesLimit, onUpload],
   );
 
   const handleCloudFilePick = useCallback(
@@ -188,22 +209,21 @@ function UIMultiUploader({
                         <div className="upload__status-text upload__status-item">
                           {fileItem.filename}
                         </div>
-                        <button
-                          disabled={disabled}
-                          className={classNames('upload__status-cancel', {
-                            'upload--disabled': disabled,
-                          })}
-                          onClick={() => onCancel(fileItem)}
-                          type="button"
-                        >
-                          <ReactSVG src={Cancel} />
-                        </button>
+                        {onCancel && (
+                          <UICancelButton
+                            disabled={isCleanFileData}
+                            onClick={() => onCancel(fileItem)}
+                            isLoading={isCleanFileData}
+                          />
+                        )}
                       </div>
-                      {!!fileItem.progress && !fileItem.isFinished && (
-                        <div className="upload__progress-bar">
-                          <UIProgressBar percentage={fileItem.progress} />
-                        </div>
-                      )}
+                      {!!fileItem.progress &&
+                        !fileItem.isFinished &&
+                        !fileItem.errorText && (
+                          <div className="upload__progress-bar">
+                            <UIProgressBar percent={fileItem.progress} />
+                          </div>
+                        )}
                       {fileItem.errorText && (
                         <div className="upload__error-text">{fileItem.errorText}</div>
                       )}

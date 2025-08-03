@@ -13,6 +13,7 @@ function UIModal({
   overlayClassName,
   isOverlayTransparent = false,
   hideCloseIcon = false,
+  shouldCloseOnOverlayClick = true,
 }: UIModalProps) {
   const isMobile = useIsMobile();
   return (
@@ -21,6 +22,7 @@ function UIModal({
       overlayClassName={classNames('modal', overlayClassName, {
         'modal--transparent': isOverlayTransparent,
       })}
+      shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}
       onRequestClose={onClose}
       isOpen
     >

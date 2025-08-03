@@ -15,6 +15,25 @@ export const apiPlanPriorityByDuration = {
     [ApiPlanTypes.PLATINUM]: 5,
     [ApiPlanTypes.TITANIUM]: 6,
   },
+  [PlanDurations.FOREVER]: {
+    [ApiPlanTypes.TITANIUM]: 7,
+  },
+};
+
+// Initial api plan prices
+export const apiPlanPrices = {
+  [ApiPlanTypes.GOLD]: {
+    [PlanDurations.MONTHLY]: 49,
+    [PlanDurations.ANNUALLY]: 470,
+  },
+  [ApiPlanTypes.PLATINUM]: {
+    [PlanDurations.MONTHLY]: 99,
+    [PlanDurations.ANNUALLY]: 950,
+  },
+  [ApiPlanTypes.TITANIUM]: {
+    [PlanDurations.MONTHLY]: 199,
+    [PlanDurations.ANNUALLY]: 1910,
+  },
 };
 
 export const apiPlanItems: ApiPlanItemCollection = {
@@ -22,7 +41,7 @@ export const apiPlanItems: ApiPlanItemCollection = {
     {
       header: 'Gold',
       title: 'Gold',
-      price: '$99',
+      price: `$${apiPlanPrices[ApiPlanTypes.GOLD][PlanDurations.MONTHLY]}`,
       type: ApiPlanTypes.GOLD,
       duration: PlanDurations.MONTHLY,
       content: ['50 API Signature Requests per month', '5 Templates'],
@@ -30,7 +49,7 @@ export const apiPlanItems: ApiPlanItemCollection = {
     {
       header: 'Platinum',
       title: 'Platinum',
-      price: '$299',
+      price: `$${apiPlanPrices[ApiPlanTypes.PLATINUM][PlanDurations.MONTHLY]}`,
       type: ApiPlanTypes.PLATINUM,
       duration: PlanDurations.MONTHLY,
       content: ['150 API Signature Requests per month', '25 Templates'],
@@ -38,7 +57,7 @@ export const apiPlanItems: ApiPlanItemCollection = {
     {
       header: 'Titanium',
       title: 'Titanium',
-      price: '$499',
+      price: `$${apiPlanPrices[ApiPlanTypes.TITANIUM][PlanDurations.MONTHLY]}`,
       type: ApiPlanTypes.TITANIUM,
       duration: PlanDurations.MONTHLY,
       content: ['500 API Signature Requests per month', 'Unlimited Templates'],
@@ -48,7 +67,7 @@ export const apiPlanItems: ApiPlanItemCollection = {
     {
       header: 'Gold',
       title: 'Gold Annually',
-      price: '$948',
+      price: `$${apiPlanPrices[ApiPlanTypes.GOLD][PlanDurations.ANNUALLY]}`,
       type: ApiPlanTypes.GOLD,
       duration: PlanDurations.ANNUALLY,
       content: ['50 API Signature Requests per month', '5 Templates'],
@@ -56,7 +75,7 @@ export const apiPlanItems: ApiPlanItemCollection = {
     {
       header: 'Platinum',
       title: 'Platinum Annually',
-      price: '$2868',
+      price: `$${apiPlanPrices[ApiPlanTypes.PLATINUM][PlanDurations.ANNUALLY]}`,
       type: ApiPlanTypes.PLATINUM,
       duration: PlanDurations.ANNUALLY,
       content: ['150 API Signature Requests per month', '25 Templates'],
@@ -64,12 +83,13 @@ export const apiPlanItems: ApiPlanItemCollection = {
     {
       header: 'Titanium',
       title: 'Titanium Annually',
-      price: '$4788',
+      price: `$${apiPlanPrices[ApiPlanTypes.TITANIUM][PlanDurations.ANNUALLY]}`,
       type: ApiPlanTypes.TITANIUM,
       duration: PlanDurations.ANNUALLY,
       content: ['500 API Signature Requests per month', 'Unlimited Templates'],
     },
   ],
+  [PlanDurations.FOREVER]: [],
 };
 
 export const nonPayedPlansDescription = {

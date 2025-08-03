@@ -2,7 +2,6 @@ import React from 'react';
 import DocumentPage, { DocumentPageProps } from './DocumentPage';
 
 export interface DocumentPreviewPageProps extends DocumentPageProps {
-  page: string;
   scale?: number;
   style?: {
     marginBottom?: number;
@@ -10,11 +9,13 @@ export interface DocumentPreviewPageProps extends DocumentPageProps {
     height?: number;
   };
   children?: React.ReactNode;
+  offset?: number;
 }
 
 const DocumentPreviewPage = ({
-  page,
+  pageNumber,
   scale = 1,
+  offset = 0,
   style,
   children,
   ...documentPageProps
@@ -27,8 +28,9 @@ const DocumentPreviewPage = ({
       }}
     >
       <DocumentPage
-        page={page}
+        pageNumber={pageNumber}
         className="documentPage__preview-item"
+        scale={scale}
         style={{
           width: (style?.width as number) * scale,
           height: (style?.height as number) * scale,
@@ -41,6 +43,7 @@ const DocumentPreviewPage = ({
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
           width: style?.width,
+          left: offset,
         }}
       >
         {children}

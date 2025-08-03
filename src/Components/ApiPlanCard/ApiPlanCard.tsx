@@ -20,6 +20,10 @@ interface ApiPlanCardProps {
   presentRequestUsage: boolean;
   presentTestRequestUsage: boolean;
   presentTemplateUsage: boolean;
+  isLoading?: boolean;
+  handleRenew: () => void;
+  isRecuringStoped?: boolean;
+  isTitaniumCustom?: boolean;
 }
 
 const ApiPlanCard = ({
@@ -33,6 +37,10 @@ const ApiPlanCard = ({
   presentTestRequestUsage = true,
   presentTemplateUsage = true,
   onUpgrade,
+  isLoading,
+  handleRenew,
+  isRecuringStoped,
+  isTitaniumCustom,
 }: ApiPlanCardProps) => {
   return (
     <div className="api-plan">
@@ -56,15 +64,28 @@ const ApiPlanCard = ({
         </div>
         <div className="api-plan__button-wrapper">
           {isCurrent ? (
-            <div className="billing__current-plan api-plan__current-plan">
-              Current plan
-            </div>
+            <>
+              {isRecuringStoped ? (
+                <div
+                  className="billing__current-plan api-plan__current-plan renew"
+                  onClick={handleRenew}
+                >
+                  Renew
+                </div>
+              ) : (
+                <div className="billing__current-plan api-plan__current-plan">
+                  Current plan
+                </div>
+              )}
+            </>
           ) : (
             <UIButton
               priority="primary"
               title={buttonText}
               className="api-plan__upgrade-button"
               handleClick={() => onUpgrade(type, duration)}
+              disabled={isLoading || isTitaniumCustom}
+              isLoading={isLoading}
             />
           )}
         </div>
@@ -72,7 +93,7 @@ const ApiPlanCard = ({
           <div className="api-plan__usage-info">
             <span className="api-plan__usage-count">{requestsUsed}</span>
             <span className="api-plan__usage-text">
-              &nbsp;API request left this month
+              &nbsp;API Signature Request left this month
             </span>
           </div>
         )}
@@ -80,7 +101,7 @@ const ApiPlanCard = ({
           <div className="api-plan__usage-info">
             <span className="api-plan__usage-count">{testRequestsMonthlyUsed}</span>
             <span className="api-plan__usage-text">
-              &nbsp;Test API request left this month
+              &nbsp;Test API Signature Request left this month
             </span>
           </div>
         )}

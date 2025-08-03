@@ -2,9 +2,15 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { FormRenderProps, Field } from 'react-final-form';
 import { Document, DocumentBulkSendValues } from 'Interfaces/Document';
-import { selectOneRoleTemplates } from 'Utils/selectors';
+import { selectOneRoleTemplates, selectUserPlan } from 'Utils/selectors';
 import { composeValidators } from 'Utils/functions';
-import { required, maxLength100, notOnlySpaces } from 'Utils/validation';
+import {
+  required,
+  maxLength100,
+  notOnlySpaces,
+  titleNotUrlProtocol,
+  messageNotUrlProtocol,
+} from 'Utils/validation';
 import UISelect from 'Components/UIComponents/UISelect';
 import { FieldTextInput, FieldTextArea } from 'Components/FormFields';
 import UIButton from 'Components/UIComponents/UIButton';
@@ -12,7 +18,8 @@ import Arrow from 'Assets/images/icons/angle-arrow.svg';
 import { useModal, useCsvParse } from 'Hooks/Common';
 import HeadersSelectModal from './HeadersSelectModal';
 import { ParsedCsvData } from 'Interfaces/Common';
-import UIUploader from 'Components/UIComponents/UIUploader';
+import { UIUploader } from 'Components/UIComponents/UIUploader';
+import { PlanTypes } from 'Interfaces/Billing';
 
 interface BulkSendFieldsProps extends FormRenderProps<DocumentBulkSendValues> {
   onTemplateSelect?: (templateId: Document['id'] | undefined) => void;
@@ -30,6 +37,7 @@ const BulkSendFields = ({
   columnParsingLimit,
 }: BulkSendFieldsProps) => {
   const templates = useSelector(selectOneRoleTemplates);
+  const userPlan = useSelector(selectUserPlan);
   const [parsedFileData, setParsedFileData] = useState<ParsedCsvData>();
   const [uploadError, setUploadError] = useState<string | null>(null);
   const parseFile = useCsvParse();
@@ -64,9 +72,7 @@ const BulkSendFields = ({
         setUploadError(null);
         const parsedFileData = await parseFile(file, rowParsingLimit, columnParsingLimit);
         setParsedFileData(parsedFileData);
-      }
-      //@ts-ignore
-      catch (error:any) {
+      } catch (error) {
         setUploadError(error.message || 'Failed to upload');
         handleSignersChange(undefined);
         setParsedFileData(undefined);
@@ -146,8 +152,16 @@ const BulkSendFields = ({
           name="title"
           label="Title"
           component={FieldTextInput}
+          onKeyDown={event => {
+            if (event.key === 'Enter') event.preventDefault();
+          }}
           placeholder="Document Title"
-          validate={composeValidators<string>(required, notOnlySpaces, maxLength100)}
+          validate={composeValidators<string>(
+            required,
+            notOnlySpaces,
+            maxLength100,
+            titleNotUrlProtocol,
+          )}
         />
         <Field
           name="message"
@@ -158,6 +172,11 @@ const BulkSendFields = ({
           }
           component={FieldTextArea}
           placeholder="Add an optional message for signers. "
+          validate={
+            userPlan.type === PlanTypes.FREE
+              ? composeValidators<string>(messageNotUrlProtocol)
+              : undefined
+          }
         />
       </div>
 

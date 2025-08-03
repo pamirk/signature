@@ -1,3 +1,3 @@
-import Index from "./CropModal";
+import index from "./CropModal";
 
-export default Index;
+export default index

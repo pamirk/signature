@@ -1,13 +1,15 @@
-import React, { useCallback } from 'react';
-import useDropdown from 'use-dropdown';
-import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
+import React, { useCallback, useState } from 'react';
+import { ReactSVG } from 'react-svg';
+import useDropdown from 'use-dropdown';
 
 import { SelectableOption } from 'Interfaces/Common';
 
-import SelectIcon from 'Assets/images/icons/select-arrow-icon.svg';
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
+import SelectIcon from 'Assets/images/icons/select-arrow-icon.svg';
+import IconSearch from 'Assets/images/icons/search.svg';
 import UISpinner from './UISpinner';
+import UITextInput from './UITextInput';
 
 export interface UISelectProps<TValue> {
   handleSelect: (value?: TValue) => void;
@@ -18,11 +20,15 @@ export interface UISelectProps<TValue> {
   value?: TValue | null;
   placeholder: string;
   contentWrapperClassName?: string;
+  className?: string;
   icon?: string;
   emptyText?: string;
   isClearable?: boolean;
   disabled?: boolean;
   isLoading?: boolean;
+  isSearchable?: boolean;
+  searchInputPlaceholder?: string;
+  searchWrapperClassName?: string;
 }
 
 function UISelect<TValue>({
@@ -31,6 +37,7 @@ function UISelect<TValue>({
   icon,
   value,
   contentWrapperClassName,
+  className,
   handleSelect,
   onBlur,
   onFocus,
@@ -38,11 +45,18 @@ function UISelect<TValue>({
   isClearable = false,
   disabled = false,
   isLoading,
+  isSearchable = false,
+  searchInputPlaceholder,
+  searchWrapperClassName,
 }: UISelectProps<TValue>) {
   const [containerRef, isOpen, open, close] = useDropdown();
 
   const selectedOption =
     options.find(option => option.value === value) || ({} as typeof options[0]);
+
+  const [filteredOptions, setFilteredOptions] = useState<SelectableOption<TValue>[]>(
+    options,
+  );
 
   const { label } = selectedOption;
 
@@ -59,6 +73,8 @@ function UISelect<TValue>({
   const toggleDropdown = useCallback(() => {
     if (disabled) return;
 
+    setFilteredOptions(options);
+
     if (isOpen) {
       onBlur && onBlur();
       close();
@@ -66,10 +82,29 @@ function UISelect<TValue>({
       onFocus && onFocus();
       open();
     }
-  }, [disabled, isOpen, onBlur, close, onFocus, open]);
+  }, [disabled, options, isOpen, onBlur, close, onFocus, open]);
+
+  const handleFilterOptions = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const searchString = event.currentTarget.value.trim().toLowerCase();
+
+      const searchOptions = options.filter(
+        option => option.label.toLowerCase().indexOf(searchString) !== -1,
+      );
+
+      setFilteredOptions(searchOptions);
+    },
+    [options],
+  );
+
+  const isNotEmptyOptions =
+    filteredOptions && filteredOptions.length > 0 && options.length > 0;
+
+  const isNoSearchOptions =
+    filteredOptions && filteredOptions.length === 0 && options.length > 0;
 
   return (
-    <div className="uiSelect__wrapper" ref={containerRef}>
+    <div className={classNames('uiSelect__wrapper', className)} ref={containerRef}>
       <div
         className={classNames('uiSelect__select', {
           'uiSelect__select--open': isOpen,
@@ -107,27 +142,44 @@ function UISelect<TValue>({
         )}
       </div>
       {isOpen && (
-        <div className={classNames('uiSelect__content-wrapper', contentWrapperClassName)}>
-          {options && options.length > 0 ? (
-            <div className="uiSelect__search-list">
-              {options
-                .filter(item => !(item.value === selectedOption.value))
-                .map((item, index) => {
-                  const { label: optionLabel } = item;
-                  return (
-                    <div
-                      key={index}
-                      onClick={() => addItem(item)}
-                      className="uiSelect__search-item"
-                    >
-                      <p className="uiSelect__select-row">{optionLabel}</p>
-                    </div>
-                  );
-                })}
-            </div>
-          ) : (
-            <p className="uiSelect__empty">{emptyText || 'Empty list'}</p>
+        <div className={isSearchable ? searchWrapperClassName : undefined}>
+          {isSearchable && (
+            <UITextInput
+              inputClassName="uiSelect__search-string"
+              placeholder={searchInputPlaceholder}
+              onKeyUp={handleFilterOptions}
+              onKeyDown={event => {
+                if (event.key === 'Enter') event.preventDefault();
+              }}
+              icon={IconSearch}
+            />
           )}
+          <div
+            className={classNames('uiSelect__content-wrapper', contentWrapperClassName)}
+          >
+            {isNotEmptyOptions ? (
+              <div className="uiSelect__search-list">
+                {filteredOptions
+                  .filter(item => !(item.value === selectedOption.value))
+                  .map((item, index) => {
+                    const { label: optionLabel } = item;
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => addItem(item)}
+                        className="uiSelect__search-item"
+                      >
+                        <p className="uiSelect__select-row">{optionLabel}</p>
+                      </div>
+                    );
+                  })}
+              </div>
+            ) : isSearchable && isNoSearchOptions ? (
+              <p className="uiSelect__empty">No search results found.</p>
+            ) : (
+              <p className="uiSelect__empty">{emptyText || 'Empty list'}</p>
+            )}
+          </div>
         </div>
       )}
     </div>

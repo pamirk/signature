@@ -12,33 +12,33 @@ import EditIcon from 'Assets/images/icons/edit-icon.svg';
 import BillingIcon from 'Assets/images/icons/billing-icon.svg';
 import LogoutIcon from 'Assets/images/icons/logout-icon.svg';
 import StarIcon from 'Assets/images/icons/star-icon.svg';
-import FeedbackIcon from 'Assets/images/icons/feedback-icon.svg';
 
 import { useSelector } from 'react-redux';
 import { selectUser } from 'Utils/selectors';
 import { User } from 'Interfaces/User';
 import { PlanTypes } from 'Interfaces/Billing';
-import { Avatar } from 'Components/Avatar/Avatar';
 import AccountAvatar from 'Components/AccountAvatar';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 export interface DropDownUserProps {
-  handleLogout: () => void;
+  handleLogout: (v: void) => void;
   location: Location;
+  isActionHidden?: boolean;
 }
 
 const LINKS = [
-  // {
-  //   label: 'Company',
-  //   url: '/settings/company',
-  //   className: 'dropDownUser__item--fill',
-  //   icon: CompanyIcon,
-  // },
-  // {
-  //   label: 'Profile',
-  //   url: '/settings/profile',
-  //   className: 'dropDownUser__item--stroke',
-  //   icon: TeamIcon,
-  // },
+  {
+    label: 'Company',
+    url: AuthorizedRoutePaths.SETTINGS_COMPANY,
+    className: 'dropDownUser__item--fill',
+    icon: CompanyIcon,
+  },
+  {
+    label: 'Profile',
+    url: AuthorizedRoutePaths.SETTINGS_PROFILE,
+    className: 'dropDownUser__item--stroke',
+    icon: TeamIcon,
+  },
   /*   {
     label: 'API',
     url: '/settings/api',
@@ -47,26 +47,20 @@ const LINKS = [
   }, */
   {
     label: 'Edit Signature',
-    url: '/settings/edit-signature',
+    url: AuthorizedRoutePaths.SETTINGS_EDIT_SIGNATURE,
     className: 'dropDownUser__item--stroke',
     icon: EditIcon,
   },
-  // {
-  //   label: 'Billing',
-  //   url: '/settings/billing',
-  //   freeUrl: '/settings/billing/plan',
-  //   className: 'dropDownUser__item--stroke',
-  //   icon: BillingIcon,
-  // },
+  {
+    label: 'Billing',
+    url: AuthorizedRoutePaths.SETTINGS_BILLING,
+    freeUrl: AuthorizedRoutePaths.SETTINGS_BILLING_PLAN,
+    className: 'dropDownUser__item--stroke',
+    icon: BillingIcon,
+  },
 ];
 
 const REDIRECT_LINK = [
-  {
-    label: 'Feedback',
-    url: 'https://feedback.signaturely.com/',
-    className: 'dropDownUser__item--stroke',
-    icon: FeedbackIcon,
-  },
   {
     label: 'Share & Earn',
     url: 'https://refer.signaturely.com/',
@@ -75,7 +69,7 @@ const REDIRECT_LINK = [
   },
 ];
 
-function DropDownUser({ handleLogout, location }: DropDownUserProps) {
+function DropDownUser({ handleLogout, location, isActionHidden }: DropDownUserProps) {
   const user: User = useSelector(selectUser);
   const [containerRef, isOpen, open, close] = useDropdown();
   const { pathname } = location;
@@ -96,36 +90,40 @@ function DropDownUser({ handleLogout, location }: DropDownUserProps) {
 
       {isOpen && (
         <div className="dropDownUser__list">
-          {LINKS.map(link => {
-            const url = (user.plan.type === PlanTypes.FREE) || link.url;
+          {!isActionHidden && (
+            <>
+              {LINKS.map(link => {
+                const url =
+                  (user.plan.type === PlanTypes.FREE && link.freeUrl) || link.url;
 
-            return (
-              <Link
-                key={link.label}
-                to={url}
-                className={`dropDownUser__item ${link.className}`}
-              >
-                <ReactSVG src={link.icon} className="dropDownUser__item-icon" />
-                {link.label}
-              </Link>
-            );
-          })}
-        {/*  {REDIRECT_LINK.map(link => (
-            <a
-              key={link.label}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`dropDownUser__item ${link.className}`}
-              onClick={close}
-            >
-              <ReactSVG src={link.icon} className="dropDownUser__item-icon" />
-              {link.label}
-            </a>
-          ))}*/}
-
+                return (
+                  <Link
+                    key={link.label}
+                    to={url}
+                    className={`dropDownUser__item ${link.className}`}
+                  >
+                    <ReactSVG src={link.icon} className="dropDownUser__item-icon" />
+                    {link.label}
+                  </Link>
+                );
+              })}
+              {REDIRECT_LINK.map(link => (
+                <a
+                  key={link.label}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`dropDownUser__item ${link.className}`}
+                  onClick={close}
+                >
+                  <ReactSVG src={link.icon} className="dropDownUser__item-icon" />
+                  {link.label}
+                </a>
+              ))}
+            </>
+          )}
           <div
-            onClick={handleLogout}
+            onClick={() => handleLogout(undefined)}
             className="dropDownUser__item dropDownUser__item--fill"
           >
             <ReactSVG src={LogoutIcon} className="dropDownUser__item-icon" />

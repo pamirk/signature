@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import classNames from 'classnames';
-import * as _ from 'lodash';
+import { keys, values, uniq } from 'lodash';
 import { GoogleApi, DropboxApi, OneDriveApi } from 'Services/Integrations';
 import Toast from 'Services/Toast';
 import { useModal } from 'Hooks/Common';
@@ -18,6 +18,8 @@ import GoogleDrive from 'Assets/images/icons/google-drive.svg';
 import OneDrive from 'Assets/images/icons/one-drive.svg';
 import Box from 'Assets/images/icons/box.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import { clearIntegrationData } from 'Store/ducks/user/actionCreators';
+import { useDispatch } from 'react-redux';
 
 const serviceDataByType = {
   [IntegrationTypes.GOOGLE_DRIVE]: { title: 'Google Drive', src: GoogleDrive },
@@ -37,6 +39,7 @@ const UIImportButton = ({ type, onPick, disabled, integrated }: UIImportButtonPr
   const [boxToken, setBoxToken] = useState<undefined | string>(undefined);
   const [getAuthToken, isGettingAuthToken] = useAuthTokenGet();
   const isMobile = useIsMobile();
+  const dispatch = useDispatch();
 
   const { src, title } = useMemo(() => serviceDataByType[type], [type]);
 
@@ -91,9 +94,9 @@ const UIImportButton = ({ type, onPick, disabled, integrated }: UIImportButtonPr
         case IntegrationTypes.GOOGLE_DRIVE: {
           await GoogleApi.initGoogleDrivePicker({
             accessToken: tokenPayload.token,
-            acceptableFormats: _.uniq([
-              ..._.values(MIME_TYPES),
-              ..._.keys(GOOGLE_MIME_TYPES),
+            acceptableFormats: uniq([
+              ...values(MIME_TYPES),
+              ...keys(GOOGLE_MIME_TYPES),
             ]).join(','),
             onPick,
             onError: Toast.error,
@@ -110,7 +113,7 @@ const UIImportButton = ({ type, onPick, disabled, integrated }: UIImportButtonPr
           await OneDriveApi.launchOneDrivePicker({
             accessToken: tokenPayload.token,
             onPick,
-            extentions: _.keys(MIME_TYPES),
+            extentions: keys(MIME_TYPES),
           });
 
           break;
@@ -120,9 +123,11 @@ const UIImportButton = ({ type, onPick, disabled, integrated }: UIImportButtonPr
         }
       }
     } catch (error) {
+      dispatch(clearIntegrationData({ type }));
       Toast.handleErrors(error);
+      handleIntegrationConnect();
     }
-  }, [getAuthToken, type, onPick]);
+  }, [type, getAuthToken, onPick, dispatch, handleIntegrationConnect]);
 
   return (
     <button

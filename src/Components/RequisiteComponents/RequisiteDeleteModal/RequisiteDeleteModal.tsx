@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
+import { capitalize } from 'lodash';
 import { useRequisiteDelete } from 'Hooks/Requisite';
 import { Requisite, RequisiteType } from 'Interfaces/Requisite';
 import Toast from 'Services/Toast';
-import { capitalize } from 'Utils/formatters';
 
 import ConfirmModal from 'Components/ConfirmModal';
 
@@ -17,7 +17,7 @@ export const RequisiteDeleteModal = ({
 }: RequisiteDeleteModalProps) => {
   const [deleteRequisite, isDeleteLoading] = useRequisiteDelete();
   const requisiteTypeName = useMemo(
-    () => (requisiteItem.type === RequisiteType.SIGN ? 'signature' : 'initial'),
+    () => (requisiteItem.type === RequisiteType.SIGN ? 'signature' : 'initials'),
     [requisiteItem.type],
   );
   const handleDeleteRequisite = useCallback(async () => {

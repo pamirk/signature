@@ -2,10 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   PlanDurations,
   ApiPlan,
-  ApiPlanTypes,
   ApiPlanChangePayload,
-  CardFormValues,
   InvoiceTypes,
+  Coupon,
+  ApiPlanTypes,
+  ApiSubscription,
+  PlanChangePayload,
 } from 'Interfaces/Billing';
 import DurationSwitcher from 'Components/DurationSwitcher';
 import {
@@ -17,62 +19,78 @@ import ApiPlanCard from 'Components/ApiPlanCard';
 import {
   BillingDetails,
   InvoiceTable,
-  PayModal,
+  PromoCodeModal,
 } from 'Pages/Settings/Billing/components';
-import {
-  useInvoicesGet,
-  useCreateCard,
-  useCardGet,
-  useApiPlanRemove,
-} from 'Hooks/Billing';
+import { useInvoicesGet, useCardGet } from 'Hooks/Billing';
 import { useSelector } from 'react-redux';
 import {
   selectApiPlan,
   selectApiSubscriptionInfo,
+  selectBillingData,
   selectCardFormValues,
-  selectCardType,
   selectInvoices,
+  selectInvoicesPaginationData,
+  selectUser,
 } from 'Utils/selectors';
 import Toast from 'Services/Toast';
-import useApiPlanChange from 'Hooks/Billing/useApiPlanChange';
-import ConfirmModal from 'Components/ConfirmModal';
-import { useModal } from 'Hooks/Common';
-import { HttpStatus } from 'Interfaces/HttpStatusEnum';
+import { useDataOrdering, useModal, usePagination } from 'Hooks/Common';
 import UIButton from 'Components/UIComponents/UIButton';
 import CardForm from 'Components/CardForm';
 import History from 'Services/History';
-import user from 'Store/ducks/user';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import Slider from 'Components/Slider';
+import { isNotEmpty } from 'Utils/functions';
+import classNames from 'classnames';
+import useApiPlanChange from 'Hooks/Billing/useApiPlanChange';
+import DowngradePlanModal from 'Pages/Settings/Billing/components/DowngradePlanModal';
+import { PlanChangeModal } from 'Components/PlanChangeModal';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
+import { OrderingDirection } from 'Interfaces/Common';
+import { User } from 'Interfaces/User';
 
 const ApiPlansSection = () => {
   const isMobile = useIsMobile();
-  const [getInvoices, isInvoicesLoading] = useInvoicesGet();
-  const [changeApiPlan, isChangePlanLoading] = useApiPlanChange();
-  const [createCard, isCreateLoading] = useCreateCard();
-  const [getCard, isGettingCard] = useCardGet();
-  const [removeApiPLan, isApiPlanRemoving] = useApiPlanRemove();
+  const user: User = useSelector(selectUser);
+  const billing = useSelector(selectBillingData);
 
-  const cardType = useSelector(selectCardType);
-  const cardInitialValues = useSelector(selectCardFormValues);
+  const [getInvoices, isInvoicesLoading] = useInvoicesGet();
+  const [changeApiPlan, isApiPlanChanging] = useApiPlanChange();
+  const [getCard] = useCardGet();
   const userApiSubscription = useSelector(selectApiSubscriptionInfo);
   const userApiPlan = useSelector(selectApiPlan);
   const invoices = useSelector(selectInvoices);
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | undefined>();
+  const cardInitialValues = useSelector(selectCardFormValues);
 
   const [selectedPlanDuration, setSelectedPlanDuration] = useState(
-    userApiPlan.duration || PlanDurations.MONTHLY,
+    (userApiPlan.duration !== PlanDurations.FOREVER && userApiPlan.duration) ||
+      PlanDurations.MONTHLY,
   );
   const [planToChange, setPlanToUpgrade] = useState<ApiPlan>({
     type: ApiPlanTypes.FREE,
     duration: PlanDurations.MONTHLY,
     title: 'Free',
   });
+  const { requestOrdering, orderingConfig } = useDataOrdering(invoices, {
+    key: 'createdAt',
+    direction: OrderingDirection.DESC,
+  });
+  const [paginationProps, setPageNumber] = usePagination({
+    paginationSelector: selectInvoicesPaginationData,
+    itemsLimit: 5,
+  });
 
   const isAppSumo =
     userApiPlan.type === ApiPlanTypes.APPSUMO_FULL ||
     userApiPlan.type === ApiPlanTypes.APPSUMO_STANDARD;
 
-  const isAppSumoOrFree = isAppSumo || userApiPlan.type === ApiPlanTypes.FREE;
+  const isLtd = !!user.ltdTierId && userApiPlan.type === ApiPlanTypes.LTD_API_PLAN;
+
+  const isTitaniumCustom =
+    userApiPlan.type === ApiPlanTypes.TITANIUM &&
+    userApiPlan.duration === PlanDurations.FOREVER;
+
+  const isAppSumoOrFree = isAppSumo || isLtd || userApiPlan.type === ApiPlanTypes.FREE;
 
   const currentPlanItems = apiPlanItems[selectedPlanDuration];
 
@@ -81,104 +99,153 @@ const ApiPlansSection = () => {
 
   const handleInvoicesGet = useCallback(async () => {
     try {
-      await getInvoices(InvoiceTypes.API);
+      await getInvoices({
+        types: [InvoiceTypes.API],
+        page: paginationProps.pageNumber + 1,
+        limit: paginationProps.itemsLimit,
+        orderingKey: orderingConfig.key,
+        orderingDirection: orderingConfig.direction.toUpperCase(),
+      });
+    } catch (error) {
+      Toast.handleErrors(error);
     }
-    //@ts-ignore
-    catch (error:any) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paginationProps.itemsLimit, paginationProps.pageNumber, orderingConfig]);
+
+  const handleCardGet = useCallback(async () => {
+    try {
+      await getCard(undefined);
+    } catch (error) {
       Toast.handleErrors(error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleRemovePlan = useCallback(async () => {
-    try {
-      await removeApiPLan(undefined);
-      Toast.success('Subscription successfully removed');
-    }
-    //@ts-ignore
-    catch (error:any) {
-      Toast.handleErrors(error);
-    }
-  }, [removeApiPLan]);
-
   const handleChangePlan = useCallback(
-    async (payload: ApiPlanChangePayload) => {
+    async (payload: PlanChangePayload) => {
       try {
-        await changeApiPlan(payload);
-      }
-      //@ts-ignore
-      catch (error:any) {
+        const response = await changeApiPlan({
+          couponId: appliedCoupon?.id,
+          ...payload,
+        } as ApiPlanChangePayload);
+
+        if (isNotEmpty(response)) {
+          Toast.success('Api plan have been upgraded');
+        }
+      } catch (error) {
         Toast.handleErrors(error);
       }
     },
-    [changeApiPlan],
+    [appliedCoupon, changeApiPlan],
   );
 
-  const handlePaySubmit = useCallback(
-    async (values: CardFormValues) => {
-      try {
-        const { type, duration } = planToChange;
+  const handleUpdateCoupon = useCallback(coupon => setAppliedCoupon(coupon), []);
+  const handleClearCoupon = useCallback(() => setAppliedCoupon(undefined), []);
 
-        await createCard(values);
-        await handleChangePlan({ type, duration });
-      }
-      //@ts-ignore
-      catch (error:any) {
-        Toast.handleErrors(error);
-      }
-    },
-    [createCard, handleChangePlan, planToChange],
-  );
-
-  const [showPayModal, hideModal] = useModal(
+  const [showPromoCodeModal, hidePromoCodeModal] = useModal(
     () => (
-      <PayModal
-        onSubmit={handlePaySubmit}
-        isLoading={isCreateLoading || isChangePlanLoading}
+      <PromoCodeModal
+        onClose={hidePromoCodeModal}
         plan={planToChange}
-        onClose={hideModal}
+        onUpdateCoupon={handleUpdateCoupon}
       />
     ),
-    [planToChange, isCreateLoading, cardInitialValues],
+    [planToChange],
+  );
+
+  const handleRenewPlan = useCallback(async () => {
+    try {
+      await changeApiPlan({ type: userApiPlan.type, duration: userApiPlan.duration });
+      Toast.success('Api plan has been renew');
+    } catch (err) {
+      Toast.handleErrors(err);
+    }
+  }, [changeApiPlan, userApiPlan.duration, userApiPlan.type]);
+
+  const [showDowngradePlanModal, hideDowngradePlanModal] = useModal(
+    () => (
+      <DowngradePlanModal
+        onClose={hideDowngradePlanModal}
+        plan={planToChange}
+        isLoading={isApiPlanChanging}
+        nextBillingDate={
+          new Date((userApiSubscription as ApiSubscription).nextBillingDate)
+        }
+        onDowngrade={async () => {
+          await handleChangePlan({
+            type: planToChange.type,
+            duration: planToChange.duration,
+          });
+          hideDowngradePlanModal();
+        }}
+      />
+    ),
+    [planToChange, handleChangePlan, userApiSubscription],
+  );
+
+  const handlePlanDurationChange = useCallback(
+    (duration: PlanDurations) => {
+      duration !== PlanDurations.FOREVER && setSelectedPlanDuration(duration);
+      setPlanToUpgrade({
+        ...planToChange,
+        duration,
+      });
+    },
+    [planToChange],
   );
 
   const [showChangeApiPlanModal, hideChangePlanModal] = useModal(
     () => (
-      <ConfirmModal
+      <PlanChangeModal
+        onChangePlan={handleChangePlan}
+        targetPlan={planToChange}
+        sourcePlan={billing?.apiSubscription?.apiPlan || user.apiSubscription.apiPlan}
+        onPromoAdd={showPromoCodeModal}
+        onPromoClear={handleClearCoupon}
         onClose={hideChangePlanModal}
-        isCancellable
-        confirmButtonProps={{
-          isLoading: isChangePlanLoading,
-          disabled: isChangePlanLoading,
-          priority: 'primary',
-          handleClick: async () => {
-            await handleChangePlan({
-              type: planToChange.type,
-              duration: planToChange.duration,
-            });
-            hideChangePlanModal();
-          },
-          title: `${
-            userApiPlanPriority >
-            apiPlanPriorityByDuration[planToChange.duration][planToChange.type]
-              ? 'Downgrade'
-              : 'Upgrade'
-          } Plan`,
-        }}
-        onCancel={hideChangePlanModal}
-      >
-        <div className="billing__plan-modal">
-          <div className="billing__plan-modal-title">{`Change plan to ${planToChange.title}`}</div>
-          <div className="billing__plan-modal-subtitle">
-            Do you want to change your plan to {planToChange.title}?
-          </div>
-        </div>
-      </ConfirmModal>
+        onSelectedDurationChange={handlePlanDurationChange}
+        cardInitialValues={cardInitialValues}
+        isLoading={isApiPlanChanging}
+        appliedCouponId={appliedCoupon?.id}
+      />
     ),
-    [userApiPlan.type, userApiPlan.duration, planToChange, cardInitialValues],
+    [userApiPlan, planToChange, changeApiPlan, isApiPlanChanging],
+  );
+
+  const checkIfDowngrade = useCallback(
+    (type: ApiPlanTypes, duration: PlanDurations) => {
+      if (type === ApiPlanTypes.FREE) {
+        return true;
+      }
+
+      if (userApiPlan.type === ApiPlanTypes.TITANIUM && type !== ApiPlanTypes.TITANIUM) {
+        return true;
+      }
+
+      if (userApiPlan.type === ApiPlanTypes.PLATINUM && type === ApiPlanTypes.GOLD) {
+        return true;
+      }
+
+      if (
+        userApiPlan.duration === PlanDurations.ANNUALLY &&
+        duration !== PlanDurations.ANNUALLY
+      ) {
+        return true;
+      }
+    },
+    [userApiPlan.duration, userApiPlan.type],
   );
 
   const openModal = useCallback(
+    async newPlan => {
+      return checkIfDowngrade(newPlan.type, newPlan.duration)
+        ? showDowngradePlanModal()
+        : showChangeApiPlanModal();
+    },
+    [checkIfDowngrade, showChangeApiPlanModal, showDowngradePlanModal],
+  );
+
+  const handleUpgradeApiPlanClick = useCallback(
     async newPlan => {
       setPlanToUpgrade({
         type: newPlan.type,
@@ -186,65 +253,22 @@ const ApiPlansSection = () => {
         title: newPlan.title,
       });
 
-      if (!cardInitialValues && newPlan.type !== ApiPlanTypes.FREE) {
-        showPayModal();
-      } else {
-        showChangeApiPlanModal();
-      }
+      openModal(newPlan);
     },
-    [cardInitialValues, showChangeApiPlanModal, showPayModal],
-  );
-
-  const handleGetCard = useCallback(async () => {
-    try {
-      await getCard(undefined);
-    }
-    //@ts-ignore
-    catch (error:any) {
-      if (error.statusCode !== HttpStatus.NOT_FOUND) {
-        Toast.handleErrors(error);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [showSubscriptionCancelModal, hideSubscriptionCancelModal] = useModal(
-    () => (
-      <ConfirmModal
-        onClose={hideSubscriptionCancelModal}
-        isCancellable
-        confirmButtonProps={{
-          isLoading: isApiPlanRemoving,
-          disabled: isApiPlanRemoving,
-          priority: 'primary',
-          handleClick: async () => {
-            await handleRemovePlan();
-            hideSubscriptionCancelModal();
-          },
-          title: 'Cancel Subscription',
-        }}
-        onCancel={hideSubscriptionCancelModal}
-      >
-        <div className="billing__plan-modal">
-          <div className="billing__plan-modal-title">Cancel API Plan</div>
-          <div className="billing__plan-modal-subtitle">
-            Do you want to cancel API plan?
-          </div>
-        </div>
-      </ConfirmModal>
-    ),
-    [handleRemovePlan, isApiPlanRemoving],
+    [openModal],
   );
 
   useEffect(() => {
+    handleCardGet();
     handleInvoicesGet();
-    handleGetCard();
-  }, [handleGetCard, handleInvoicesGet]);
+  }, [handleCardGet, handleInvoicesGet]);
 
   return (
     <div className="api-billing">
       <div className={`api-billing__header${isMobile ? '--mobile' : ''}`}>
-        <div className="api-billing__title">Choose your Signaturely API plan</div>
+        <div className="api-billing__title" id="api-billing__title">
+          Choose your Signaturely API plan
+        </div>
         <div className={`api-billing__select-duration${isMobile ? '--mobile' : ''}`}>
           <div className="api-billing__select-duration-item">
             <DurationSwitcher
@@ -273,11 +297,14 @@ const ApiPlansSection = () => {
                   apiPlanPriorityByDuration[item.duration][item.type];
                 return (
                   <ApiPlanCard
+                    isRecuringStoped={!userApiSubscription?.neverExpires}
+                    handleRenew={handleRenewPlan}
                     key={item.title}
                     item={item}
                     isCurrent={isCurrent}
                     presentRequestUsage={
-                      isCurrent || (item.type === ApiPlanTypes.GOLD && isAppSumo)
+                      isCurrent ||
+                      (item.type === ApiPlanTypes.GOLD && (isAppSumo || isLtd))
                     }
                     presentTestRequestUsage={
                       isCurrent || (item.type === ApiPlanTypes.GOLD && isAppSumoOrFree)
@@ -285,16 +312,23 @@ const ApiPlansSection = () => {
                     presentTemplateUsage={
                       isCurrent || (item.type === ApiPlanTypes.GOLD && isAppSumoOrFree)
                     }
-                    onUpgrade={() => openModal(item)}
+                    onUpgrade={() => handleUpgradeApiPlanClick(item)}
                     buttonText={`${
                       userApiPlanPriority >
                       apiPlanPriorityByDuration[item.duration][item.type]
                         ? 'Select'
                         : 'Upgrade'
                     }`}
-                    testRequestsMonthlyUsed={userApiSubscription?.testRequestsMonthlyUsed}
-                    requestsUsed={userApiSubscription?.requestsMonthlyUsed}
+                    testRequestsMonthlyUsed={
+                      userApiPlan.requestLimit -
+                      (userApiSubscription?.testRequestsMonthlyUsed || 0)
+                    }
+                    requestsUsed={
+                      (userApiSubscription?.requestLimit || userApiPlan.requestLimit) -
+                      (userApiSubscription?.requestsMonthlyUsed || 0)
+                    }
                     templatesUsed={userApiSubscription?.templatesCount}
+                    isTitaniumCustom={isTitaniumCustom}
                   />
                 );
               })}
@@ -307,6 +341,8 @@ const ApiPlansSection = () => {
                   apiPlanPriorityByDuration[item.duration][item.type];
                 return (
                   <ApiPlanCard
+                    isRecuringStoped={!userApiSubscription?.neverExpires}
+                    handleRenew={handleRenewPlan}
                     key={item.title}
                     item={item}
                     isCurrent={isCurrent}
@@ -319,30 +355,53 @@ const ApiPlansSection = () => {
                     presentTemplateUsage={
                       isCurrent || (item.type === ApiPlanTypes.GOLD && isAppSumoOrFree)
                     }
-                    onUpgrade={() => openModal(item)}
+                    onUpgrade={() => handleUpgradeApiPlanClick(item)}
                     buttonText={`${
                       userApiPlanPriority >
                       apiPlanPriorityByDuration[item.duration][item.type]
                         ? 'Select'
                         : 'Upgrade'
                     }`}
-                    testRequestsMonthlyUsed={userApiSubscription?.testRequestsMonthlyUsed}
-                    requestsUsed={userApiSubscription?.requestsMonthlyUsed}
+                    testRequestsMonthlyUsed={
+                      userApiPlan.requestLimit -
+                      (userApiSubscription?.testRequestsMonthlyUsed || 0)
+                    }
+                    requestsUsed={
+                      (userApiSubscription?.requestLimit || userApiPlan.requestLimit) -
+                      (userApiSubscription?.requestsMonthlyUsed || 0)
+                    }
                     templatesUsed={userApiSubscription?.templatesCount}
+                    isTitaniumCustom={isTitaniumCustom}
                   />
                 );
               })}
             </Slider>
           )}
         </div>
-        {isAppSumoOrFree && (
-          <div className="api-billing__extra-plan">
-            <div className="api-billing__extra-plan-text">
+        {(isAppSumoOrFree || isTitaniumCustom) && (
+          <div className={classNames('api-billing__extra-plan', { mobile: isMobile })}>
+            <div
+              className={classNames('api-billing__extra-plan-text', {
+                mobile: isMobile,
+              })}
+            >
               <h2 className="api-billing__extra-plan-title">
-                You are currently in the {userApiPlan.name} plan
+                You are currently in the{' '}
+                {isLtd ? `${userApiPlan.name}` : `${userApiPlan.name} plan`}
               </h2>
               <div className="settings__text settings__text--grey">
-                {nonPayedPlansDescription[userApiPlan.type]}
+                {isTitaniumCustom ? (
+                  <>
+                    This plan includes all Titanium Plan features but has a limited number
+                    of API Signature Requests with an indefinite validity. You have
+                    <b> {userApiSubscription?.requestLimit}</b> API Signature Requests
+                    left. If you want more API Requests or want to switch to another plan,
+                    please contact us. Note that if you switch to another plan, your API
+                    Requests will be lost.
+                  </>
+                ) : (
+                  nonPayedPlansDescription[userApiPlan.type]
+                )}
               </div>
             </div>
             {isAppSumo && (
@@ -350,7 +409,7 @@ const ApiPlansSection = () => {
                 priority="primary"
                 className="api-billing__extra-plan-button"
                 handleClick={() => {
-                  History.push('/settings/billing');
+                  History.push(AuthorizedRoutePaths.SETTINGS_BILLING);
                 }}
                 title="View AppSumo Plan"
               />
@@ -363,24 +422,17 @@ const ApiPlansSection = () => {
           className={`billing__card settings__block--small${isMobile ? ' mobile' : ''}`}
         >
           <h1 className="settings__title">Card Details</h1>
-          <CardForm
-            isLoading={isGettingCard}
-            cardType={cardType}
-            cardInitialValues={cardInitialValues}
-            extraButtonRenderProps={() => (
-              <UIButton
-                priority="secondary"
-                handleClick={showSubscriptionCancelModal}
-                title="Cancel Plan"
-                disabled={userApiPlan.type === ApiPlanTypes.FREE || isApiPlanRemoving}
-                isLoading={isApiPlanRemoving}
-              />
-            )}
-          />
+          <CardForm />
         </div>
         <BillingDetails />
       </div>
-      <InvoiceTable invoiceItems={invoices} isLoading={isInvoicesLoading} />
+      <InvoiceTable
+        invoiceItems={invoices}
+        isLoading={isInvoicesLoading}
+        requestOrdering={requestOrdering}
+        paginationProps={paginationProps}
+        setPageNumber={setPageNumber}
+      />
     </div>
   );
 };

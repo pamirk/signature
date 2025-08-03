@@ -1,5 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import DayPicker, { RangeModifier, DateUtils } from 'react-day-picker';
+import DayPicker, {
+  RangeModifier,
+  DateUtils,
+  DayModifiers,
+  Modifier,
+} from 'react-day-picker';
 import { ReactSVG } from 'react-svg';
 import useDropdown from 'use-dropdown';
 import classNames from 'classnames';
@@ -12,12 +17,16 @@ import useIsMobile from 'Hooks/Common/useIsMobile';
 
 const weekdaysShort = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-interface UIDatePickerProps {
+export interface UIDatePickerProps {
   onDateSelect?: (date: Date) => void;
   onDateRangeSelect?: (dateRange: RangeModifier) => void;
   position?: 'right' | 'left';
   value?: RangeModifier | Date;
+  placeholder?: string;
   onCancel?: () => void;
+  disabled?: boolean;
+  disabledDays?: Modifier | Modifier[];
+  fromMonth?: Date;
 }
 
 const isDateRange = (date: RangeModifier | Date): date is RangeModifier => {
@@ -33,7 +42,11 @@ const UIDatePicker = ({
   onDateRangeSelect,
   position = 'left',
   value,
+  placeholder,
   onCancel,
+  disabled,
+  disabledDays,
+  fromMonth,
 }: UIDatePickerProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedDateRange, setSelectedDateRange] = useState<RangeModifier>();
@@ -67,7 +80,11 @@ const UIDatePicker = ({
   };
 
   const handleDayClick = useCallback(
-    (day: Date) => {
+    (day: Date, { disabled }: DayModifiers) => {
+      if (disabled) {
+        return;
+      }
+
       if (!onDateRangeSelect) {
         return setSelectedDate(day);
       }
@@ -93,13 +110,13 @@ const UIDatePicker = ({
     value &&
     (isDate(value)
       ? value.toLocaleDateString()
-        //@ts-ignore
       : `${value.from.toLocaleDateString()} - ${value.to.toLocaleDateString()}`);
   const rangeDays = selectedDateRange
     ? [selectedDateRange.from, selectedDateRange.to]
     : [selectedDate];
-  const modifiers: any = {
+  const modifiers = {
     highlighted: [...rangeDays],
+    disabled: disabledDays,
     inRange: selectedDateRange,
     saturday: { daysOfWeek: [6] },
     sunday: { daysOfWeek: [0] },
@@ -108,9 +125,16 @@ const UIDatePicker = ({
 
   return (
     <div className="DayPickerContainer" ref={containerRef}>
-      <div className="DayPickerContainer__wrapper" onClick={handleOpenClick}>
+      <div
+        className={classNames('DayPickerContainer__wrapper', {
+          'DayPickerContainer__wrapper--disabled': disabled,
+        })}
+        onClick={handleOpenClick}
+      >
         <ReactSVG src={DatePickerIcon} className="DayPickerContainer__icon" />
-        <p className="dropDownUser__trigger-name">{currentValue || 'Select date'}</p>
+        <p className="dropDownUser__trigger-name">
+          {currentValue || placeholder || 'Select date'}
+        </p>
         <ReactSVG
           src={ArrowIcon}
           className={classNames('DayPickerContainer__close-button', {
@@ -133,6 +157,7 @@ const UIDatePicker = ({
             />
             <DayPicker
               modifiers={modifiers}
+              fromMonth={fromMonth}
               weekdaysShort={weekdaysShort}
               renderDay={(day, modifiers) => (
                 <DayElement

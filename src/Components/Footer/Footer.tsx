@@ -5,7 +5,10 @@ function Footer() {
 
   return (
     <footer className="footer">
-      Developed by&nbsp; <em> PK </em>
+      © {currentYear} Signaturely |
+      <a href="https://signaturely.com/terms/" target="_blank" rel="noopener noreferrer">
+        Terms and Conditions
+      </a>
     </footer>
   );
 }

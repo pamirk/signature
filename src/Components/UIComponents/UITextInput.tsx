@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { ReactSVG } from 'react-svg';
 import { UITextFieldProps } from './interfaces/UITextField';
@@ -6,6 +6,8 @@ import { UITextFieldProps } from './interfaces/UITextField';
 export type UITextInputProps = UITextFieldProps<HTMLInputElement> & {
   wrapperClassName?: string;
   inputClassName?: string;
+  onIconFocus?: (state: boolean) => void;
+  iconFocusState?: boolean;
 };
 
 function UITextInput(props: UITextInputProps, ref) {
@@ -28,12 +30,16 @@ function UITextInput(props: UITextInputProps, ref) {
     wrapperClassName,
     inputClassName,
     readOnly,
+    onIconFocus,
+    iconFocusState,
+    autoComplete,
   } = props;
 
   return (
     <div className={classNames('form__input-wrapper', wrapperClassName)}>
       <input
         type={type}
+        autoComplete={autoComplete}
         className={classNames(inputClassName, {
           form__input: !hidden,
           'form__input--error': error,
@@ -55,9 +61,13 @@ function UITextInput(props: UITextInputProps, ref) {
         readOnly={readOnly}
       />
       {icon && (
-        <div className="form__input-icon">
-          <ReactSVG src={icon} />
-        </div>
+        <ReactSVG
+          src={icon}
+          onMouseEnter={() => onIconFocus && onIconFocus(true)}
+          onMouseLeave={() => onIconFocus && onIconFocus(false)}
+          onClick={() => onIconFocus && onIconFocus(!iconFocusState)}
+          className="form__input-icon"
+        />
       )}
     </div>
   );

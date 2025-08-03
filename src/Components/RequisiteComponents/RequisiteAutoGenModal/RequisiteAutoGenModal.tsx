@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import uuid from 'uuid/v4';
 import { fontFamilyByValue } from 'Services/Fonts';
@@ -16,6 +16,7 @@ import UICheckbox from 'Components/UIComponents/UICheckbox';
 import UIButton from 'Components/UIComponents/UIButton';
 
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
+import { emptyString } from 'Utils/validation';
 
 const textFontSize = 300;
 
@@ -61,7 +62,7 @@ function RequisiteAutoGenModal({
         ];
         Toast.success(
           `${
-            requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initial'
+            requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initials'
           } created successfully`,
         );
         return requisites;
@@ -77,6 +78,12 @@ function RequisiteAutoGenModal({
       const id: Requisite['id'] = uuid();
       const siblingId: Requisite['id'] = uuid();
 
+      const error = emptyString(requisiteValue, 'Requisite field');
+
+      if (error) {
+        return Toast.error(error);
+      }
+
       const requisitesPayload = await createRequisitesPayload([
         {
           id,
@@ -91,7 +98,10 @@ function RequisiteAutoGenModal({
             requisiteType === RequisiteType.SIGN
               ? RequisiteType.INITIAL
               : RequisiteType.SIGN,
-          value: siblingRequisiteValue,
+          value:
+            siblingRequisiteValue && siblingRequisiteValue !== ''
+              ? siblingRequisiteValue
+              : requisiteValue,
         },
       ]);
 
@@ -119,6 +129,10 @@ function RequisiteAutoGenModal({
     requisiteValue,
   ]);
 
+  useEffect(() => {
+    document.getElementById('requisiteText')?.focus();
+  }, []);
+
   return (
     <div className="requisiteModal">
       <div className="requisiteModal__inner">
@@ -134,6 +148,7 @@ function RequisiteAutoGenModal({
           <div>
             <div className="requisiteModal__area requisiteModal__area--type">
               <input
+                id="requisiteText"
                 type="text"
                 className="requisiteModal__type-input"
                 value={requisiteValue}

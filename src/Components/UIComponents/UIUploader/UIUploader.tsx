@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import { useDropzone } from 'react-dropzone';
 import classNames from 'classnames';
-import * as _ from 'lodash';
+import { values, uniq } from 'lodash';
 import { IntegrationTypes } from 'Interfaces/Integration';
 import { lessThan40MB } from 'Utils/validation';
 import Toast from 'Services/Toast';
@@ -17,7 +17,7 @@ import Cancel from 'Assets/images/icons/cancel.svg';
 import { useSelector } from 'react-redux';
 import { selectUserIntegrations } from 'Utils/selectors';
 
-const defaultFormats = _.uniq(_.values(MIME_TYPES)).join(',');
+const defaultFormats = uniq(values(MIME_TYPES)).join(',');
 
 interface UIUploaderProps {
   importServices?: Array<IntegrationTypes>;
@@ -86,6 +86,7 @@ function UIUploader({
   const handleCloudFilePick = useCallback(
     (file: File) => {
       setFilename(file.name);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       onUpload && onUpload(file);
     },
     [onUpload],
@@ -186,7 +187,7 @@ function UIUploader({
           </div>
           {uploadProgress !== 0 && !isFinished && (
             <div className="upload__progress-bar">
-              <UIProgressBar percentage={uploadProgress} />
+              <UIProgressBar percent={uploadProgress} />
             </div>
           )}
         </div>

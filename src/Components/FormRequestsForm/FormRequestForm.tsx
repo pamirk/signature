@@ -2,7 +2,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import arrayMutators from 'final-form-arrays';
 import { Form, FormRenderProps } from 'react-final-form';
-import _ from 'lodash';
+import { orderBy } from 'lodash';
 import { useModal } from 'Hooks/Common';
 import { selectDocument } from 'Utils/selectors';
 import {
@@ -20,6 +20,7 @@ import { DocumentValues, Document } from 'Interfaces/Document';
 import { DocumentForm, SuccessSendModal, ValidationModal } from 'Components/DocumentForm';
 import { TemplateUpgradeModal } from 'Components/UpgradeModal';
 import { RequestErrorTypes } from 'Interfaces/Common';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface TemplateFormProps {
   initialValues: DocumentValues;
@@ -77,11 +78,11 @@ const FormRequestForm = ({ initialValues, sourceTemplateId }: TemplateFormProps)
         isTemplate
         onClose={() => {
           closeSuccessModal();
-          History.push('/form-requests');
+          History.push(AuthorizedRoutePaths.FORM_REQUESTS);
         }}
         onConfirm={() => {
           closeSuccessModal();
-          History.push('/form-requests');
+          History.push(AuthorizedRoutePaths.FORM_REQUESTS);
         }}
         document={document as Document}
       />
@@ -121,15 +122,13 @@ const FormRequestForm = ({ initialValues, sourceTemplateId }: TemplateFormProps)
           await mergeTemplate({ sourceTemplateId, templateId: scopedDocument.id });
           Toast.success('Form saved');
 
-          return History.push('/form-requests');
+          return History.push(AuthorizedRoutePaths.FORM_REQUESTS);
         }
 
         await activateTemplate({ documentId: scopedDocument.id });
 
         return openSuccessModal();
-      }
-      //@ts-ignore
-      catch (error:any) {
+      } catch (error) {
         if (error.type === RequestErrorTypes.QUOTA_EXCEEDED) {
           return openUpgradeModal();
         }
@@ -164,7 +163,7 @@ const FormRequestForm = ({ initialValues, sourceTemplateId }: TemplateFormProps)
     return {
       ...initialValues,
       ...restDocument,
-      signers: _.orderBy(documentSigners, 'order', 'asc'),
+      signers: orderBy(documentSigners, 'order', 'asc'),
     } as DocumentValues;
   }, [initialValues, document]);
 
@@ -179,7 +178,6 @@ const FormRequestForm = ({ initialValues, sourceTemplateId }: TemplateFormProps)
         onSubmit={onSubmit}
         mutators={{ ...arrayMutators }}
         render={(renderProps: FormRenderProps<DocumentValues>) => (
-            //@ts-ignore
           <DocumentForm
             {...renderProps}
             onDocumentCreate={setDocumentId}

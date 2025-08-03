@@ -7,6 +7,7 @@ interface DeleteModalProps extends UIModalProps {
   onClose: () => void;
   onConfirm: () => void;
   deleteTitle?: string;
+  cancelTitle?: string;
   className?: string;
 }
 
@@ -15,6 +16,7 @@ const DeleteModal = ({
   onConfirm,
   children,
   deleteTitle = 'Yes, Delete',
+  cancelTitle,
   ...modalProps
 }: DeleteModalProps) => {
   return (
@@ -28,7 +30,12 @@ const DeleteModal = ({
           title={deleteTitle}
         />
       )}
-      isCancellable={false}
+      cancelComponent={() => (
+        <div className="documents__deleteModal--cancel" onClick={onClose}>
+          {cancelTitle}
+        </div>
+      )}
+      isCancellable={!!cancelTitle}
       isOverlayTransparent={true}
       {...modalProps}
     >

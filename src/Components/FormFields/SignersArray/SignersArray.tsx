@@ -1,10 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { FieldArrayRenderProps } from 'react-final-form-arrays';
 import classNames from 'classnames';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ReactSVG } from 'react-svg';
-import _ from 'lodash';
-import { Signer } from 'Interfaces/Document';
+import { maxBy } from 'lodash';
+import { InteractExtraValues, Signer } from 'Interfaces/Document';
 import { moveArrayItem } from 'Utils/functions';
 
 import { UIAddButton } from 'Components/UIComponents/UIAddButton';
@@ -12,6 +12,12 @@ import { UIAddButton } from 'Components/UIComponents/UIAddButton';
 import CircleClose from 'Assets/images/icons/circle-close.svg';
 import DraggableIcon from 'Assets/images/icons/draggable-icon.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import { checkSignersLimit } from 'Utils/validation';
+import Toast from 'Services/Toast';
+import { useSelector } from 'react-redux';
+import { selectUser, selectUserPlan } from 'Utils/selectors';
+import { User } from 'Interfaces/User';
+import { PlanTypes } from 'Interfaces/Billing';
 
 interface IsDepetablePredicateArgument {
   itemIndex: number;
@@ -19,41 +25,70 @@ interface IsDepetablePredicateArgument {
 }
 
 interface SignersArrayProps extends FieldArrayRenderProps<Partial<Signer>, HTMLElement> {
-  renderFields?: (name, index) => any;
+  renderFields?: (name: string, index: number) => any;
   addLabel?: string;
   isItemDeletablePredicate?: (arg: IsDepetablePredicateArgument) => boolean;
   isOrdered?: boolean;
+  isOrderedDisabled?: boolean;
   skipFirst?: boolean;
   skipPreparer?: boolean;
   isAdditionDisabled?: boolean;
+  isRemoveDisabled?: boolean;
   withRoles?: boolean;
+  handleSetSignersValues?: (values: InteractExtraValues) => void;
 }
 
 function SignersArray({
   fields,
   withRoles,
   isAdditionDisabled,
+  isRemoveDisabled,
   isOrdered = false,
+  isOrderedDisabled = false,
   renderFields,
   addLabel = 'Add signer',
-  skipFirst = false,
   skipPreparer = true,
   isItemDeletablePredicate,
+  handleSetSignersValues,
 }: SignersArrayProps) {
   const isMobile = useIsMobile();
-  const lastSigner = useMemo(() => _.maxBy(fields.value, 'order') as Partial<Signer>, [
-    fields.value,
+
+  const isAloneSigner = useMemo(
+    () => fields.value.filter(value => value.order && value.order > 0).length === 1,
+    [fields.value],
+  );
+  const lastSigner = useMemo(() => maxBy(fields.value, 'order') as Partial<Signer>, [
+    fields,
   ]);
 
-  const handleSignerAdd = useCallback(
-    () => fields.push({ order: (lastSigner.order || 0) + 1 }),
-    [fields, lastSigner],
+  const userPlan = useSelector(selectUserPlan);
+  const user: User = useSelector(selectUser);
+
+  const handleSignerAdd = useCallback(() => {
+    const checkLimit = checkSignersLimit(fields.value.length);
+    if ((user.isTrialSubscription || userPlan.type === PlanTypes.FREE) && checkLimit) {
+      return Toast.error(checkLimit);
+    }
+    fields.push({ order: Math.max((lastSigner.order || 0) + 1, 1) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields, lastSigner]);
+
+  const handleSignerRemove = useCallback(
+    (index: number) => {
+      for (let i = index + 1; i < fields.value.length; i++) {
+        const { order } = fields.value[i - 1];
+        fields.update(i, { ...fields.value[i], order });
+      }
+
+      fields.remove(index);
+    },
+    [fields],
   );
 
   const handleDragEnd = useCallback(
     ({ source, destination }) => {
       if (destination) {
-        moveArrayItem(fields.value, source.index, destination.index).map(
+        moveArrayItem(fields.value, source.index, destination.index).forEach(
           (value, index) => {
             fields.update(index, { ...value, order: fields.value[index].order });
           },
@@ -63,6 +98,12 @@ function SignersArray({
     [fields],
   );
 
+  useEffect(() => {
+    if (handleSetSignersValues && fields.value)
+      handleSetSignersValues({ signers: fields.value as Signer[], isOrdered: isOrdered });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.value]);
+
   return (
     <div>
       <div>
@@ -70,22 +111,27 @@ function SignersArray({
           <Droppable droppableId="signers">
             {droppableProvided => (
               <ul
-                ref={droppableProvided.innerRef}
                 className="signers__list"
+                ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}
               >
                 {fields.map((name, index) => {
                   const signer = fields.value[index];
 
                   if (signer.isPreparer && skipPreparer) return null;
-                  if (signer.order === 1 && skipFirst) return null;
 
                   return (
                     <Draggable
                       draggableId={`signer_${name}`}
-                      index={index}
+                      index={signer.order}
                       key={name}
-                      isDragDisabled={!isOrdered || !fields.length || fields.length <= 1}
+                      isDragDisabled={
+                        isOrderedDisabled ||
+                        !isOrdered ||
+                        isAloneSigner ||
+                        !fields.length ||
+                        fields.length <= 1
+                      }
                     >
                       {(draggableProvided, snapshot) => (
                         <li
@@ -94,7 +140,7 @@ function SignersArray({
                           {...draggableProvided.draggableProps}
                           {...draggableProvided.dragHandleProps}
                         >
-                          {isOrdered && (
+                          {isOrdered && !isAloneSigner && !isOrderedDisabled && (
                             <div className="signers__item-order">
                               {fields.length && fields.length > 1 && (
                                 <ReactSVG
@@ -124,16 +170,15 @@ function SignersArray({
                             </div>
                           </div>
                           {(!isItemDeletablePredicate ||
-                            isItemDeletablePredicate({ itemIndex: index, fields })) && (
-                            <ReactSVG
-                              src={CircleClose}
-                              draggable={false}
-                              className="signers__remove"
-                              onClick={() => {
-                                fields.remove(index);
-                              }}
-                            />
-                          )}
+                            isItemDeletablePredicate({ itemIndex: index, fields })) &&
+                            !isRemoveDisabled && (
+                              <ReactSVG
+                                src={CircleClose}
+                                draggable={false}
+                                className="signers__remove"
+                                onClick={() => handleSignerRemove(index)}
+                              />
+                            )}
                         </li>
                       )}
                     </Draggable>

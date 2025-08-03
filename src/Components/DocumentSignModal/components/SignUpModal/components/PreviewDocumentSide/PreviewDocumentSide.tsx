@@ -51,7 +51,7 @@ const PreviewDocumentSide = ({
               />
               <div className="successSignUpModal__side-text-wrapper">
                 <p className="successSignUpModal__side-title">
-                  Thanks for Submiting your Document
+                  Thanks for Submitting your Document
                 </p>
                 <p className="successSignUpModal__side-text">
                   You&apos;ll receive a copy in your inbox shortly.

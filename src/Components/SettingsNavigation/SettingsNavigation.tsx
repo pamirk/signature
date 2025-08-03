@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Location } from 'history';
 import classNames from 'classnames';
 import { ReactSVG } from 'react-svg';

@@ -1,3 +1,2 @@
-import Index from "./PlanChangeModal";
-
-export default Index;
+export {default as PlanChangeModal} from  "./PlanChangeModal";
+export {default as LtdPlanChangeModal} from "./LtdPlanChangeModal";

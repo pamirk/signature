@@ -13,6 +13,7 @@ export const calculateSizeRatio = (pdfPageMeta?: PDFPageMetadata | null) => {
 
 export const getMinSize = (type: DocumentFieldTypes) => {
   switch (type) {
+    case DocumentFieldTypes.Name:
     case DocumentFieldTypes.Date: {
       return {
         width: 50,
@@ -36,6 +37,7 @@ export const fieldHasValue = (
     case DocumentFieldTypes.Checkbox: {
       return fieldValues.checked;
     }
+    case DocumentFieldTypes.Name:
     case DocumentFieldTypes.Date:
     case DocumentFieldTypes.Text: {
       return fieldValues.text;

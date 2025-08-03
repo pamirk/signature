@@ -1,4 +1,2 @@
-import DayElement from "./DayElement/DayElement";
-import NavbarElement from "./NavbarElement/NavbarElement";
-
-export { DayElement, NavbarElement };
+export { default as NavbarElement } from './NavbarElement/NavbarElement';
+export { default as DayElement } from './DayElement/DayElement';

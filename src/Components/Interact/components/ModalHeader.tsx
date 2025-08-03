@@ -1,15 +1,12 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
-import { useDocumentFieldHistory } from 'Hooks/DocumentFields';
-
 import UIButton from 'Components/UIComponents/UIButton';
 import ScaleDropDown from './ScaleDropDown';
-
 import NavigateIconLeft from 'Assets/images/icons/navigate-icon-left.svg';
 import NavigateIconRight from 'Assets/images/icons/navigate-icon-right.svg';
 import CopyIcon from 'Assets/images/icons/copy-icon.svg';
 import PasteIcon from 'Assets/images/icons/paste-icon.svg';
-import { DocumentActions } from 'Components/DocumentForm/DocumentForm';
+import { DocumentActions } from 'Interfaces/Document';
 
 export interface ModalHeaderProps {
   onScaleChange: (number) => void;
@@ -21,6 +18,12 @@ export interface ModalHeaderProps {
   onPaste?: () => void;
   submitButtonTitle?: DocumentActions;
   isForm?: boolean;
+  disabled?: boolean;
+  isDisableCancelButton: boolean;
+  redoDocumentFieldAction: () => void;
+  undoDocumentFieldAction: () => void;
+  isNextAvailable: boolean;
+  isPrevAvailable: boolean;
 }
 
 function ModalHeader({
@@ -33,14 +36,13 @@ function ModalHeader({
   onPaste,
   submitButtonTitle = DocumentActions.SEND,
   isForm,
+  disabled,
+  isDisableCancelButton,
+  redoDocumentFieldAction,
+  undoDocumentFieldAction,
+  isNextAvailable,
+  isPrevAvailable,
 }: ModalHeaderProps) {
-  const [
-    redoDocumentFieldAction,
-    undoDocumentFieldAction,
-    isNextAvailable,
-    isPrevAvailable,
-  ] = useDocumentFieldHistory();
-
   return (
     <header className="interactModal__header">
       <h3 className="interactModal__header-title">
@@ -84,13 +86,15 @@ function ModalHeader({
         </div>
       </div>
       <div className="interactModal__header-send">
-        <button className="interactModal__header-cancelButton" onClick={handleClose}>
-          Cancel
-        </button>
+        {!isDisableCancelButton && (
+          <button className="interactModal__header-cancelButton" onClick={handleClose}>
+            Cancel
+          </button>
+        )}
         <UIButton
           priority="primary"
           title={submitButtonTitle}
-          disabled={isSubmitting}
+          disabled={disabled || isSubmitting}
           isLoading={isSubmitting}
           handleClick={handleSubmit}
         />

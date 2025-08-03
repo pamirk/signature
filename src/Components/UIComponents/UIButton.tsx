@@ -5,8 +5,9 @@ import { ButtonHTMLAttributes } from 'react';
 import UISpinner from './UISpinner';
 
 export interface UIButtonProps {
-  priority: 'primary' | 'secondary' | 'red';
+  priority: 'primary' | 'secondary' | 'red' | 'white';
   disabled?: boolean;
+  ariaDisabled?: boolean;
   handleClick?: (...args: any[]) => void;
   title?: string;
   type?: ButtonHTMLAttributes<''>['type'];
@@ -19,6 +20,7 @@ export interface UIButtonProps {
 function UIButton({
   priority,
   disabled = false,
+  ariaDisabled = false,
   handleClick,
   title,
   type = 'button',
@@ -30,6 +32,7 @@ function UIButton({
   const primary = priority === 'primary';
   const secondary = priority === 'secondary';
   const red = priority === 'red';
+  const white = priority === 'white';
 
   return (
     <button
@@ -38,11 +41,13 @@ function UIButton({
         'button--primary': primary,
         'button--secondary': secondary,
         'button--red': red,
+        'button--white': white,
         'button--disabled': disabled,
         'button--loading': isLoading,
       })}
       onClick={handleClick}
-      disabled={disabled}
+      disabled={disabled && !ariaDisabled}
+      aria-disabled={ariaDisabled}
     >
       {isLoading && <UISpinner wrapperClassName="button__spinner" />}
       {leftIcon && <ReactSVG src={leftIcon} className="button__ico" />}

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { ReactSVG } from 'react-svg';
 import { DataLayerAnalytics, FacebookPixel } from 'Services/Integrations';
 import Toast from 'Services/Toast';
-import { useSignUp } from 'Hooks/Auth';
+import { useSignUp, useSignUpConversionSet } from 'Hooks/Auth';
 import SignUpForm from 'Components/AuthForm/SignUpForm';
 
 import Logo from 'Assets/images/logoWhite.svg';
@@ -14,6 +14,7 @@ import {
 import { isNotEmpty } from 'Utils/functions';
 import History from 'Services/History';
 import Bing from 'Services/Integrations/Analytics/Bing';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface SignUpSide {
   onClose: () => void;
@@ -22,6 +23,7 @@ interface SignUpSide {
 
 const SignUpSide = ({ onClose, onSignInClick }: SignUpSide) => {
   const [callSignUp, isLoading] = useSignUp();
+  const signUpConversionSet = useSignUpConversionSet();
 
   const signUp = useCallback(
     async values => {
@@ -34,12 +36,15 @@ const SignUpSide = ({ onClose, onSignInClick }: SignUpSide) => {
           return onClose();
         }
         if (isTwoFactorResponseData(response)) {
-          History.push('/two-factor');
+          History.push(UnauthorizedRoutePaths.TWO_FACTOR);
         }
 
         if (isEmailConfirmationData(response)) {
-          DataLayerAnalytics.fireUnconfirmedRegistrationEvent();
-          History.push('/confirm-account', { confirmationRequired: true });
+          DataLayerAnalytics.fireUnconfirmedRegistrationEvent(response.userId);
+          signUpConversionSet();
+          History.push(UnauthorizedRoutePaths.CONFIRM_ACCOUNT, {
+            confirmationRequired: true,
+          });
         }
 
         if (isUserResponseData(response) && response.isNewUser) {
@@ -50,7 +55,7 @@ const SignUpSide = ({ onClose, onSignInClick }: SignUpSide) => {
         Toast.handleErrors(error);
       }
     },
-    [callSignUp, onClose],
+    [callSignUp, onClose, signUpConversionSet],
   );
 
   return (
@@ -61,7 +66,7 @@ const SignUpSide = ({ onClose, onSignInClick }: SignUpSide) => {
           Try Signaturely for Free
         </div>
         <div className="successSignUpModal__text">
-          Sign up for a FREE Signaturely account today and sign all your documents
+          Sign up for a FREE trial Signaturely account today and sign all your documents
           electronically.
         </div>
         <SignUpForm

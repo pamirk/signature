@@ -30,14 +30,16 @@ export const DateField = ({
   style,
   onFocus,
   onBlur,
-  dateFormat = DateFormats.MM_DD_YYYY,
+  dateFormat,
   fieldColor,
   disabled,
   isInsertable,
   datePipeOptions,
 }: DateFieldProps) => {
   const shadowRef = useRef<HTMLSpanElement>(null);
-  const mask = useMemo(() => dateFormatMasks[dateFormat], [dateFormat]);
+  const mask = useMemo(() => dateFormatMasks[dateFormat || DateFormats.MM_DD_YYYY], [
+    dateFormat,
+  ]);
 
   const changeTextValue = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +87,7 @@ export const DateField = ({
             'fieldDropDown__trigger--disabled': disabled,
           },
         )}
-        placeholder={dateFormat || 'MM/DD/YYYY'}
+        placeholder={dateFormat || 'Date'}
         value={value || ''}
         onChange={changeTextValue}
         disabled={disabled || !isInsertable}

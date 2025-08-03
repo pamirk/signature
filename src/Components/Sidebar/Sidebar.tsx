@@ -7,8 +7,8 @@ import { sidebarItems } from './SidebarItems';
 import SelectIcon from 'Assets/images/icons/select-arrow-icon.svg';
 import { useSelector } from 'react-redux';
 import { selectUserPlan } from 'Utils/selectors';
-import { User } from 'Interfaces/User';
 import { PlanTypes } from 'Interfaces/Billing';
+import classNames from 'classnames';
 
 export interface SidebarProps {
   location: Location;
@@ -21,7 +21,7 @@ function Sidebar({ location }: SidebarProps) {
     <div className="sidebar__wrapper">
       <Accordion className="sidebar__list">
         {sidebarItems.map((item, index) => {
-          const { path, classNameMod, label, icon, subLinks } = item;
+          const { path, classNameMod, label, icon, subLinks, iconClassName } = item;
           const { pathname } = location;
           const isExpanded =
             pathname.startsWith(path) || subLinks.find(i => i.subPath === pathname);
@@ -36,7 +36,10 @@ function Sidebar({ location }: SidebarProps) {
                   className={`sidebar__item-trigger sidebar__item-trigger--${classNameMod}`}
                 >
                   <div className="sidebar__item-trigger-inner">
-                    <ReactSVG src={icon} className="sidebar__item-trigger-icon" />
+                    <ReactSVG
+                      src={icon}
+                      className={classNames('sidebar__item-trigger-icon', iconClassName)}
+                    />
                     {label}
                   </div>
                   {isSubLinks && (
@@ -49,38 +52,40 @@ function Sidebar({ location }: SidebarProps) {
               className="sidebar__item"
               expandedClassName="sidebar__item--expanded"
             >
-              <div className="sidebar__item-link-list">
-                {subLinks.map((item, index) => {
-                  const { subPath, label, status, externalUrl, freePlanSubPath } = item;
-                  const path =
-                    (userPlan.type === PlanTypes.FREE && freePlanSubPath) || subPath;
-                  const className = `sidebar__item-link ${
-                    status
-                      ? `sidebar__item-link-status sidebar__item-link-status--${status}`
-                      : ''
-                  }`;
-                  return externalUrl ? (
-                    <a
-                      key={label}
-                      href={externalUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="sidebar__item-link"
-                    >
-                      {label}
-                    </a>
-                  ) : (
-                    <NavLink
-                      key={index}
-                      to={path}
-                      className={className}
-                      activeClassName="sidebar__item-link--active"
-                    >
-                      {label}
-                    </NavLink>
-                  );
-                })}
-              </div>
+              {!!subLinks.length && (
+                <div className="sidebar__item-link-list">
+                  {subLinks.map((item, index) => {
+                    const { subPath, label, status, externalUrl, freePlanSubPath } = item;
+                    const path =
+                      (userPlan.type === PlanTypes.FREE && freePlanSubPath) || subPath;
+                    const className = `sidebar__item-link ${
+                      status
+                        ? `sidebar__item-link-status sidebar__item-link-status--${status}`
+                        : ''
+                    }`;
+                    return externalUrl ? (
+                      <a
+                        key={label}
+                        href={externalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="sidebar__item-link"
+                      >
+                        {label}
+                      </a>
+                    ) : (
+                      <NavLink
+                        key={index}
+                        to={path}
+                        className={className}
+                        activeClassName="sidebar__item-link--active"
+                      >
+                        {label}
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              )}
             </AccordionItem>
           );
         })}

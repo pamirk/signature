@@ -32,6 +32,7 @@ import {
 import CloseIcon from 'Assets/images/icons/close-icon.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
+import FileResizer from 'react-image-file-resizer';
 
 interface RequisiteModalProps {
   requisiteItem?: Requisite;
@@ -85,6 +86,7 @@ function RequisiteModal({
   const [
     canvasSignRef,
     [imageSignFile, setImageSignFile],
+    [drawnSignFile],
     [requisiteSignValue, setRequisiteSignValue],
     isSignDownloading,
   ] = useRequisitePayloadGet({
@@ -95,6 +97,7 @@ function RequisiteModal({
   const [
     canvasInitialRef,
     [imageInitialFile, setImageInitialFile],
+    [drawnInitialFile],
     [requisiteInitialValue, setRequisiteInitialValue],
     isInitialDownloading,
   ] = useRequisitePayloadGet({
@@ -130,6 +133,10 @@ function RequisiteModal({
         }
         break;
       case RequisiteValueType.DRAW:
+        if (drawnSignFile && drawnInitialFile) {
+          return false;
+        }
+        break;
       case RequisiteValueType.UPLOAD:
         if (imageSignFile && imageInitialFile) {
           return false;
@@ -142,7 +149,9 @@ function RequisiteModal({
   }, [
     activeTab,
     imageInitialFile,
+    drawnInitialFile,
     imageSignFile,
+    drawnSignFile,
     requisiteInitialValue,
     requisiteSignValue,
   ]);
@@ -175,7 +184,7 @@ function RequisiteModal({
 
         Toast.success(
           `${
-            requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initial'
+            requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initials'
           } updated successfully`,
         );
 
@@ -197,7 +206,7 @@ function RequisiteModal({
 
         Toast.success(
           `${
-            requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initial'
+            requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initials'
           } created successfully`,
         );
 
@@ -214,24 +223,32 @@ function RequisiteModal({
       const initialId: Requisite['id'] = initialRequisite?.id || uuid();
       const signId: Requisite['id'] = signRequisite?.id || uuid();
 
+      const signValue =
+        activeTab === RequisiteValueType.TEXT
+          ? requisiteSignValue
+          : activeTab === RequisiteValueType.DRAW
+          ? (drawnSignFile as File)
+          : (imageSignFile as File);
+
+      const initialValue =
+        activeTab === RequisiteValueType.TEXT
+          ? requisiteInitialValue
+          : activeTab === RequisiteValueType.DRAW
+          ? (drawnInitialFile as File)
+          : (imageInitialFile as File);
+
       const requisitesPayload = await createRequisitesPayload([
         {
           id: signId,
           siblingId: initialId,
           type: RequisiteType.SIGN,
-          value:
-            activeTab === RequisiteValueType.TEXT
-              ? requisiteSignValue
-              : (imageSignFile as File),
+          value: signValue,
         },
         {
           id: initialId,
           siblingId: signId,
           type: RequisiteType.INITIAL,
-          value:
-            activeTab === RequisiteValueType.TEXT
-              ? requisiteInitialValue
-              : (imageInitialFile as File),
+          value: initialValue,
         },
       ]);
 
@@ -260,8 +277,10 @@ function RequisiteModal({
     activeTab,
     requisiteSignValue,
     imageSignFile,
+    drawnSignFile,
     requisiteInitialValue,
     imageInitialFile,
+    drawnInitialFile,
     requisiteItem,
     handleRequisitesUpdate,
     handleRequisitesCreate,
@@ -270,15 +289,34 @@ function RequisiteModal({
     requisiteType,
   ]);
 
+  const resizeImage = (file: File) => {
+    return new Promise<File>(resolve => {
+      FileResizer.imageFileResizer(
+        file,
+        1280,
+        1280,
+        'PNG',
+        100,
+        0,
+        file => {
+          resolve(file as File);
+        },
+        'file',
+      );
+    });
+  };
+
   const handleChangeFile = useCallback(
-    (type: RequisiteType) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    (type: RequisiteType) => async (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files.length > 0) {
-        const result = event.target.files[0];
+        let result: File = event.target.files[0];
         if (result.size > maxFileSize) {
           return Toast.error('Max file size is 40MB');
         }
-        if (type === RequisiteType.SIGN) setImageSignFile(result);
-        else setImageInitialFile(result);
+        result = await resizeImage(result);
+        if (type === RequisiteType.SIGN) {
+          setImageSignFile(result);
+        } else setImageInitialFile(result);
       }
     },
     [setImageInitialFile, setImageSignFile],

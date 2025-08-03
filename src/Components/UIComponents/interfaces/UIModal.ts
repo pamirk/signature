@@ -1,10 +1,11 @@
 export interface UIModalProps {
     onClose?: () => void;
-    children?: any;
     className?: string;
     overlayClassName?: string;
     isOverlayTransparent?: boolean
     hideCloseIcon?: boolean
+    shouldCloseOnOverlayClick?: boolean;
+    children?: React.ReactNode;
 }
 
 export interface BaseModalProps {

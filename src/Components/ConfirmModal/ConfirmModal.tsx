@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import UIModal from 'Components/UIComponents/UIModal';
 import UIButton, { UIButtonProps } from 'Components/UIComponents/UIButton';
 import { UIModalProps } from 'Components/UIComponents/interfaces/UIModal';
+import useIsMobile from 'Hooks/Common/useIsMobile';
 
 export interface ConfirmModalProps extends UIModalProps {
   onConfirm?: () => void;
@@ -15,6 +16,7 @@ export interface ConfirmModalProps extends UIModalProps {
   cancelComponent?: React.FunctionComponent;
   buttonsBlockClassName?: string;
   isCancellable?: boolean;
+  footer?: React.ReactNode;
 }
 
 function ConfirmModal({
@@ -30,12 +32,16 @@ function ConfirmModal({
   cancelComponent: CancelComponent,
   buttonsBlockClassName,
   isCancellable = true,
+  footer,
   ...modalProps
 }: ConfirmModalProps) {
+  const isMobile = useIsMobile();
   return (
     <UIModal onClose={onClose} {...modalProps}>
       <div className="confirmModal">
-        <div className="confirmModal__content">{children}</div>
+        <div className={classNames('confirmModal__content', { mobile: isMobile })}>
+          {children}
+        </div>
         <div className={classNames('confirmModal__buttons', buttonsBlockClassName)}>
           <div className="confirmModal__button">
             {ConfirmComponent ? (
@@ -61,6 +67,7 @@ function ConfirmModal({
               />
             ))}
         </div>
+        {footer && <div className="confirmModal__footer">{footer}</div>}
       </div>
     </UIModal>
   );

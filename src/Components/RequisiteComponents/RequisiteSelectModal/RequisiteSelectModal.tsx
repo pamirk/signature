@@ -55,7 +55,7 @@ const RequisiteSelectModal = ({
     availableSignatureTypes[0],
   );
   const requisiteTypeName = useMemo(
-    () => (type === RequisiteType.SIGN ? 'Signature' : 'Initial'),
+    () => (type === RequisiteType.SIGN ? 'Signature' : 'Initials'),
     [type],
   );
   const requisitesSelector = useMemo(
@@ -73,7 +73,7 @@ const RequisiteSelectModal = ({
   );
 
   const requisiteAddTitle = useMemo(() => {
-    return `Create New ${type === RequisiteType.SIGN ? 'Signature' : 'Initial'}`;
+    return `Create New ${type === RequisiteType.SIGN ? 'Signature' : 'Initials'}`;
   }, [type]);
   const defaultValues = useMemo(() => {
     return isCustomCreate

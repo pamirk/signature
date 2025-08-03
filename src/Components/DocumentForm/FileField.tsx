@@ -13,6 +13,7 @@ interface FileFieldProps extends FieldRenderProps<string> {
   disabled?: boolean;
   files?: DocumentItem[];
   onSubmit: () => Promise<void>;
+  onEditTemplate: () => Promise<void>;
   onFileUpload: (file: File) => Promise<void>;
   onUploadCancel: (fileItem: FileItem) => Promise<void>;
   onUploadSuccess?: () => void;
@@ -22,16 +23,20 @@ interface FileFieldProps extends FieldRenderProps<string> {
   isBasedOnTemplate?: boolean;
   onFileReorder: (orders: FileItem[]) => void;
   disableReorder?: boolean;
+  isCleanFileData?: boolean;
+  isShowWarning?: boolean;
 }
 
 function FileField({
   input,
   disabled,
   submitButtonTitle = 'Prepare Doc for Signing',
+  editButtonTitle = 'Edit template',
   onUploadCancel,
   onFileUpload,
   files,
   onSubmit,
+  onEditTemplate,
   isFileProcessed,
   submitting,
   onUploadSuccess = () => {},
@@ -39,6 +44,8 @@ function FileField({
   isBasedOnTemplate,
   onFileReorder,
   disableReorder,
+  isCleanFileData,
+  isShowWarning,
 }: FileFieldProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const { value, onChange } = input;
@@ -53,9 +60,7 @@ function FileField({
 
         setUploadError(null);
         onUploadSuccess();
-      }
-      //@ts-ignore
-      catch (error:any) {
+      } catch (error) {
         setUploadError('Failed to upload');
         onUploadFailure(error);
       }
@@ -74,7 +79,7 @@ function FileField({
             IntegrationTypes.DROPBOX,
             IntegrationTypes.BOX,
           ]}
-          disabled={disabled}
+          disabled={disabled || isBasedOnTemplate}
           onUpload={handleFileUpload}
           onCancel={onUploadCancel}
           isError={!!uploadError}
@@ -86,7 +91,19 @@ function FileField({
           isLoading={submitting}
           onFileReorder={onFileReorder}
           disableReorder={disableReorder}
+          isCleanFileData={isCleanFileData}
         />
+
+        {isShowWarning && (
+          <div className="signTemplate__upload-notice">
+            <p className="signTemplate__upload-notice symbol">*</p>
+            <p className="signTemplate__upload-notice text">
+              To keep your email box tidy, Signaturely only attaches documents under 10Mb
+              as PDF files to the email sent when they get signed. You will still be able
+              to download larger files from the Download link.
+            </p>
+          </div>
+        )}
       </div>
       <div
         className={classNames('signTemplate__templateField-upload-createButton', {
@@ -96,11 +113,25 @@ function FileField({
         <UIButton
           priority="primary"
           title={submitButtonTitle}
-          disabled={!isBasedOnTemplate && (!isFileProcessed || submitting)}
+          disabled={
+            (!isBasedOnTemplate && (!isFileProcessed || submitting)) ||
+            isCleanFileData ||
+            disabled
+          }
           isLoading={submitting}
           rightIcon={Arrow}
           handleClick={onSubmit}
         />
+        {isBasedOnTemplate && (
+          <UIButton
+            priority="primary"
+            title={editButtonTitle}
+            disabled={!isBasedOnTemplate && (!isFileProcessed || submitting)}
+            isLoading={submitting}
+            rightIcon={Arrow}
+            handleClick={onEditTemplate}
+          />
+        )}
       </div>
     </div>
   );

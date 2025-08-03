@@ -12,7 +12,9 @@ interface RequisiteModalUploadProps {
   handleOnClearFile: (requisiteType: RequisiteType) => void;
   handleChangeFile: (
     requisiteType: RequisiteType,
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => string | number | undefined;
+  ) => (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => Promise<string | number | undefined>;
 }
 
 export const RequisiteModalUpload = ({

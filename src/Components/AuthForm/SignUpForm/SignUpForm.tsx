@@ -10,10 +10,12 @@ import { required, email, password } from 'Utils/validation';
 import { composeValidators } from 'Utils/functions';
 import FieldPasswordInput from 'Components/FormFields/FieldPasswordInput';
 import UISpinner from 'Components/UIComponents/UISpinner';
-import { toLowerCase } from 'Utils/formatters';
+import { toLowerCaseAndRemoveEmptyCharacters } from 'Utils/formatters';
 import GoogleLoginForm from '../GoogleLoginForm';
 import History from 'Services/History';
 import { AuthFormProps } from '../interfaces/AuthFormProps';
+import { RoutePaths } from 'Interfaces/RoutePaths';
+import useIsMobile from 'Hooks/Common/useIsMobile';
 
 interface SignUpFormProps extends AuthFormProps {
   isShowFooter?: boolean;
@@ -21,6 +23,7 @@ interface SignUpFormProps extends AuthFormProps {
   fieldClassName?: string;
   onSignInClick?: () => void;
   initialValues?: Partial<SignUpData>;
+  needGoogleAuth?: boolean;
 }
 
 function SignUpForm({
@@ -32,8 +35,10 @@ function SignUpForm({
   onSignInClick,
   isShowFooter = true,
   initialValues,
+  needGoogleAuth = true,
 }: SignUpFormProps) {
-  const navigateToSignIn = useCallback(() => History.push('/'), []);
+  const navigateToSignIn = useCallback(() => History.push(RoutePaths.BASE_PATH), []);
+  const isMobile = useIsMobile();
 
   return (
     <Form
@@ -61,7 +66,7 @@ function SignUpForm({
             className={fieldClassName}
             component={FieldTextInput}
             placeholder="username@gmail.com"
-            parse={toLowerCase}
+            parse={toLowerCaseAndRemoveEmptyCharacters}
             validate={composeValidators<string>(required, email)}
           />
           <Field
@@ -74,7 +79,8 @@ function SignUpForm({
             validate={composeValidators<string>(required, password)}
           />
           <div className="auth__acception">
-            By clicking Create Free Account or Sign Up with Google, I agree to the&nbsp;
+            By clicking Create Account{needGoogleAuth && ' or Sign Up with Google'}, I
+            agree to the&nbsp;
             <a
               className="auth__link"
               href="https://signaturely.com/terms/"
@@ -113,7 +119,7 @@ function SignUpForm({
             ) : (
               <UIButton
                 priority="primary"
-                title="Create free account"
+                title="Create account"
                 handleClick={handleSubmit}
                 type="submit"
                 disabled={pristine || submitting || hasValidationErrors}
@@ -122,10 +128,18 @@ function SignUpForm({
               />
             )}
           </div>
-          {/*<div className="common__or auth__separator">OR</div>
-          <div className="auth__googleButton-wrapper">
-            <GoogleLoginForm onSubmit={onSubmit} buttonLabel="Sign up with Google" />
-          </div>*/}
+          {needGoogleAuth && (
+            <>
+              <div className="common__or auth__separator">OR</div>
+              <div className="auth__googleButton-wrapper">
+                <GoogleLoginForm
+                  onSubmit={onSubmit}
+                  width={isMobile ? 350 : 400}
+                  text={'signup_with'}
+                />
+              </div>
+            </>
+          )}
           {isShowFooter && (
             <>
               <hr className="auth__hr" />

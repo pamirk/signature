@@ -1,54 +1,36 @@
-import React, { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
 import History from 'Services/History';
 
 import UIButton from 'Components/UIComponents/UIButton';
 import UIModal from 'Components/UIComponents/UIModal';
-import { useModal } from 'Hooks/Common';
-import PlanChangeModal from 'Components/PlanChangeModal';
-
-import { selectUser } from 'Utils/selectors';
-import { PlanDurations, PlanTypes } from 'Interfaces/Billing';
-import { User } from 'Interfaces/User';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 import classNames from 'classnames';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 export interface UpgradeModalProps {
   children: React.ReactChild | React.ReactChild[];
   title?: string;
   onClose: () => void;
   onUpgradeClick?: () => void;
+  cancelComponent?: React.FunctionComponent;
 }
 
-const UpgradeModal = ({ onClose, children, title }: UpgradeModalProps) => {
-  const user: User = useSelector(selectUser);
+const UpgradeModal = ({
+  onClose,
+  children,
+  title,
+  onUpgradeClick,
+  cancelComponent: CancelComponent,
+}: UpgradeModalProps) => {
   const isMobile = useIsMobile();
 
-  const [showPlanChangeModal, hidePlanChangeModal] = useModal(() => {
-    return (
-      <PlanChangeModal
-        planDetails={{
-          duration: user.plan.duration,
-          type: PlanTypes.BUSINESS,
-          title: `Business${
-            user.plan.duration === PlanDurations.ANNUALLY ? ' Annually' : ''
-          }`,
-        }}
-        onClose={() => {
-          onClose();
-          hidePlanChangeModal();
-        }}
-      />
-    );
-  });
-
   const handleUpgrade = useCallback(() => {
-    if (user.last4 && user.plan.type === PlanTypes.PERSONAL) {
-      showPlanChangeModal();
+    if (onUpgradeClick) {
+      onUpgradeClick();
     } else {
-      History.push('/settings/billing/plan');
+      History.push(AuthorizedRoutePaths.SETTINGS_BILLING_PLAN);
     }
-  }, [showPlanChangeModal, user.last4, user.plan.type]);
+  }, [onUpgradeClick]);
 
   return (
     <UIModal
@@ -67,6 +49,7 @@ const UpgradeModal = ({ onClose, children, title }: UpgradeModalProps) => {
           title="Upgrade Account"
           handleClick={handleUpgrade}
         />
+        {CancelComponent && <CancelComponent />}
       </div>
     </UIModal>
   );

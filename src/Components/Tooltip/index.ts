@@ -1,5 +1,3 @@
-import Index from "./Tooltip";
-import TooltipBlock from "./TooltipBlock";
-
-export default Index;
-export {TooltipBlock}
+export { default } from './Tooltip';
+export { default as TooltipBlock } from './TooltipBlock';
+export { default as IndependentTooltip } from './IndependentTooltip';

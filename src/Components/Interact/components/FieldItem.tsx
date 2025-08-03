@@ -40,10 +40,18 @@ import UISelect from 'Components/UIComponents/UISelect';
 import { RequisiteSelectModal } from 'Components/RequisiteComponents';
 import { CheckboxField, RequisiteField, DateField, TextFieldSign } from './FieldTypes';
 import FieldItemView from './FieldItemView';
+import NameField from './FieldTypes/NameField';
 
 export enum InteractModes {
   PREPARING = 'preparing',
   SIGNING = 'signing',
+}
+
+export enum FieldModalPosition {
+  BOTTOM = 'bottom',
+  LEFT = 'left',
+  TOP = 'top',
+  TOP_LEFT = 'top-left',
 }
 
 export interface FieldItemProps {
@@ -64,6 +72,8 @@ export interface FieldItemProps {
   onInteract?: (fieldId: DocumentField['id']) => void;
   lastSelectedSignature?: SelectedSignature | null;
   setLastSelectedSignature?: (signature: SelectedSignature) => void;
+  isFontResize?: boolean;
+  selectedScale?: number;
 }
 
 function FieldItem({
@@ -81,6 +91,8 @@ function FieldItem({
   onDocumentFieldUpdate,
   lastSelectedSignature,
   setLastSelectedSignature,
+  isFontResize = true,
+  selectedScale = 1,
 }: FieldItemProps) {
   const {
     id,
@@ -90,6 +102,7 @@ function FieldItem({
     checked,
     height,
     fontFamily,
+    fixedFontSize,
     signerId,
     required,
     style,
@@ -97,6 +110,8 @@ function FieldItem({
     text,
     placeholder,
     requisiteId,
+    createType,
+    minimizeWidth,
   } = field;
   const { isCheckboxType, isRequisiteType } = useMemo(() => {
     const isRequisiteType = isRequisite(type);
@@ -116,6 +131,11 @@ function FieldItem({
   const [dropdownMenuClassName, setDropdownMenuClassName] = useState(
     'fieldDropDown__content-wrapper--bottom',
   );
+
+  const [fieldModalPosition, setFieldModalPosition] = useState<FieldModalPosition>(
+    FieldModalPosition.BOTTOM,
+  );
+
   const requisite: ReturnType<typeof selectRequisite> = useSelector(state =>
     selectRequisite(state, { requisiteId: field.requisiteId || '' }),
   );
@@ -238,17 +258,39 @@ function FieldItem({
       const containerRect = interact.getElementRect(containerRef.current.parentNode);
       const triggerRect = interact.getElementRect(containerRef.current);
       const dropdownMenuRect = interact.getElementRect(dropdownMenuRef.current);
-      const escapeRight = containerRect.right < triggerRect.left + dropdownMenuRect.width;
+      const escapeRight =
+        containerRect.right < triggerRect.left + dropdownMenuRect.width * selectedScale;
       const escapeBottom =
         containerRect.bottom <
-        triggerRect.bottom + dropdownMenuRect.height + 20 * documentScale;
+        triggerRect.bottom + dropdownMenuRect.height * selectedScale + 20 * documentScale;
+
+      const isOverflowX =
+        containerRect.bottom < dropdownMenuRect.height * (1 / selectedScale);
+      const isOverflowY =
+        containerRect.right < dropdownMenuRect.width * (1 / selectedScale);
+
+      const isOverflow = isOverflowX || isOverflowY;
+
+      setFieldModalPosition(
+        (!escapeRight && !escapeBottom) || isOverflow
+          ? FieldModalPosition.BOTTOM
+          : escapeRight && !escapeBottom
+          ? FieldModalPosition.LEFT
+          : escapeBottom && !escapeRight
+          ? FieldModalPosition.TOP
+          : FieldModalPosition.TOP_LEFT,
+      );
 
       setDropdownMenuClassName(
         classNames({
-          'fieldDropDown__content-wrapper--bottom': !escapeRight && !escapeBottom,
-          'fieldDropDown__content-wrapper--left': escapeRight && !escapeBottom,
-          'fieldDropDown__content-wrapper--top': escapeBottom && !escapeRight,
-          'fieldDropDown__content-wrapper--top-left': escapeBottom && escapeRight,
+          'fieldDropDown__content-wrapper--bottom':
+            (!escapeRight && !escapeBottom) || isOverflow,
+          'fieldDropDown__content-wrapper--left':
+            escapeRight && !escapeBottom && !isOverflow,
+          'fieldDropDown__content-wrapper--top':
+            escapeBottom && !escapeRight && !isOverflow,
+          'fieldDropDown__content-wrapper--top-left':
+            escapeBottom && escapeRight && !isOverflow,
         }),
       );
     }
@@ -266,6 +308,8 @@ function FieldItem({
   const toggleFieldChecked = useCallback(() => {
     updateDocumentField({ checked: !checked });
   }, [checked, updateDocumentField]);
+
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const setPrepareInteracting = useCallback(() => {
     const fieldContainer = containerRef.current as HTMLElement;
@@ -325,9 +369,17 @@ function FieldItem({
       .on('resizestart', handleInteraction)
       .on('resizemove', event => {
         Interact.resizeMoveListener(event, documentScale);
-        if ([DocumentFieldTypes.Text, DocumentFieldTypes.Date].includes(type)) {
+        if (
+          isFontResize &&
+          [
+            DocumentFieldTypes.Name,
+            DocumentFieldTypes.Text,
+            DocumentFieldTypes.Date,
+          ].includes(type)
+        ) {
           Interact.rearrangeFontSizeAsync(event.target as HTMLElement, {
-            checkWidth: type === DocumentFieldTypes.Date,
+            checkWidth:
+              type === DocumentFieldTypes.Date || type === DocumentFieldTypes.Name,
             isAsync: type === DocumentFieldTypes.Text,
           });
         }
@@ -351,7 +403,14 @@ function FieldItem({
           },
         } as Parameters<typeof updateDocumentField>[0];
 
-        if ([DocumentFieldTypes.Date, DocumentFieldTypes.Text].includes(type)) {
+        if (
+          isFontResize &&
+          [
+            DocumentFieldTypes.Name,
+            DocumentFieldTypes.Date,
+            DocumentFieldTypes.Text,
+          ].includes(type)
+        ) {
           const fontSize = Interact.getNodeFontSize(event.target);
           updatePayload = {
             ...updatePayload,
@@ -361,6 +420,23 @@ function FieldItem({
               fontSize,
             },
           };
+        }
+
+        if (minimizeWidth && imgRef.current) {
+          const rate = imgRef.current.naturalWidth / imgRef.current.naturalHeight;
+          const minimizedWidth = (height / documentScale) * rate;
+
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          if (minimizedWidth < updatePayload.width!) {
+            updatePayload = {
+              ...updatePayload,
+              width: minimizedWidth,
+              style: {
+                ...updatePayload.style,
+                width: minimizedWidth,
+              },
+            };
+          }
         }
 
         updateDocumentField(updatePayload);
@@ -386,6 +462,7 @@ function FieldItem({
     getRelatedPage,
     handleInteraction,
     isCheckboxType,
+    isFontResize,
     isPreparer,
     isRequisiteType,
     modifyDropDownMenu,
@@ -393,6 +470,8 @@ function FieldItem({
     openRequisiteSelectModal,
     type,
     updateDocumentField,
+    minimizeWidth,
+    imgRef,
   ]);
 
   const handleUpdateRequisisteField = useCallback(() => {
@@ -469,6 +548,21 @@ function FieldItem({
 
   const renderFieldTrigger = useCallback(() => {
     switch (type) {
+      case DocumentFieldTypes.Name: {
+        return (
+          <NameField
+            value={text}
+            signer={signer}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onFieldDataChange={updateDocumentField}
+            style={textStyles}
+            fieldColor={fieldColor}
+            isInsertable={isPreparer}
+            disabled={isDragging || disabled}
+          />
+        );
+      }
       case DocumentFieldTypes.Signature:
       case DocumentFieldTypes.Initials: {
         return (
@@ -482,6 +576,8 @@ function FieldItem({
             fieldColor={fieldColor}
             signer={signer}
             requisite={requisite}
+            createType={createType}
+            imgRef={imgRef}
             updateField={
               interactMode === InteractModes.PREPARING
                 ? updateDocumentRequisiteField
@@ -504,10 +600,12 @@ function FieldItem({
           <TextFieldSign
             ref={textFieldRef}
             onFieldDataChange={updateDocumentField}
+            isFixedFontSize={fixedFontSize}
             value={text}
             placeholder={placeholder}
             signer={signer}
             onFocus={handleFocus}
+            onBlur={handleBlur}
             style={{ ...textStyles, width, height }}
             fieldColor={fieldColor}
             disabled={
@@ -584,7 +682,13 @@ function FieldItem({
         </ul>
       );
     },
-    [signersOptions, signerId, changeDocumentFieldSigner, updateDocumentField],
+    [
+      signersOptions,
+      signerId,
+      changeDocumentFieldSigner,
+      onChangeSigner,
+      updateDocumentField,
+    ],
   );
 
   const changeFontFamily = useCallback(
@@ -667,6 +771,14 @@ function FieldItem({
           </div>
         );
       }
+      case DocumentFieldTypes.Name: {
+        return (
+          <div className="fieldDropDown__content-body">
+            {renderPartisipantsList(true)}
+            {renderStyleSelectors()}
+          </div>
+        );
+      }
       case DocumentFieldTypes.Date:
       case DocumentFieldTypes.Text: {
         return (
@@ -713,6 +825,8 @@ function FieldItem({
       isResizable={isResizable && interactMode !== InteractModes.SIGNING}
       dropdownMenuRef={dropdownMenuRef}
       dropdownClassName={dropdownMenuClassName}
+      selectedScale={0.9 * documentScale}
+      fieldModalPosition={fieldModalPosition}
     />
   );
 }

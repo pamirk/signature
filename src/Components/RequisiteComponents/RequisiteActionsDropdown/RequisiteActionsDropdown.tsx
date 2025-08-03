@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import RemoveIcon from 'Assets/images/icons/remove-icon.svg';
 import EditIcon from 'Assets/images/icons/edit-icon.svg';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export enum RequisiteActionTypes {
   EDIT = 'edit',
   DELETE = 'delete',
@@ -29,7 +30,7 @@ interface RequisiteActionsDropdownProps {
 }
 
 const RequisiteActionsDropdown = ({ options = [] }: RequisiteActionsDropdownProps) => {
-  const [containerRef, isOpen, open] = useDropdown();
+  const [containerRef, isOpen, open, close] = useDropdown();
 
   return (
     <div className="settingsSignature__dropDown-wrapper" ref={containerRef}>
@@ -41,28 +42,35 @@ const RequisiteActionsDropdown = ({ options = [] }: RequisiteActionsDropdownProp
         </div>
         {isOpen && options.length && (
           <div className="settingsSignature__dropDown-list">
-            {options.map((option, index) => (
-              <div
-                key={index}
-                className={classNames(
-                  'settingsSignature__dropDown-item',
-                  {
-                    'settingsSignature__dropDown-item--edit':
-                      option.type === RequisiteActionTypes.EDIT,
-                    'settingsSignature__dropDown-item--delete':
-                      option.type === RequisiteActionTypes.DELETE,
-                  },
-                  option.className,
-                )}
-                onClick={option.onClick}
-              >
-                <ReactSVG
-                  src={option.icon || iconsByActionType[option.type]}
-                  className="settingsSignature__dropDown-item-icon"
-                />
-                <p className="settingsSignature__dropDown-item-label">{option.title}</p>
-              </div>
-            ))}
+            {options.map((option, index) => {
+              const { type, title, icon, className, onClick } = option;
+              return (
+                <div
+                  key={index}
+                  className={classNames(
+                    'settingsSignature__dropDown-item',
+                    {
+                      'settingsSignature__dropDown-item--edit':
+                        type === RequisiteActionTypes.EDIT,
+                      'settingsSignature__dropDown-item--delete':
+                        type === RequisiteActionTypes.DELETE,
+                    },
+                    className,
+                  )}
+                  onClick={() => {
+                    close();
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                    onClick && onClick();
+                  }}
+                >
+                  <ReactSVG
+                    src={icon || iconsByActionType[type]}
+                    className="settingsSignature__dropDown-item-icon"
+                  />
+                  <p className="settingsSignature__dropDown-item-label">{title}</p>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

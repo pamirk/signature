@@ -10,7 +10,7 @@ interface DayElementProps {
 
 const DayElement = ({
   day,
-  modifiers: { from, to, highlighted, sunday, saturday, inRange },
+  modifiers: { from, to, highlighted, sunday, saturday, inRange, disabled },
   selectedRange = { from: day, to: day },
 }: DayElementProps) => {
   const isSame = from && to;
@@ -22,12 +22,12 @@ const DayElement = ({
 
   const top =
     day.getDate() <= 7 ||
-      //@ts-ignore
-    (day.getDate() - selectedRange?.from.getDate() <= 7 && currentMonth === selectedRange.from.getMonth());
+    (day.getDate() - selectedRange?.from.getDate() <= 7 &&
+      currentMonth === selectedRange.from.getMonth());
   const bottom =
     day.getDate() + 7 > lastDay ||
-      //@ts-ignore
-    (selectedRange?.to.getDate() - day.getDate() <= 7 && currentMonth === selectedRange.to.getMonth());
+    (selectedRange?.to.getDate() - day.getDate() <= 7 &&
+      currentMonth === selectedRange.to.getMonth());
   const saturdayInRange = saturday && inRange;
   const sundayInRange = sunday && inRange;
 
@@ -65,6 +65,7 @@ const DayElement = ({
           'DayPicker__custom-day--is-box':
             highlighted || ((sunday || saturday || isFirst || isLast) && inRange),
           'DayPicker__custom-day--in-range': inRange,
+          'DayPicker__custom-day--disabled': disabled,
         })}
       >
         {day.getDate()}

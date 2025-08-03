@@ -10,7 +10,7 @@ const ModalHeader = () => {
       <div className="successSendModal__text-wrapper">
         <p className="successSendModal__title">Thanks for sending your document</p>
         <p className="successSendModal__text">
-          You&apos;ll receive a copy in your inbox shortly.
+          You&apos;ll receive a notification when your document is processed.
         </p>
       </div>
     </div>

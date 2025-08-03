@@ -6,6 +6,7 @@ import { selectSignToken, selectUser, selectDocument } from 'Utils/selectors';
 import { parseJwtToken } from 'Utils/functions';
 import { LoginModal, SignUpModal } from './components';
 import { SuccessSendModal } from 'Components/DocumentForm';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 enum ModalType {
   AUTHORIZED = 'Authorized',
@@ -14,15 +15,18 @@ enum ModalType {
 }
 
 interface DocumentSignModalProps {
-  documentId?: Document['id'];
+  documentId?: Document['id'] | null;
   onClose: () => void;
 }
 
 const DocumentSignModal = ({ documentId, onClose }: DocumentSignModalProps) => {
-  const token: any = useSelector(selectSignToken);
+  const token: string | undefined = useSelector(selectSignToken);
   const document = useSelector(state => selectDocument(state, { documentId }));
   const { id } = useSelector(selectUser);
-  const isAuthorizedUser = useMemo(() => parseJwtToken(token).sub === id, [id, token]);
+  const isAuthorizedUser = useMemo(
+    () => (token ? parseJwtToken(token).sub === id : false),
+    [id, token],
+  );
   const [modalType, setModalType] = useState<ModalType>(
     isAuthorizedUser ? ModalType.AUTHORIZED : ModalType.SIGNUP,
   );
@@ -30,13 +34,13 @@ const DocumentSignModal = ({ documentId, onClose }: DocumentSignModalProps) => {
   const handleClose = useCallback(() => {
     onClose();
 
-    History.push('/');
+    History.push(UnauthorizedRoutePaths.BASE_PATH);
   }, [onClose]);
 
   const handleCloseSignUp = useCallback(() => {
     onClose();
 
-    History.push('/about', {
+    History.push(UnauthorizedRoutePaths.ABOUT, {
       isSignUpClose: true,
     });
   }, [onClose]);

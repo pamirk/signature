@@ -1,3 +1,3 @@
-import Index from "./OverlaySpinner";
+import OverlaySpinner from './OverlaySpinner';
 
-export default Index;
+export default OverlaySpinner;

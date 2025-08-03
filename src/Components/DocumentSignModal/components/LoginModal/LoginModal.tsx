@@ -12,6 +12,7 @@ import {
 } from 'Utils/typeGuards';
 import { isNotEmpty } from 'Utils/functions';
 import { DataLayerAnalytics } from 'Services/Integrations';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface LoginModalProps {
   onClose: () => void;
@@ -23,7 +24,6 @@ const LoginModal = ({ onClose, onSignUpClick }: LoginModalProps) => {
 
   const handleSignIn = useCallback(
     async values => {
-
       try {
         const response = await callSignIn(values);
 
@@ -32,20 +32,20 @@ const LoginModal = ({ onClose, onSignUpClick }: LoginModalProps) => {
         }
 
         if (isTwoFactorResponseData(response)) {
-          History.push('/two-factor');
+          History.push(UnauthorizedRoutePaths.TWO_FACTOR);
         }
 
         if (isEmailConfirmationData(response)) {
-          History.push('/confirm-account', { confirmationRequired: true });
+          History.push(UnauthorizedRoutePaths.CONFIRM_ACCOUNT, {
+            confirmationRequired: true,
+          });
         }
 
         if (isUserResponseData(response) && response.isNewUser) {
           DataLayerAnalytics.fireGoogleRegistrationEvent();
           Toast.success('Your account has been created.');
         }
-      }
-      // @ts-ignore
-      catch (error:any) {
+      } catch (error) {
         Toast.error(error.message);
       }
     },

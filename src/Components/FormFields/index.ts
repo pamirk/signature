@@ -8,8 +8,10 @@ import FieldSelect from './FieldSelect/FieldSelect';
 import FieldTextArea from './FieldTextArea/FieldTextArea';
 import MaskedTextInput from './MaskedTextInput/MaskedTextInput';
 import SignersArray from './SignersArray/SignersArray';
+import EmailRecipientsArray from './EmailRecipientsArray/EmailRecipientsField';
 
 export {
+    EmailRecipientsArray,
     SignersArray,
     FieldTextArea,
     MaskedTextInput,

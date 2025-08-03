@@ -1,55 +1,44 @@
-import React, { useCallback } from 'react';
-import { GOOGLE_CLIENT_ID } from 'Utils/constants';
-import GoogleButton from './GoogleButton';
-import GoogleLogin from 'react-google-login';
-import Toast from 'Services/Toast';
+import React, { useCallback, useEffect } from 'react';
 import { SignUpData } from 'Interfaces/Auth';
 import { OnSubmitReturnType } from 'Interfaces/FinalForm';
+import { useGoogleLoginRenderButton } from 'Hooks/Auth';
+import jwtDecode from 'jwt-decode';
+
+declare let google: any;
 
 interface GoogleLoginFormProps {
   onSubmit: (values: SignUpData) => OnSubmitReturnType;
-  buttonLabel: string;
+  width: number;
+  text?: string;
 }
 
-const GoogleLoginForm = ({ onSubmit, buttonLabel }: GoogleLoginFormProps) => {
+const GoogleLoginForm = ({ onSubmit, width, text }: GoogleLoginFormProps) => {
   const handleSuccess = useCallback(
     response => {
+      const parseToken: any = jwtDecode(response.credential);
       onSubmit({
-        email: response.profileObj.email,
-        id_token: response.tokenId,
-        name: response.profileObj.name,
+        email: parseToken.email,
+        id_token: response.credential,
+        name: parseToken.name,
       });
     },
     [onSubmit],
   );
 
-  const handleFailure = useCallback(response => {
-    switch (response.error) {
-      case 'access_denied':
-        Toast.error('Access denied');
-        break;
-      case 'popup_closed_by_user':
-        Toast.error('You need to select your Google account in the pop-up window.');
-        break;
-      case 'idpiframe_initialization_failed':
-        break;
-      default:
-        Toast.error();
-    }
-  }, []);
+  const gisRenderButton = useGoogleLoginRenderButton({ onSubmit: handleSuccess });
 
-  return (
-    <GoogleLogin
-      clientId={GOOGLE_CLIENT_ID}
-      render={renderProps => (
-        <GoogleButton title={buttonLabel} handleClick={renderProps.onClick} />
-      )}
-      onSuccess={handleSuccess}
-      onFailure={handleFailure}
-      cookiePolicy={'single_host_origin'}
-      prompt={'select_account'}
-    />
-  );
+  useEffect(() => {
+    gisRenderButton(document.getElementById('buttonDiv') as HTMLButtonElement, {
+      type: 'standart',
+      theme: 'outline',
+      size: 'large',
+      shape: 'pill',
+      width: width,
+      text: text,
+    });
+  }, [gisRenderButton, text, width]);
+
+  return <div id="buttonDiv" data-context="signin" data-auto_select="true"></div>;
 };
 
 export default GoogleLoginForm;

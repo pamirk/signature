@@ -1,10 +1,7 @@
 import React from 'react';
-import { ReactSVG } from 'react-svg';
 import { RequisiteType } from 'Interfaces/Requisite';
 
 import UISpinner from 'Components/UIComponents/UISpinner';
-
-import CloseIcon from 'Assets/images/icons/close-icon.svg';
 
 interface RequisiteModalDrawProps {
   isDownloading: boolean;

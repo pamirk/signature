@@ -7,15 +7,17 @@ import CloseIcon from 'Assets/images/icons/close-icon.svg';
 import { Menu } from './Menu';
 
 export interface DropDownUserProps {
-  handleLogout: () => void;
+  handleLogout: (v: void) => void;
   location: Location;
   isSignaturesLimited: boolean;
+  isActionHidden?: boolean;
 }
 
 function DropDownMenu({
   handleLogout,
   isSignaturesLimited,
   location,
+  isActionHidden,
 }: DropDownUserProps) {
   const [containerRef, isOpen, open, close] = useDropdown();
   const { pathname } = location;
@@ -29,7 +31,11 @@ function DropDownMenu({
         className="dropDownMenu__trigger-arrow dropDownMenu__trigger-arrow--open"
       />
       {isOpen && (
-        <Menu handleLogout={handleLogout} isSignaturesLimited={isSignaturesLimited} />
+        <Menu
+          handleLogout={handleLogout}
+          isSignaturesLimited={isSignaturesLimited}
+          isActionHidden={isActionHidden}
+        />
       )}
     </div>
   );

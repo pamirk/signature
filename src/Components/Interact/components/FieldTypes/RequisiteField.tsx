@@ -10,8 +10,10 @@ import { RequisiteItem } from 'Components/RequisiteComponents';
 import SignIcon from 'Assets/images/icons/sign-icon.svg';
 import InIcon from 'Assets/images/icons/in-icon.svg';
 import {
+  DocumentFieldLabels,
   DocumentFieldsCRUDMeta,
   DocumentFieldUpdatePayload,
+  FieldCreateType,
 } from 'Interfaces/DocumentFields';
 
 interface RequisiteFieldProps {
@@ -24,6 +26,8 @@ interface RequisiteFieldProps {
     payload: Omit<DocumentFieldUpdatePayload, 'id'>,
     meta?: DocumentFieldsCRUDMeta,
   ) => void;
+  createType?: FieldCreateType;
+  imgRef?: React.Ref<HTMLImageElement>;
 }
 
 const RequisiteField = ({
@@ -32,29 +36,48 @@ const RequisiteField = ({
   signer,
   fieldColor,
   updateField,
+  createType,
+  imgRef,
 }: RequisiteFieldProps) => {
   const title = useMemo(() => {
     if (signer && !signer.isPreparer) {
       return signer.name || signer.role;
     }
 
-    return requisiteType === RequisiteType.SIGN ? 'Signature' : 'Initials';
+    return requisiteType === RequisiteType.SIGN
+      ? DocumentFieldLabels.SIGNATURE
+      : DocumentFieldLabels.INITIALS;
   }, [requisiteType, signer]);
 
   const shadowRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
-    if (shadowRef.current) {
+    if (
+      shadowRef.current &&
+      createType === FieldCreateType.ADD &&
+      requisiteType === RequisiteType.SIGN
+    ) {
       const width = Math.max(shadowRef?.current?.clientWidth + 40, 110);
 
       updateField && updateField({ width }, { pushToHistory: false });
     }
+  }, [
+    updateField,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateField, signer?.name?.length, signer?.role?.length]);
+    signer?.name?.length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    signer?.role?.length,
+    createType,
+    requisiteType,
+  ]);
 
   if (requisite?.id) {
     return (
-      <RequisiteItem requisiteItem={requisite} spinnerProps={{ width: 14, height: 14 }} />
+      <RequisiteItem
+        requisiteItem={requisite}
+        imgRef={imgRef}
+        spinnerProps={{ width: 14, height: 14 }}
+      />
     );
   }
 
@@ -63,6 +86,9 @@ const RequisiteField = ({
       className={classNames(
         'fieldDropDown__requisite-blank',
         `fieldColor__${fieldColor}`,
+        (requisiteType === RequisiteType.INITIAL ||
+          requisiteType === RequisiteType.SIGN) &&
+          'fieldDropDown__requisite-blank-center',
       )}
     >
       <pre
@@ -81,7 +107,9 @@ const RequisiteField = ({
         className="fieldDropDown__requisite-blank-icon"
         src={requisiteType === RequisiteType.SIGN ? SignIcon : InIcon}
       />
-      <span className="fieldDropDown__requisite-blank-title">{title}</span>
+      {requisiteType === RequisiteType.SIGN && (
+        <span className="fieldDropDown__requisite-blank-title">{title}</span>
+      )}
     </div>
   );
 };

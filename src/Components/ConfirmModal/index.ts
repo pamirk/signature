@@ -1,4 +1,3 @@
-import index, { ConfirmModalProps } from "./ConfirmModal";
+import index from "./ConfirmModal";
 
 export default index
-export type {ConfirmModalProps};

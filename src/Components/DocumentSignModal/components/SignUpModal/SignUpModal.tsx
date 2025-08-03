@@ -54,7 +54,7 @@ const SignUpModal = ({ document, onClose, onSignInClick }: SignUpModalProps) => 
         signerId: signer?.id,
       });
     } catch (error) {
-      Toast.handleErrors(error);
+      Toast.handleErrors(error, { toastId: 'download_error' });
     }
   }, [document.id, downloadDocument, signer]);
 

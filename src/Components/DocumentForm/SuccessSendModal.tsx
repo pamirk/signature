@@ -19,15 +19,23 @@ import CircleSuccessIcon from 'Assets/images/icons/circle-success.svg';
 import DownloadIcon from 'Assets/images/icons/download-icon.svg';
 import PrintIcon from 'Assets/images/icons/print-icon.svg';
 import useIsMobile from 'Hooks/Common/useIsMobile';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface SuccessSendModalProps {
-  onClose: () => void;
+  onClose?: () => void;
   document: Document;
   onConfirm?: () => void;
   isTemplate?: boolean;
+  isDisableActionPanel?: boolean;
 }
 
-const SuccessSendModal = ({ document, onConfirm, isTemplate }: SuccessSendModalProps) => {
+const SuccessSendModal = ({
+  onClose,
+  document,
+  onConfirm,
+  isTemplate,
+  isDisableActionPanel,
+}: SuccessSendModalProps) => {
   const [printPdf, isPdfLoading] = useDocumentSignPrint(document);
   const [
     downloadDocument,
@@ -58,13 +66,13 @@ const SuccessSendModal = ({ document, onConfirm, isTemplate }: SuccessSendModalP
   const navigateToDocuments = useCallback(() => {
     switch (document.type) {
       case DocumentTypes.FORM_REQUEST:
-        History.push('/form-requests');
+        History.push(AuthorizedRoutePaths.FORM_REQUESTS);
         break;
       case DocumentTypes.TEMPLATE:
-        History.push('/templates');
+        History.push(AuthorizedRoutePaths.TEMPLATES);
         break;
       default:
-        History.push('/documents');
+        History.push(AuthorizedRoutePaths.DOCUMENTS);
     }
   }, [document.type]);
 
@@ -75,7 +83,7 @@ const SuccessSendModal = ({ document, onConfirm, isTemplate }: SuccessSendModalP
         signerId: document.type !== DocumentTypes.ME ? preparer?.id : undefined,
       });
     } catch (error) {
-      Toast.handleErrors(error);
+      Toast.handleErrors(error, { toastId: 'download_error' });
     }
   }, [document.id, document.type, downloadDocument, preparer]);
 
@@ -94,16 +102,18 @@ const SuccessSendModal = ({ document, onConfirm, isTemplate }: SuccessSendModalP
 
   return (
     <UIModal
-      onClose={navigateToDocuments}
+      onClose={onClose || navigateToDocuments}
       className={classNames('successSendModal', {
         'successSendModal--template': isTemplate,
         mobile: isMobile,
       })}
       hideCloseIcon
+      shouldCloseOnOverlayClick={false}
     >
       <div
         className={classNames('successSendModal__main', {
           'successSendModal__main--template': isTemplate,
+          'successSendModal__main--banBorderBottom': isDisableActionPanel,
         })}
       >
         <ReactSVG src={CircleSuccessIcon} className="successSendModal__main-icon" />
@@ -132,20 +142,27 @@ const SuccessSendModal = ({ document, onConfirm, isTemplate }: SuccessSendModalP
               )
             ) : (
               <>
-                You&apos;ll receive a copy in your inbox shortly. And you&apos;ll be{' '}
-                <br /> notified every time it is signed
+                You&apos;ll receive a notification when your document is processed.
+                {document.type !== DocumentTypes.ME && (
+                  <>
+                    <br />
+                    Subsequent notifications will arrive when it is signed.
+                  </>
+                )}
               </>
             )}
           </p>
         </div>
-        <UIButton
-          priority="primary"
-          className="successSendModal__button"
-          handleClick={onConfirm || navigateToDocuments}
-          title={`Back to ${capitalize(documentType)}s  `}
-        />
+        {!isDisableActionPanel && (
+          <UIButton
+            priority="primary"
+            className="successSendModal__button"
+            handleClick={onConfirm || navigateToDocuments}
+            title={`Back to ${capitalize(documentType)}s  `}
+          />
+        )}
       </div>
-      {!isTemplate && (
+      {!isTemplate && !isDisableActionPanel && (
         <div className="successSendModal__footer">
           {isWatcherExecuting ? (
             <>

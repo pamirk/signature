@@ -5,6 +5,7 @@ import TeamIcon from 'Assets/images/icons/team-icon.svg';
 import SettingsIcon from 'Assets/images/icons/settings-icon.svg';
 import IntegrationsIcon from 'Assets/images/icons/integrations-icon.svg';
 import FormsIcon from 'Assets/images/icons/forms-icon.svg';
+import { AuthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface SubLink {
   subPath: string;
@@ -20,140 +21,138 @@ interface SideBarItem {
   label: string;
   icon: string;
   subLinks: SubLink[];
+  iconClassName?: string;
 }
 
 export const sidebarItems: SideBarItem[] = [
   {
-    path: '/sign',
+    path: AuthorizedRoutePaths.SIGN,
     classNameMod: 'stroke',
     label: 'Sign',
     icon: SignIcon,
-    subLinks: [
-      {
-        subPath: '/only-me',
-        label: 'Only Me',
-      },
-      {
-        subPath: '/me-and-others',
-        label: 'Me & Others',
-      },
-      {
-        subPath: '/only-others',
-        label: 'Only Others',
-      },
-      {
-        subPath: '/bulk-send',
-        label: 'Bulk Send',
-      },
-    ],
+    subLinks: [],
   },
   {
-    path: '/documents',
+    path: AuthorizedRoutePaths.DOCUMENTS,
     classNameMod: 'fill',
     label: 'Documents',
     icon: DocumentsIcon,
     subLinks: [
       {
-        subPath: '/documents/completed',
+        subPath: `${AuthorizedRoutePaths.DOCUMENTS}/completed`,
         label: 'Completed',
         status: 'completed',
       },
       {
-        subPath: '/documents/awaiting',
+        subPath: `${AuthorizedRoutePaths.DOCUMENTS}/awaiting`,
         label: 'Awaiting Signature',
         status: 'awaiting',
       },
       {
-        subPath: '/documents/draft',
+        subPath: `${AuthorizedRoutePaths.DOCUMENTS}/voided`,
+        label: 'Voided',
+        status: 'declined',
+      },
+      {
+        subPath: `${AuthorizedRoutePaths.DOCUMENTS}/draft`,
         label: 'Draft',
         status: 'draft',
+      },
+      {
+        subPath: `${AuthorizedRoutePaths.DOCUMENTS}/received`,
+        label: 'Received',
+        status: 'received',
+      },
+      {
+        subPath: `${AuthorizedRoutePaths.DOCUMENTS}/trash`,
+        label: 'Trash',
+        status: 'trash',
       },
     ],
   },
   {
-    path: '/templates',
+    path: `${AuthorizedRoutePaths.TEMPLATES}/active`,
     classNameMod: 'fill',
     label: 'Templates',
     icon: TemplatesIcon,
     subLinks: [
       {
-        subPath: '/templates/create',
+        subPath: `${AuthorizedRoutePaths.TEMPLATES}/create`,
         label: 'Create Template',
       },
       {
-        subPath: '/templates',
+        subPath: `${AuthorizedRoutePaths.TEMPLATES}/active`,
         label: 'Templates View',
+      },
+      {
+        subPath: `${AuthorizedRoutePaths.TEMPLATES}/api`,
+        label: 'API Templates',
       },
     ],
   },
   {
-    path: '/form-requests',
+    path: AuthorizedRoutePaths.FORM_REQUESTS,
     classNameMod: 'stroke',
     label: 'Forms',
     icon: FormsIcon,
     subLinks: [
       {
-        subPath: '/form-requests/active',
+        subPath: `${AuthorizedRoutePaths.FORM_REQUESTS}/active`,
         label: 'Live',
         status: 'completed',
       },
       {
-        subPath: '/form-requests/draft',
+        subPath: `${AuthorizedRoutePaths.FORM_REQUESTS}/draft`,
         label: 'Draft',
         status: 'draft',
       },
     ],
   },
-/*  {
-    path: '/team',
+  {
+    path: AuthorizedRoutePaths.TEAM,
     classNameMod: 'stroke',
     label: 'Team',
     icon: TeamIcon,
     subLinks: [
       {
-        subPath: '/team/add-member',
+        subPath: `${AuthorizedRoutePaths.TEAM}/add-member`,
         label: 'Member view',
       },
     ],
   },
   {
-    path: '/integrations',
+    path: AuthorizedRoutePaths.INTEGRATIONS,
     classNameMod: 'stroke',
     label: 'Integrations',
     icon: IntegrationsIcon,
     subLinks: [],
   },
   {
-    path: '/settings',
+    path: AuthorizedRoutePaths.SETTINGS,
     classNameMod: 'fill',
     label: 'Settings',
     icon: SettingsIcon,
     subLinks: [
       {
-        subPath: '/settings/company',
+        subPath: AuthorizedRoutePaths.SETTINGS_COMPANY,
         label: 'Company',
       },
       {
-        subPath: '/settings/profile',
+        subPath: AuthorizedRoutePaths.SETTINGS_PROFILE,
         label: 'Profile',
       },
-      /!*       {
+      /*       {
         subPath: '/settings/api',
         label: 'API',
-      }, *!/
+      }, */
       {
-        subPath: '/settings/edit-signature',
+        subPath: AuthorizedRoutePaths.SETTINGS_EDIT_SIGNATURE,
         label: 'Edit Signature',
       },
       {
-        subPath: '/settings/billing',
-        freePlanSubPath: '/settings/billing/plan',
+        subPath: AuthorizedRoutePaths.SETTINGS_BILLING,
+        freePlanSubPath: AuthorizedRoutePaths.SETTINGS_BILLING_PLAN,
         label: 'Billing',
-      },
-      {
-        subPath: '',
-        label: 'Feedback',
-        externalUrl: 'https://feedback.signaturely.com/',
       },
       {
         subPath: '',
@@ -161,5 +160,5 @@ export const sidebarItems: SideBarItem[] = [
         externalUrl: 'https://refer.signaturely.com/',
       },
     ],
-  },*/
+  },
 ];

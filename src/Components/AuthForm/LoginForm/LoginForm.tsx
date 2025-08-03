@@ -10,9 +10,10 @@ import { composeValidators } from 'Utils/functions';
 import FieldPasswordInput from 'Components/FormFields/FieldPasswordInput';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import GoogleLoginForm from '../GoogleLoginForm';
-import { toLowerCase } from 'Utils/formatters';
+import { toLowerCaseAndRemoveEmptyCharacters } from 'Utils/formatters';
 import History from 'Services/History';
 import { AuthFormProps } from '../interfaces/AuthFormProps';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 
 interface LoginFormProps extends AuthFormProps {
   onSignUpClick?: () => void;
@@ -25,7 +26,10 @@ function LoginForm({
   formClassName,
   onSignUpClick,
 }: LoginFormProps) {
-  const navigateToSignUp = useCallback(() => History.push('/signup'), []);
+  const navigateToSignUp = useCallback(
+    () => History.push(UnauthorizedRoutePaths.SIGN_UP),
+    [],
+  );
 
   return (
     <Form
@@ -48,7 +52,7 @@ function LoginForm({
               name="email"
               label="Email Address"
               component={FieldTextInput}
-              parse={toLowerCase}
+              parse={toLowerCaseAndRemoveEmptyCharacters}
               placeholder="username@gmail.com"
               validate={composeValidators<string>(required, email)}
             />
@@ -65,7 +69,7 @@ function LoginForm({
                 <div
                   className="auth__link"
                   onClick={() => {
-                    History.push('/reset');
+                    History.push(UnauthorizedRoutePaths.RESET);
                   }}
                 >
                   Forgot password?
@@ -90,10 +94,10 @@ function LoginForm({
                 />
               )}
             </div>
-           {/* <div className="common__or">OR</div>
+            <div className="common__or">OR</div>
             <div className="auth__googleButton-wrapper">
-              <GoogleLoginForm onSubmit={onSubmit} buttonLabel="Log in with Google" />
-            </div>*/}
+              <GoogleLoginForm onSubmit={onSubmit} width={300} text={'signin_with'} />
+            </div>
             <hr className="auth__hr" />
             <div className="auth__check-account">
               Don’t have an account?&nbsp;

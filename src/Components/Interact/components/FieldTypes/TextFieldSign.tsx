@@ -10,6 +10,7 @@ import Interact from 'Services/Interact';
 interface TextFieldProps {
   onFieldDataChange?: (fieldData: Omit<DocumentFieldUpdatePayload, 'id'>) => void;
   onFocus?: () => void;
+  onBlur?: () => void;
   value?: string | null;
   placeholder?: string;
   style: CSSProperties;
@@ -18,12 +19,14 @@ interface TextFieldProps {
   maxFontSize?: number;
   signer?: Signer;
   fieldColor?: FieldColorNames;
+  isFixedFontSize?: boolean;
 }
 
 const TextField = (
   {
     onFieldDataChange,
     onFocus,
+    onBlur,
     style,
     value,
     placeholder,
@@ -32,6 +35,7 @@ const TextField = (
     maxFontSize = 48,
     fieldColor,
     signer,
+    isFixedFontSize = false,
   }: TextFieldProps,
   ref,
 ) => {
@@ -46,11 +50,24 @@ const TextField = (
         const prevValue = shadowRef.current.innerHTML;
 
         shadowRef.current.innerHTML = value;
+        const parent = shadowRef.current.parentElement as HTMLElement;
+
+        if (
+          isFixedFontSize &&
+          (shadowRef.current.offsetWidth > parent.offsetWidth ||
+            shadowRef.current.offsetHeight > parent.offsetHeight)
+        ) {
+          return onFieldDataChange({
+            text: value,
+          });
+        }
+
         const newFontSize = await Interact.getRearrangedFontSize({
           initialFontSize: style.fontSize as number,
           shadowElement: shadowRef.current,
           minFontSize,
           maxFontSize,
+          isFixedFontSize,
         });
 
         if (newFontSize) {
@@ -67,7 +84,7 @@ const TextField = (
         }
       }
     },
-    [onFieldDataChange, style.fontSize, minFontSize, maxFontSize],
+    [onFieldDataChange, isFixedFontSize, style.fontSize, minFontSize, maxFontSize],
   );
 
   const textValue = useMemo(() => value || '', [value]);
@@ -102,6 +119,7 @@ const TextField = (
       />
       <UITextArea
         onFocus={onFocus}
+        onBlur={onBlur}
         onChange={changeTextValue}
         ref={ref}
         height="100%"

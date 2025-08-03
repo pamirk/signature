@@ -14,7 +14,7 @@ interface AvatarProps {
 export const Avatar = ({ className, name, email, avatarUrl }: AvatarProps) => {
   const isMobile = useIsMobile();
   return (
-    <div className={classNames('avatar', className)}>
+    <div className={classNames('avatar', className, { mobile: isMobile })}>
       {avatarUrl ? (
         <img src={avatarUrl} alt="avatar" />
       ) : (

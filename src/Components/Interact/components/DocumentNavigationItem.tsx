@@ -2,6 +2,7 @@ import React, { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { useToggler } from 'Hooks/Common';
 import { DocumentField, DocumentFieldTypes } from 'Interfaces/DocumentFields';
+import { Page } from 'react-pdf';
 
 import OverlayLoader from 'Components/UIComponents/UIOverlayLoader';
 import { useSelector } from 'react-redux';
@@ -33,6 +34,8 @@ const DocumentFieldPreviewItem = ({
     <div
       key={field.id}
       className={classNames('interactModal__documentNavigation-field', {
+        'interactModal__documentNavigation-field--name':
+          field.type === DocumentFieldTypes.Name,
         'interactModal__documentNavigation-field--signature':
           field.type === DocumentFieldTypes.Signature,
         'interactModal__documentNavigation-field--initial':
@@ -57,7 +60,7 @@ const DocumentFieldPreviewItem = ({
 
 export interface DocumentNavigationItemProps {
   navigateToPage: () => void;
-  page: string;
+  pageNumber: number;
   pageMeta?: {
     width: number;
     height: number;
@@ -66,7 +69,7 @@ export interface DocumentNavigationItemProps {
 }
 
 function DocumentNavigationItem({
-  page,
+  pageNumber,
   navigateToPage,
   pageMeta,
   fields,
@@ -83,7 +86,7 @@ function DocumentNavigationItem({
   useLayoutEffect(() => {
     if (containerRef.current && pageWidth && pageHeight) {
       setFieldsXScale(containerRef.current.clientWidth / pageWidth);
-      setFieldsYScale(containerRef.current.clientHeight / pageHeight);
+      setFieldsYScale(containerRef.current.clientWidth / pageWidth);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageHeight, pageWidth, containerRef.current]);
@@ -100,12 +103,12 @@ function DocumentNavigationItem({
           labelClassName="overlayLoader__text--preview"
         />
       )}
-      <img
-        src={page}
-        alt="preview"
-        className="interactModal__documentNavigation-img"
-        onLoadStart={toggleIsLoading}
-        onLoad={toggleIsLoading}
+      <Page
+        pageNumber={pageNumber}
+        onLoadSuccess={toggleIsLoading}
+        width={(pageWidth || 0) * fieldsXScale}
+        height={(pageHeight || 0) * fieldsYScale}
+        renderAnnotationLayer={false}
       />
       {fields.map(field => (
         <DocumentFieldPreviewItem

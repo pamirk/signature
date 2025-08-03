@@ -1,3 +1,3 @@
-import Index from "./DebounceInput";
+import index from "./DebounceInput";
 
-export default Index;
+export default index
