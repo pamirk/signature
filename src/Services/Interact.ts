@@ -13,6 +13,7 @@ interface RearrangeFontSizeParams {
   checkHeight?: boolean;
   checkWidth?: boolean;
   isAsync?: boolean;
+  isFixedFontSize?: boolean;
 }
 
 class Interact {
@@ -87,10 +88,11 @@ class Interact {
     checkHeight = true,
     checkWidth = false,
     isAsync = false,
+    isFixedFontSize = false,
   }: RearrangeFontSizeParams) {
     let fontSize = initialFontSize;
 
-    if (shadowElement) {
+    if (shadowElement && !isFixedFontSize) {
       const parent = shadowElement.parentElement as HTMLElement;
 
       while (
@@ -104,8 +106,9 @@ class Interact {
       }
 
       while (
-        (checkHeight && shadowElement.offsetHeight > parent.offsetHeight) ||
-        (checkWidth && shadowElement.offsetWidth > parent.offsetWidth)
+        ((checkHeight && shadowElement.offsetHeight > parent.offsetHeight) ||
+          (checkWidth && shadowElement.offsetWidth > parent.offsetWidth)) &&
+        fontSize > minFontSize
       ) {
         isAsync && (await new Promise(resolve => setTimeout(resolve)));
         fontSize--;

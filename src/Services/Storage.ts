@@ -1,9 +1,8 @@
-import { HttpStatus } from 'Interfaces/HttpStatusEnum';
-
 const LocalStorage = window.localStorage;
 const SessionStorage = window.sessionStorage;
 
 const ACCESS_TOKEN_NAME = 'accessToken';
+const REDIRECT_ROUTER_PATH = 'redirectRouterPath';
 
 class StorageService {
   getItem = key => {
@@ -40,6 +39,18 @@ class StorageService {
     if (!localAccessToken || localAccessToken !== sessionAccessToken) return undefined;
 
     return localAccessToken;
+  };
+
+  setRedirectRoutePath = (value: string) => {
+    SessionStorage.setItem(REDIRECT_ROUTER_PATH, value);
+  };
+
+  getRedirectRoutePath = () => {
+    return SessionStorage.getItem(REDIRECT_ROUTER_PATH);
+  };
+
+  removeRedirectRoutePath = () => {
+    SessionStorage.removeItem(REDIRECT_ROUTER_PATH);
   };
 }
 

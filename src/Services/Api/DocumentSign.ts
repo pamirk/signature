@@ -15,10 +15,18 @@ import {
   CodeAccessPayload,
   SigningUrlGetPayload,
   SigningUrlPayload,
-  DocumentDisableRemindersPayload,
+  SigningRemindersUnlinkPayload,
+  DocumentActivitiesDownloadPayload,
+  DocumentDisableRemindersRequest,
+  DocumentSeparateSignPayload,
+  DocumentForSigning,
 } from 'Interfaces/Document';
 import { TokenizedPayload } from 'Interfaces/User';
-import { SignedUrlResponse } from 'Interfaces/Common';
+import {
+  SignedPartDocumentActivityUrlResponse,
+  SignedPartDocumentUrlResponse,
+  SignedUrlResponse,
+} from 'Interfaces/Common';
 
 export class DocumentSignApi extends Api {
   sendOutDocument = (documentId: Document['id']) =>
@@ -44,6 +52,12 @@ export class DocumentSignApi extends Api {
     );
   };
 
+  getSigningDocument = ({ token, payload }: TokenizedPayload<DocumentIdPayload>) => {
+    return this.request.get(token)<DocumentForSigning>(
+      `document_sign/documents/${payload.documentId}`,
+    );
+  };
+
   submitSignedDocument = ({
     token,
     payload,
@@ -52,6 +66,18 @@ export class DocumentSignApi extends Api {
 
     return this.request.patch(token)(
       `document_sign/documents/${documentId}/signers/${signerId}/sign`,
+      {},
+    );
+  };
+
+  declineSigningRequest = ({
+    token,
+    payload,
+  }: TokenizedPayload<SignerDocumentIdPayload>) => {
+    const { signerId, documentId } = payload;
+
+    return this.request.patch(token)(
+      `document_sign/documents/${documentId}/signers/${signerId}/decline`,
       {},
     );
   };
@@ -72,6 +98,14 @@ export class DocumentSignApi extends Api {
       },
     );
 
+  getActivitiesDownloadUrlByHash = ({ documentId, ...params }: DocumentDownloadPayload) =>
+    this.request.get()<SignedUrlResponse>(
+      `document_sign/documents/${documentId}/activities/signed_download_url/hash`,
+      {
+        params,
+      },
+    );
+
   getDownloadUrlByJWT = ({
     payload: { signerId, documentId },
     token,
@@ -83,16 +117,49 @@ export class DocumentSignApi extends Api {
       },
     );
 
+  getActivitiesDownloadUrlByJWT = ({
+    payload: { documentId },
+    token,
+  }: TokenizedPayload<DocumentActivitiesDownloadPayload>) =>
+    this.request.get(token)<SignedUrlResponse>(
+      `document_sign/documents/${documentId}/activities/signed_download_url/jwt`,
+    );
+
+  signSeparateDocumentActivitiesByJWT = ({
+    payload: { documentId },
+    token,
+  }: TokenizedPayload<DocumentActivitiesDownloadPayload>) =>
+    this.request.patch(token)<SignedPartDocumentActivityUrlResponse>(
+      `document_sign/documents/${documentId}/activities/sign_activities/jwt`,
+    );
+
+  signSeparateDocumentByJWT = ({
+    payload: { documentId },
+    token,
+  }: TokenizedPayload<DocumentSeparateSignPayload>) =>
+    this.request.patch(token)<SignedPartDocumentUrlResponse>(
+      `document_sign/documents/${documentId}/document/sign_document_without_activities/jwt`,
+    );
+
+  getSeparateDocumentDownloadUrlByJWT = ({
+    payload: { documentId },
+    token,
+  }: TokenizedPayload<DocumentSeparateSignPayload>) =>
+    this.request.get(token)<SignedUrlResponse>(
+      `document_sign/documents/${documentId}/document/signed_download_url/jwt`,
+    );
+
   sendReminders = ({ documentId, signersIds }: RemindersSendPayload) =>
     this.request.post()<void>(`document_sign/documents/${documentId}/send_reminders`, {
       signersIds,
     });
 
-  disableSigningReminders = (values: DocumentDisableRemindersPayload) => {
-    const { documentId } = values;
+  disableSigningReminders = (values: DocumentDisableRemindersRequest) => {
+    const { documentId, disableReminders } = values;
 
     return this.request.patch()<Document>(
       `document_sign/${documentId}/disable-reminders`,
+      { disableReminders },
     );
   };
 
@@ -150,6 +217,29 @@ export class DocumentSignApi extends Api {
           userId,
         },
       },
+    );
+  };
+
+  unlinkSigningReminders = ({
+    token,
+    payload,
+  }: TokenizedPayload<SigningRemindersUnlinkPayload>) => {
+    return this.request.patch(token)<SigningRemindersUnlinkPayload>(
+      `document_sign/${payload.signerId}/unlink-reminder`,
+    );
+  };
+
+  sendOutEmbedDocument = ({ token, payload }: TokenizedPayload<DocumentIdPayload>) =>
+    this.request.patch(token)<Document>(
+      `document_sign/documents/embed/${payload.documentId}/send_out`,
+    );
+
+  getEmbedDocumentPreviewPages = ({
+    token,
+    payload,
+  }: TokenizedPayload<DocumentIdPayload>) => {
+    return this.request.get(token)<DocumentPreviewPagesPayload>(
+      `document_sign/documents/embed/${payload.documentId}/preview_pages`,
     );
   };
 }

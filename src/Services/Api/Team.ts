@@ -4,27 +4,27 @@ import { TeamMember, TeamMembersAddPayload, TeamIdPayload } from 'Interfaces/Tea
 import { TokenizedPayload, UserIdPayload, User } from 'Interfaces/User';
 
 class TeamApi extends Api {
-  getTeamMembers:any = (params: AxiosRequestConfig['params'], config?: AxiosRequestConfig) =>
+  getTeamMembers = (params: AxiosRequestConfig['params'], config?: AxiosRequestConfig) =>
     this.request.get()('teams/members', { params, ...config });
 
-  addTeamMembers:any = (values: TeamMembersAddPayload) =>
-    this.request.post()<TeamMember>('teams/members', values);
+  addTeamMembers = (values: TeamMembersAddPayload) =>
+    this.request.post()<TeamMember>('add-teammates', values);
 
-  deleteTeamMembers:any = (teamMemberIds: TeamMember['id'][]) => {
-    return this.request.delete()(`teams/members`, {
+  deleteTeamMembers = (teamMemberIds: TeamMember['id'][]) => {
+    return this.request.delete()(`remove-teammates`, {
       data: { ids: teamMemberIds },
     });
   };
 
-  acceptInvite:any = ({ token, payload }: TokenizedPayload<TeamIdPayload>) => {
-    return this.request.post(token)(`teams/${payload.teamId}/accept_invite`);
+  acceptInvite = ({ token, payload }: TokenizedPayload<TeamIdPayload>) => {
+    return this.request.post(token)(`add-teammates/${payload.teamId}/accept_invite`);
   };
 
-  upgradeToAdmin:any = (payload: UserIdPayload) => {
+  upgradeToAdmin = (payload: UserIdPayload) => {
     return this.request.post()<User>(`teams/${payload.userId}/upgrade_to_admin`);
   };
 
-  downgradeToUser:any = (payload: UserIdPayload) => {
+  downgradeToUser = (payload: UserIdPayload) => {
     return this.request.post()<User>(`teams/${payload.userId}/downgrade_to_user`);
   };
 }

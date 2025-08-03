@@ -4,13 +4,17 @@ import {
   IntegrationUrlPayload,
   IntegrationAuthTokenPayload,
 } from 'Interfaces/Integration';
+import { getWorkflowVersion } from 'Utils/functions';
 
 class IntegrationsApi extends Api {
   baseUrl = 'integrations';
 
   getAuthUrl = (params: IntegrationActionPayload) => {
     return this.request.get()<IntegrationUrlPayload>('integrations/auth_url', {
-      params,
+      params: {
+        ...params,
+        workflowVersion: getWorkflowVersion(),
+      },
     });
   };
 

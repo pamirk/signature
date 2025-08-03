@@ -2,9 +2,7 @@ import loadScript from 'load-script';
 import Axios from 'axios';
 import { DROPBOX_SDK_URL, DROPBOX_APP_KEY } from 'Utils/constants';
 import { lessThan40MB } from 'Utils/validation';
-
-type FileDownloadCallback = (values: any) => any;
-type ErrorCallback = (values: any) => any;
+import { FileDownloadCallback, ErrorCallback } from './Interfaces';
 
 loadScript(DROPBOX_SDK_URL, {
   attrs: {

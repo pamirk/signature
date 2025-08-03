@@ -4,13 +4,32 @@ import { HttpStatus } from 'Interfaces/HttpStatusEnum';
 class Toast {
   success = (message: ToastContent) => toast.success(message);
 
-  handleErrors = error => {
+  handleErrors = (error, options?: ToastOptions) => {
     if (error.statusCode === HttpStatus.UNAUTHORIZED) return;
 
-    return this.error(error.message);
+    if (error.statusCode === HttpStatus.BAD_GATEWAY) {
+      return this.error('502 Bad Gateway, Please try in again in a few minutes', options);
+    }
+
+    if (error.statusCode === HttpStatus.SERVICE_UNAVAILABLE) {
+      return this.error(
+        '503 Service Temporary Unavailable, Please try in again in a few minutes',
+        options,
+      );
+    }
+
+    if (error.statusCode === HttpStatus.GATEWAY_TIMEOUT) {
+      return this.error(
+        '504 Gateway timeout, Please try in again in a few minutes',
+        options,
+      );
+    }
+
+    return this.error(error.message, options);
   };
 
-  error = (message?: ToastContent) => toast.error(message || 'Something went wrong');
+  error = (message?: ToastContent, options?: ToastOptions) =>
+    toast.error(message || 'Something went wrong', options);
 
   warn = (message: ToastContent, options?: ToastOptions) => toast.warn(message, options);
 

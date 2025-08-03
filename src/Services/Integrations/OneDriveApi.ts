@@ -70,13 +70,13 @@ loadScript(ONEDRIVE_SDK_URL);
 
 class OneDriveApi {
   launchOneDrivePicker = (options: LaunchOneDrivePickerParams) =>
-    new Promise<void>((resolve, reject) => {
+    new Promise((resolve, reject) => {
       //@ts-ignore
       const OneDrive: OneDrive = window.OneDrive;
 
       if (!OneDrive) reject('Api is not loaded yet');
 
-      const { onPick, accessToken, extentions = [] } = options;
+      const { onPick, extentions = [] } = options;
 
       const oneDriveOptions: OneDriveOpenOptions = {
         clientId: ONEDRIVE_APP_ID,

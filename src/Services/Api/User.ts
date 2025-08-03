@@ -9,6 +9,8 @@ import {
 } from 'Interfaces/Profile';
 import { AxiosRequestConfig } from 'axios';
 import { DocumentIdPayload } from 'Interfaces/Document';
+import { UpdateGoogleClientId } from 'Interfaces/Auth';
+import { getWorkflowVersion } from 'Utils/functions';
 
 class UserApi extends Api {
   getUser = () => this.request.get()<User>('user');
@@ -26,10 +28,14 @@ class UserApi extends Api {
     this.request.post()(`user/disable_twillio`, payload);
 
   generateCode = async (payload: CodeGeneratePayload) => {
-    const { phone, scope } = payload;
+    const { phone, scope, recaptcha } = payload;
     const params: AxiosRequestConfig['params'] = { scope };
 
-    return this.request.post()(`user/generate_twillio_code`, { phone }, { params });
+    return this.request.post()(
+      `user/generate_twillio_code`,
+      { phone, recaptcha },
+      { params },
+    );
   };
 
   verifyGoogleCode = async (payload: CodePayload) =>
@@ -57,6 +63,15 @@ class UserApi extends Api {
   getSignersAvatars = (payload: DocumentIdPayload) => {
     return this.request.get()<UserAvatar[]>(`user/signers_avatars/${payload.documentId}`);
   };
+
+  updateGoogleClientId = (payload: UpdateGoogleClientId) => {
+    return this.request.patch()('user/google_client_id/update', {
+      ...payload,
+      workflowVersion: getWorkflowVersion(),
+    });
+  };
+
+  getCompanyInfo = () => this.request.get()<Company>('user/company_info');
 }
 
 export default new UserApi();

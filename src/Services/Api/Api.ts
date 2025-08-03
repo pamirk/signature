@@ -112,6 +112,10 @@ class ApiService {
     return action(token ? tokenResponse.accessToken : null)(...args);
   };
 
+  static async uploadFile(url: string, data: any, config?: AxiosRequestConfig) {
+    return axios.put(url, data, config);
+  }
+
   static async downloadFile(url: string, config?: AxiosRequestConfig) {
     return axios.request({ ...config, url });
   }
