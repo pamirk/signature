@@ -1,24 +1,28 @@
-import React from 'react';
-import { Router, Switch, Redirect } from 'react-router-dom';
+import React, { JSX } from 'react';
+import { Router, Switch } from 'react-router-dom';
 import History from 'Services/History';
 
 import SimplifiedWrapper from 'Layouts/SimplifiedWrapper';
 import { GuestWrapper } from 'Layouts/GuestWrapper';
-import { SignUp, ForgotPassword, Login, ChangePassword } from 'Pages/Auth';
+import { SignUp, Login, ChangePassword } from 'Pages/Auth';
 import { TwoFactor } from 'Pages/Auth/TwoFactor';
-import { DocumentSign } from 'Pages/DocumentSign';
-import { DocumentDownload } from 'Pages/DocumentDownload';
-import { InviteAcceptPage } from 'Pages/Team';
 import { AboutSignaturely } from 'Pages/AboutSignaturely';
 import Route from './Route';
-import ConfirmEmail from 'Pages/Auth/ConfirmEmail';
-import { LoadingUserScreen } from 'Pages/AppSumo';
 import ScrollToTop from 'Components/ScrollToPop';
 import SignUpConfirm from 'Pages/Auth/SignUp/ConfirmPage';
 import PageTracker from 'Components/PageTracker';
 import BuyNow from 'Pages/Auth/BuyNow';
 import { PlanTypes } from 'Interfaces/Billing';
-import FormRequestShow from 'Pages/FormRequests/FormRequestShow';
+import CustomRedirect from './CustomRedirect';
+import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
+import { BaseRoutes } from '.';
+import {
+  LifeTimeDeal,
+  LifeTimeDealSelect,
+  LifeTimeDealSignUp,
+} from 'Pages/Auth/LifeTimeDeal';
+import LifeTimeDealWrapper from 'Layouts/LifeTimeDealWrapper';
+import { LifeTimeDealSuccessPaymentPage } from 'Pages/LifeTimeDeal';
 
 const UnauthorizedRoutes = () => {
   return (
@@ -26,65 +30,82 @@ const UnauthorizedRoutes = () => {
       <PageTracker />
       <ScrollToTop />
       <Switch>
-        <Route exact path="/signup" component={SignUp} />
+        {BaseRoutes()}
+        <Route exact path={UnauthorizedRoutePaths.SIGN_UP} component={SignUp} />
         <Route
-          path="/confirm-account"
+          exact
+          path={UnauthorizedRoutePaths.SIGN_UP_FREE}
+          component={({ history, location, match }): JSX.Element => (
+            <SignUp
+              isFreeSignUp={true}
+              history={history}
+              location={location}
+              match={match}
+            />
+          )}
+        />
+        <Route
+          exact
+          path={UnauthorizedRoutePaths.SIGN_UP_LTD}
+          layout={LifeTimeDealWrapper}
+          component={LifeTimeDealSignUp}
+        />
+        <Route
+          path={UnauthorizedRoutePaths.CONFIRM_ACCOUNT}
           layout={SimplifiedWrapper}
           component={SignUpConfirm}
         />
-        <Route path="/appsumo_thanks" component={LoadingUserScreen} />
         <Route
-          path="/confirm_email"
-          component={ConfirmEmail}
-          layout={SimplifiedWrapper}
-        />
-        <Route path="/reset" layout={SimplifiedWrapper} component={ForgotPassword} />
-        <Route
-          path="/change_password"
+          path={UnauthorizedRoutePaths.CHANGE_PASSWORD}
           layout={SimplifiedWrapper}
           component={ChangePassword}
         />
-        <Route path="/login" layout={SimplifiedWrapper} component={Login} />
         <Route
-          path="/signup/business"
+          path={UnauthorizedRoutePaths.LOGIN}
+          layout={SimplifiedWrapper}
+          component={Login}
+        />
+        <Route
+          path={UnauthorizedRoutePaths.SIGN_UP_BUSINESS}
           layout={SimplifiedWrapper}
           component={() => <BuyNow currentPlan={PlanTypes.BUSINESS} />}
         />
         <Route
-          path="/signup/personal"
+          path={UnauthorizedRoutePaths.SIGN_UP_PERSONAL}
           layout={SimplifiedWrapper}
           component={() => <BuyNow currentPlan={PlanTypes.PERSONAL} />}
         />
-        <Route path="/two-factor" layout={SimplifiedWrapper} component={TwoFactor} />
         <Route
           exact
-          path="/teams/:teamId/accept_invite"
+          path={UnauthorizedRoutePaths.LIFE_TIME_DEAL}
           layout={SimplifiedWrapper}
-          component={InviteAcceptPage}
+          component={LifeTimeDealSelect}
         />
         <Route
-          path="/documents/:documentId/sign"
-          layout={GuestWrapper}
-          component={DocumentSign}
-        />
-        <Route path="/documents/:documentId/download" component={DocumentDownload} />
-        <Route
-          path="/documents/:documentId/:signerId/download"
-          component={DocumentDownload}
+          path={UnauthorizedRoutePaths.LIFE_TIME_DEAL_TIER}
+          layout={SimplifiedWrapper}
+          component={LifeTimeDeal}
         />
         <Route
-          path="/about"
+          path={UnauthorizedRoutePaths.LTD_PAYMENT_SUCCESS}
+          component={LifeTimeDealSuccessPaymentPage}
+          layout={SimplifiedWrapper}
+        />
+        <Route
+          path={UnauthorizedRoutePaths.TWO_FACTOR}
+          layout={SimplifiedWrapper}
+          component={TwoFactor}
+        />
+        <Route
+          path={UnauthorizedRoutePaths.ABOUT}
           layoutProps={{ isShowFooter: true, isShowHeaderBorder: true }}
           layout={GuestWrapper}
           component={AboutSignaturely}
         />
         <Route
-          path="/form-requests/:formRequestId/send"
-          layout={GuestWrapper}
-          layoutProps={{ isShowFooter: false, isShowHeaderBorder: true }}
-          component={FormRequestShow}
+          path={UnauthorizedRoutePaths.BASE_PATH}
+          component={() => <CustomRedirect to={UnauthorizedRoutePaths.LOGIN} />}
         />
-        <Route path="/" component={() => <Redirect to="/login" />} />
       </Switch>
     </Router>
   );

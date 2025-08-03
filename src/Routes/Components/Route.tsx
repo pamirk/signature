@@ -1,3 +1,4 @@
+import { RoutePaths } from 'Interfaces/RoutePaths';
 import React from 'react';
 import { Route as ReactRouterRoute, Switch, Redirect } from 'react-router-dom';
 import { RouteProps } from 'react-router-dom';
@@ -12,7 +13,7 @@ export interface MyRouteProps<TLayoutProps> extends RouteProps {
 
 const PassThrough = ({ children }: { children?: React.ReactNode }) => <>{children}</>;
 
-const Forbidden = () => <Redirect to="/" />;
+const Forbidden = () => <Redirect to={RoutePaths.BASE_PATH} />;
 
 export function Route<TLayoutProps>({
   layout: Layout = PassThrough,
