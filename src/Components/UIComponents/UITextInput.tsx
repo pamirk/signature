@@ -8,6 +8,7 @@ export type UITextInputProps = UITextFieldProps<HTMLInputElement> & {
   inputClassName?: string;
   onIconFocus?: (state: boolean) => void;
   iconFocusState?: boolean;
+    autoComplete?: string;
 };
 
 function UITextInput(props: UITextInputProps, ref) {

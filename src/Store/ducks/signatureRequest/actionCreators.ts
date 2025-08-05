@@ -1,4 +1,4 @@
-import { ActionError, PromisifiedActionMeta } from '@/Interfaces/ActionCreators.ts';
+import { ActionError, PromisifiedActionMeta } from 'Interfaces/ActionCreators';
 import { SigntureRequestsDeletePayload } from 'Interfaces/SignatureRequest';
 import { createAsyncAction } from 'typesafe-actions';
 import { promisifyAsyncAction } from 'Utils/functions';

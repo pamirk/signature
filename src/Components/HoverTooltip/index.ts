@@ -1,3 +1,1 @@
-import Header from "./HoverTooltip";
-
-export default Header
+export {HoverTooltip} from "./HoverTooltip";

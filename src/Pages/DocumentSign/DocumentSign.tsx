@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { RouteChildrenProps } from 'react-router-dom';
-import * as Sentry from '@sentry/react';
+// import * as Sentry from '@sentry/react';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { useDocumentSigning, useSigningDocumentGet } from 'Hooks/DocumentSign';
 import { useBeaconRemove, useModal } from 'Hooks/Common';
@@ -69,14 +69,14 @@ const DocumentSign = ({ location, match }: RouteChildrenProps<PageParams>) => {
         Toast.handleErrors({ message: 'documentId is not provided' });
       }
 
-      Sentry.captureException(new Error('Redirecting to root'), {
-        extra: {
-          page: 'DocumentSign',
-          func: 'useEffect',
-          documentId,
-          signToken,
-        },
-      });
+      // Sentry.captureException(new Error('Redirecting to root'), {
+      //   extra: {
+      //     page: 'DocumentSign',
+      //     func: 'useEffect',
+      //     documentId,
+      //     signToken,
+      //   },
+      // });
 
       return navigateToRoot();
     }
@@ -98,12 +98,12 @@ const DocumentSign = ({ location, match }: RouteChildrenProps<PageParams>) => {
       } catch (error) {
         if (error.statusCode !== HttpStatus.NOT_FOUND) {
           Toast.handleErrors(error);
-          Sentry.captureException(error, {
-            extra: {
-              page: 'DocumentSign',
-              func: 'handleDocumentGet',
-            },
-          });
+          // Sentry.captureException(error, {
+          //   extra: {
+          //     page: 'DocumentSign',
+          //     func: 'handleDocumentGet',
+          //   },
+          // });
           navigateToRoot();
         }
       }

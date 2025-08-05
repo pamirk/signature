@@ -1,10 +1,10 @@
 
 export interface UITextFieldProps<HTMLInputElement> {
-    onBlur?: () => void;
-    onFocus?: () => void;
-    onKeyUp?: () => void;
-    onKeyDown?: () => void;
-    onChange?: (v:any) => void;
+    onBlur?: any;
+    onFocus?: any;
+    onKeyUp?: any;
+    onKeyDown?: any;
+    onChange?: any;
     value?:any;
     error?:any;
     placeholder?:any;

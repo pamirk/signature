@@ -1,4 +1,4 @@
-import { User } from '@sentry/react';
+// import { User } from '@sentry/react';
 import classNames from 'classnames';
 import UISpinner from 'Components/UIComponents/UISpinner';
 import { SelectableItem } from 'Interfaces/Common';
@@ -15,7 +15,7 @@ interface TeamMemberListMobileViewProps {
   isEditEnabled: boolean;
   isChangingRoleEnabled: boolean;
   toggleItemSelection?: (teamMemberId: string) => void;
-  user: User;
+  user: any;
   isOwnerOrAdmin?: boolean;
   openDeleteModal: () => void;
 }

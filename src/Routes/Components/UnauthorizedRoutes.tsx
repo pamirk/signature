@@ -1,4 +1,4 @@
-import React, { JSX } from 'react';
+import React from 'react';
 import { Router, Switch } from 'react-router-dom';
 import History from 'Services/History';
 

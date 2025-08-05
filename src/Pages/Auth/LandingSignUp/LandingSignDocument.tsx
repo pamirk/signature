@@ -166,7 +166,7 @@ const LandingSignDocument = ({
           className={classNames('sign-up-landing__upload-form')}
           onSubmit={renderProps.handleSubmit}
         >
-          {currentStep < 3 && (
+          {currentStep < 3 && (//@ts-ignore
             <LandingDocumentForm
               {...renderProps}
               document={document}

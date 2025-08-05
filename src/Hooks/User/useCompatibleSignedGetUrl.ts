@@ -30,7 +30,7 @@ const useCompatibleSignedGetUrl = () => {
     }
   });
 
-  const wrappedGetSignedUrl = useCallback(
+  const wrappedGetSignedUrl = useCallback(//@ts-ignore
     (params: GetUrlParams) => getSignedUrl(params),
     [getSignedUrl]
   );

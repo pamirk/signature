@@ -1,5 +1,5 @@
 import { createAsyncAction, createAction } from 'typesafe-actions';
-import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
+import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
 import {
   Document,
   DocumentValuesPayload,

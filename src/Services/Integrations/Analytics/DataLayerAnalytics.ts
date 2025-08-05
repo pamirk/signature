@@ -2,7 +2,7 @@
 import { User } from 'Interfaces/User';
 import { NODE_ENV } from 'Utils/constants';
 import { formatDateToHumanString } from 'Utils/formatters';
-import { AnalyticsData, EcommerceItem } from './interfaces';
+import { AnalyticsData, EcommerceItem } from './Interfaces';
 
 declare var dataLayer;
 

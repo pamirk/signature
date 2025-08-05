@@ -9,7 +9,8 @@ const pdfJsOptions = {
 //   '/static/js/pdf.worker.min.js',
 // );
 
-export type PDFDocumentProps = ComponentProps<typeof Document>;
+// export type PDFDocumentProps = ComponentProps<typeof Document>;
+export type PDFDocumentProps = any // Placeholder for Document component
 
 function PDFDocument(props: PDFDocumentProps) {
   const options = useMemo(() => ({ ...props.options, ...pdfJsOptions }), [props.options]);

@@ -14,7 +14,7 @@ import {
   UserResponseData,
 } from 'Interfaces/Auth';
 import { createAsyncAction, createAction } from 'typesafe-actions';
-import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
+import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
 import { promisifyAsyncAction } from 'Utils/functions';
 import {
   SignUpActionTypes,

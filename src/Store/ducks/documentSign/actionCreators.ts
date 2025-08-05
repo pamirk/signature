@@ -17,7 +17,7 @@ import {
   SigningUrlPayload,
   SigningRemindersUnlinkPayload,
 } from 'Interfaces/Document';
-import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
+import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
 import {
   AvailableSignersOptionsGetTypes,
   SignerDocumentGetTypes,

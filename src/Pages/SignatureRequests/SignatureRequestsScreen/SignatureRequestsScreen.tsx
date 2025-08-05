@@ -147,8 +147,8 @@ const SignatureRequestsScreen = ({ match }: RouteChildrenProps<statusType>) => {
           await getGridForSignatureRequests({
           page: paginationProps.pageNumber + 1,
           limit: paginationProps.itemsLimit,
-          searchTerm: documentNameFilter, // @ts-expect-error eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          dateFrom: formatDateToIsoString(from), // @ts-expect-error* eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          searchTerm: documentNameFilter,
+          dateFrom: formatDateToIsoString(from),
           dateTo: formatDateToIsoString(to),
           orderingKey: key,
           orderingDirection,

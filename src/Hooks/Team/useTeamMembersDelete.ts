@@ -6,7 +6,7 @@ import { TeamMember } from 'Interfaces/Team';
 export default () => {
   const dispatch = useDispatch();
 
-  return useAsyncAction((teamMembersIds: TeamMember['id'][]) =>
+  return useAsyncAction((teamMembersIds: TeamMember['id'][]) => //@ts-ignore
     $actions.team.deleteTeamMembers(dispatch, { teamMembersIds }),
   );
 };

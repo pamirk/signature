@@ -127,6 +127,7 @@ const WizardSignFormValues = ({
           ...values,
         })) as Document;
         form.change('signers', document.signers);
+        //@ts-ignore
         form.change('fields', document.fields);
         setDocumentId(document.id);
       } else {
@@ -136,6 +137,7 @@ const WizardSignFormValues = ({
         })) as Document;
 
         form.change('signers', updatedDocument.signers);
+        //@ts-ignore
         form.change('fields', updatedDocument.fields);
         setDocumentId(updatedDocument.id);
       }
@@ -183,9 +185,8 @@ const WizardSignFormValues = ({
       })}
       onSubmit={renderProps.handleSubmit}
     >
-      {currentStep < 3 && (
-        <div>
-          <UploadFileStep
+      {currentStep < 3 && ( //@ts-ignore
+        <div><UploadFileStep
             {...renderProps}
             document={document}
             onDocumentCreate={setDocumentId}

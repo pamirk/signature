@@ -201,11 +201,11 @@ const DocumentForm = ({
         return isTemplate
           ? role?.trim()
           : signer?.isPreparer ||
-              (form.getFieldState(`signers[${index}].email`)?.valid &&
-                form.getFieldState(`signers[${index}].name`)?.valid);
+              (form.getFieldState(`signers[${index}].email` as any)?.valid &&
+                form.getFieldState(`signers[${index}].name` as any)?.valid);
       }),
       recipients: values.recipients?.filter(
-        (recipient, index) => form.getFieldState(`recipients[${index}]email`)?.valid,
+        (recipient, index) => form.getFieldState(`recipients[${index}]email` as any)?.valid,
       ),
     }),
     [isTemplate, form],
@@ -343,7 +343,10 @@ const DocumentForm = ({
 
         const requiredSignersCount = initialType === DocumentTypes.OTHERS ? 2 : 3;
         if (signersWithoutRole.length < requiredSignersCount) {
-          signersWithoutRole.push({ order: 2 });
+          signersWithoutRole.push({
+            order: 2,
+            role: undefined,
+          });
         }
 
         form.change('signers', orderBy(signersWithoutRole, 'order', 'asc'));
@@ -550,8 +553,8 @@ const DocumentForm = ({
             (signer, index) =>
               signer &&
               (isOnlyMeType || !signer.isPreparer) &&
-              form.getFieldState(`signers[${index}].email`)?.valid &&
-              form.getFieldState(`signers[${index}].name`)?.valid,
+              form.getFieldState(`signers[${index}].email` as any)?.valid &&
+              form.getFieldState(`signers[${index}].name` as any)?.valid,
           );
 
           if (actualSigners.length < documentPrepareValidationMeta.signers.minLength) {

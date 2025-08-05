@@ -27,7 +27,6 @@ import { UnauthorizedRoutePaths } from 'Interfaces/RoutePaths';
 import { Tabs } from './components/Tabs';
 import { CURRENT_YEAR } from 'Utils/constants';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const testimonials = [
   {
     icon: LeeIcon,

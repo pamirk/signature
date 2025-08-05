@@ -423,7 +423,7 @@ const DocumentItem = ({
     handleClickDocumentRename,
   ]);
 
-  const handleUpdateDocument = ({ title }) => {
+  const handleUpdateDocument =  async ({ title }) => {
     onUpdateDocument(title, document.id, document.type);
     setRenamingDocumentId(undefined);
   };

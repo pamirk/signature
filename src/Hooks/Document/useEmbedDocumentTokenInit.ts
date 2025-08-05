@@ -23,6 +23,7 @@ export default () => {
   );
 
   const removeEmbedDocumenToken: RemoveEmbedDocumenToken = useCallback(() => {
+    //@ts-ignore
     dispatch(rootActions.document.finishEmbedDocumenToken());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

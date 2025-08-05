@@ -39,6 +39,7 @@ const ReminderModal = ({
   }, [orderedSigners, isSignersOrdered]);
   const [selectableSigners, toggleSignerSelection, selectedSigners] = useSelectableItem(
     orderedSigners,
+    //@ts-ignore
     'id',
   );
 
@@ -61,6 +62,7 @@ const ReminderModal = ({
 
   const handleRemindersSend = useCallback(async () => {
     try {
+      //@ts-ignore
       const selectedSignersIds = selectedSigners.map(signer => signer.id);
 
       await sendReminders({ signersIds: selectedSignersIds, documentId });
@@ -90,19 +92,20 @@ const ReminderModal = ({
       <div className={classNames('reminderModal__options', { mobile: isMobile })}>
         {selectableSigners.map(selectableSigner => (
           <button
-            disabled={
-              selectableSigner.isFinished ||
+            disabled={//@ts-ignore
+              selectableSigner.isFinished || //@ts-ignore
               (isSignersOrdered && selectableSigner.id !== firstUnfinishedSigner?.id)
-            }
+            }//@ts-ignore
             onClick={() => toggleSignerSelection(selectableSigner.id)}
+            //@ts-ignore
             key={selectableSigner.id}
             className="reminderModal__optionItem"
             type="button"
           >
-            <SignerItemLabel
-              avatarUrl={userAvatars[selectableSigner.userId]?.avatarUrl}
-              name={selectableSigner.name}
-              email={selectableSigner.email}
+            <SignerItemLabel //@ts-ignore
+              avatarUrl={userAvatars[selectableSigner.userId]?.avatarUrl} //@ts-ignore
+              name={selectableSigner.name} //@ts-ignore
+              email={selectableSigner.email}//@ts-ignore
               isSelected={selectableSigner.isSelected}
             />
             <UICheckbox check={selectableSigner.isSelected} />

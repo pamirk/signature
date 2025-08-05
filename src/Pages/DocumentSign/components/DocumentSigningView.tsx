@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import * as Sentry from '@sentry/react';
+// import * as Sentry from '@sentry/react';
 import {
   useCodeAccessSend,
   useDeclineSigningRequest,
@@ -166,12 +166,12 @@ const DocumentSigningView = ({
         }
       } catch (error) {
         Toast.handleErrors(error);
-        Sentry.captureException(error, {
-          extra: {
-            page: 'DocumentSigningView',
-            func: 'handleDocumentGet',
-          },
-        });
+        // Sentry.captureException(error, {
+        //   extra: {
+        //     page: 'DocumentSigningView',
+        //     func: 'handleDocumentGet',
+        //   },
+        // });
         navigateToRoot();
       }
     },

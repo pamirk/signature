@@ -1,3 +1,5 @@
+import {NormalizedEntity} from "./Common";
+
 export type ApiKeyCreatePayload = {
     name?: string;
     prefix?: string;
@@ -26,11 +28,20 @@ export interface ApiKeyIdPayload {
 }
 
 export interface ApiKeysData {
-  items?: ApiKey[];
-  // totalItems : number;
-  // totalPages: number;
-  // itemCount: number;
+    items?: ApiKey[];
+    apiKeys: NormalizedEntity<ApiKey>;
+    paginationData: {
+        totalItems: any;
+        pageCount: any;
+        itemsCount: any;
+    }
+    // totalItems : number;
+    // totalPages: number;
+    // itemCount: number;
 }
+
 export interface ApiKeyCreateResult {
     name?: string;
+    key?: string;
+
 }

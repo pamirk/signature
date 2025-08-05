@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useMemo, JSX} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import { useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
 import Toggler from 'react-toggle';
@@ -61,7 +61,6 @@ const renderCell = (
     value
   );
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const planPriorityByDuration = {
   [PlanDurations.MONTHLY]: {
     [PlanTypes.FREE]: 0,
@@ -75,7 +74,6 @@ export const planPriorityByDuration = {
   },
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const planMonthlyInformationItems = [
   {
     name: 'Plan Cost',
@@ -90,7 +88,6 @@ export const planMonthlyInformationItems = [
   ...planInformationItems,
 ];
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const planAnnuallyInformationItems = [
   {
     name: 'Plan Cost',
@@ -361,7 +358,6 @@ const BillingDefaultPlanScreen = () => {
       await getCard(undefined);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       if (error.statusCode !== HttpStatus.NOT_FOUND) {
         Toast.handleErrors(error);
       }

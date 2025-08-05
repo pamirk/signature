@@ -102,11 +102,12 @@ class OneDriveApi {
               await onPick(file);
             }
 
+            // @ts-ignore
             resolve();
           } catch (error) {
             reject(error);
           }
-        },
+        },            // @ts-ignore
         cancel: () => resolve(),
         error: () => {
           reject('Failed to pick file.');

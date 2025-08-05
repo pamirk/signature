@@ -1,4 +1,4 @@
-import io from 'socket.io-client';
+import io, {Socket}  from 'socket.io-client';
 import { eventChannel } from 'redux-saga';
 import { getType, EmptyActionCreator, PayloadAction, Action } from 'typesafe-actions';
 import { call, take, put, cancelled, fork, cancel } from 'redux-saga/effects';
@@ -21,7 +21,7 @@ interface SocketEventEmitter {
 }
 
 export class SocketService {
-  client: SocketIOClient.Socket | null = null;
+  client: Socket | null = null;
 
   connect = () => {
     if (!this.client) {
@@ -59,7 +59,7 @@ export class SocketService {
 
       this.on(event, emitter);
 
-      return () => this.client?.removeEventListener(event);
+      return () => this.client?.off(event);
     });
 
   private *channelizeSocketEvent(event: string, handlerActionCreator) {

@@ -128,6 +128,7 @@ function* handleToUserDonwgrade({
   }
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [
   takeLatest(getTeamMembers.request, handleTeamMembersGet),
   takeLatest(addTeamMembers.request, handleAddTeamMembers),

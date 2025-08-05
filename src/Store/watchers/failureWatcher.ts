@@ -1,6 +1,6 @@
 import { takeEvery, put } from 'redux-saga/effects';
 import { Action, PayloadMetaActionCreator } from 'typesafe-actions';
-import { PromisifiedActionMeta } from '@/Interfaces/ActionCreators.ts';
+import { PromisifiedActionMeta } from 'Interfaces/ActionCreators';
 import { HttpStatus } from 'Interfaces/HttpStatusEnum';
 import {
   CurrentUserGetActionTypes,

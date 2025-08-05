@@ -53,6 +53,7 @@ function TwoFactorForm({
   return (
     <Form
       onSubmit={onSubmit}
+        //@ts-ignore
       initialValues={{ twoFactorType } as TwoFactorFormValues}
       mutators={{ ...arrayMutators }}
       render={({

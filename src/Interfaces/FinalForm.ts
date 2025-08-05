@@ -1,5 +1,5 @@
 // Type for form submission return value - typically a Promise that resolves to success/failure
-export type OnSubmitReturnType = Promise<void>;
+export type OnSubmitReturnType = void;
 
 // Type for common form error shape
 export interface FormError {

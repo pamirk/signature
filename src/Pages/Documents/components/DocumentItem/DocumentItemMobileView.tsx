@@ -10,7 +10,7 @@ interface DocumentItemMobileViewProps {
   isActiveEditForm: boolean;
   options: any;
   className?: string;
-  handleUpdateDocument: (value: any) => void;
+  handleUpdateDocument: ({ title }: { title: string }) => Promise<void>;
 }
 
 const DocumentItemMobileView = ({

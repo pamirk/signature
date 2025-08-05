@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { PromisifiedActionMeta, ActionError } from '@/Interfaces/ActionCreators.ts';
+import { PromisifiedActionMeta, ActionError } from 'Interfaces/ActionCreators';
 import { promisifyAsyncAction } from 'Utils/functions';
 import { RequestHistoryGetActionTypes } from './actionTypes';
 import { RequestHistoryData, RequestHistoryGetPayload } from 'Interfaces/RequestsHistory';

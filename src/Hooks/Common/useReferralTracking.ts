@@ -5,7 +5,10 @@ export default () => {
     return new Promise(resolve => {
       // @ts-ignore
       if (!window.$FPROM) {
-        resolve();
+        resolve({
+            success: false,
+            message: 'Referral tracking is not initialized.',
+        });
       } else {
         // @ts-ignore
         window.$FPROM.trackSignup(

@@ -1,14 +1,13 @@
+import {Document} from "./Document";
+
 export interface Contract {
   email: string;
   id: string;
   name: string;
-  document: {
-    id: string;
-    status: string;
-    codeAccess?: string;
-  };
+  document: Document;
 }
 export interface ContractsPayload {
-  formRequestId: string;
+  formRequestId?: string;
   status?: string;
+  documentId?: string;
 }

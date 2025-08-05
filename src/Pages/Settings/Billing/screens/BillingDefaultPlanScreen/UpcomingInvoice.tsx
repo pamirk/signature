@@ -27,7 +27,7 @@ import { FieldTextInput, MaskedTextInput } from 'Components/FormFields';
 import { name, postalCode, required } from 'Utils/validation';
 import { postalCodeMask } from 'Utils/formatters';
 import ClearableTextInput from 'Components/FormFields/ClearableTextInput';
-import { User } from '@sentry/react';
+// import { User } from '@sentry/react';
 
 interface UpcomingInvoiceProps {
   targetPlan: Plan | ApiPlan;
@@ -57,7 +57,7 @@ const UpcomingInvoice = ({
   const [upcomingInvoice, setUpcomingInvoice] = useState<any>(undefined);
   const card = useSelector(selectCardFormValues);
   const ltdTier = useSelector(selectLtdTier);
-  const user: User = useSelector(selectUser);
+  const user: any = useSelector(selectUser);
   const isMobile = useIsMobile();
 
   const ltdType = useMemo(() => {

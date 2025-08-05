@@ -17,6 +17,7 @@ import {
 } from './actionCreators';
 import reducer from './reducer';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   sagas,
   reducer,

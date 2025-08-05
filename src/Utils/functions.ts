@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import dayjs from 'dayjs';
 import { START_WATCH_PROMISIFIED_ACTION } from 'Store/actionTypes';
 import { Action, DatePipeOptions } from 'Interfaces/Common';
-import { AsyncActionCreator } from '@/Interfaces/ActionCreators.ts';
+import { AsyncActionCreator } from 'Interfaces/ActionCreators';
 import { isEmpty, isArray } from 'lodash';
 import { DocumentFieldTypes } from 'Interfaces/DocumentFields';
 import Papa from 'papaparse';
@@ -79,11 +79,13 @@ export const parseCsvByStep = (file: File, rowLimit?: number, columnLimit?: numb
           reject(new Error(`Maximum number of rows is ${rowLimit}`));
           parser.abort();
         }
+        // @ts-ignore
         if (columnLimit && row.data.length > columnLimit) {
           reject(new Error(`Maximum number of columns is ${columnLimit}`));
           parser.abort();
         }
 
+        // @ts-ignore
         results.push(row.data);
         counter++;
       },

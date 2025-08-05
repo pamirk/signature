@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import RemoveIcon from 'Assets/images/icons/remove-icon.svg';
 import EditIcon from 'Assets/images/icons/edit-icon.svg';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export enum RequisiteActionTypes {
   EDIT = 'edit',
   DELETE = 'delete',

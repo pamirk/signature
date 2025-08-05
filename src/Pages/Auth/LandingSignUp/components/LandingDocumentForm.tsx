@@ -61,12 +61,12 @@ export const LandingDocumentForm = ({
 
         return (
           signer?.isPreparer ||
-          (form.getFieldState(`signers[${index}].email`)?.valid &&
-            form.getFieldState(`signers[${index}].name`)?.valid)
+          (form.getFieldState(`signers[${index}].email` as any)?.valid &&
+            form.getFieldState(`signers[${index}].name` as any)?.valid)
         );
       }),
       recipients: values.recipients?.filter(
-        (recipient, index) => form.getFieldState(`recipients[${index}]email`)?.valid,
+        (recipient, index) => form.getFieldState(`recipients[${index}]email` as any)?.valid,
       ),
     }),
     [form],

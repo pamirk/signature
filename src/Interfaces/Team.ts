@@ -1,16 +1,7 @@
 import { UserRoles } from "./User";
 
-export interface TeamMembersAddPayload {
-  members: {
-    email?: string;
-    role?: UserRoles;
-  }[];
-  emails?: string[]; // Add this if required by the type error
-}
-
-export interface TeamIdPayload {
-    teamId: string;
-}
+export type TeamMembersAddPayload = any
+export type TeamIdPayload = any
 
 export type TeamMember = {
     id: string;
@@ -27,13 +18,15 @@ export interface TeamMembersGetPayload {
     teamId?: string;
     page?: number;
     limit?: number;
-    TeamMembersGetPayload?: never
+    TeamMembersGetPayload?: never;
+    orderingDirection?: string;
+    orderingKey?: string;
 }
 
 export interface TeamMembersData {
     members?: TeamMember[];
     total?: number;
-
+    teamMembers?: Record<string, TeamMember>;
 }
 
 export interface DeleteTeamMembersPayload {

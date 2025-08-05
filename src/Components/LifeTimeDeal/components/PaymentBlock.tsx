@@ -5,7 +5,7 @@ import UIButton from 'Components/UIComponents/UIButton';
 import useIsMobile from 'Hooks/Common/useIsMobile';
 
 declare let paypal: any;
-const PaypalButton = paypal.Buttons.driver('react', { React, ReactDOM });
+// const PaypalButton = paypal.Buttons.driver('react', { React, ReactDOM });
 
 interface PaymentBlockProps {
   openStripeCheckout: () => void;
@@ -42,11 +42,14 @@ const PaymenBlock = ({
       />
       <div className="common__or lifeTimeDeal__or-divisor">OR</div>
 
-      <PaypalButton
-        style={{ shape: 'pill', width: '100%', outerHeight: '42px' }}
-        createOrder={createPaypalOrder}
-        onApprove={approvePaypalPayment}
-      />
+      <div className="lifeTimeDeal__paypal-button">
+        <span className="lifeTimeDeal__paypal-text">Pay with PayPal</span>
+      </div>
+      {/*<PaypalButton*/}
+      {/*  style={{ shape: 'pill', width: '100%', outerHeight: '42px' }}*/}
+      {/*  createOrder={createPaypalOrder}*/}
+      {/*  onApprove={approvePaypalPayment}*/}
+      {/*/>*/}
 
       <div className={classNames(policyClassName)}>
         <div

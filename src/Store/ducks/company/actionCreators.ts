@@ -1,6 +1,6 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 import { GetCompanyInfoActionTypes, redirectToBillingType } from './actionTypes';
-import { ActionError, PromisifiedActionMeta } from '@/Interfaces/ActionCreators.ts';
+import { ActionError, PromisifiedActionMeta } from 'Interfaces/ActionCreators';
 import { Company } from 'Interfaces/User';
 import { promisifyAsyncAction } from 'Utils/functions';
 

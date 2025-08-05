@@ -26,11 +26,13 @@ export default () => {
   }, [documentFieldsHistory]);
 
   const redoEmbedDocumentFieldAction: RedoEmbedDocumentFieldAction = useCallback(() => {
+    //@ts-ignore
     dispatch(rootActions.documentField.redoEmbedDocumentFieldsHistory.request());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const undoEmbedDocumentFieldAction: UndoEmbedDocumentFieldAction = useCallback(() => {
+    //@ts-ignore
     dispatch(rootActions.documentField.undoEmbedDocumentFieldsHistory.request());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

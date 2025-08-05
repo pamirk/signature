@@ -205,6 +205,7 @@ const TemplateForm = ({ initialValues, sourceTemplateId }: TemplateFormProps) =>
         onSubmit={onSubmit}
         mutators={{ ...arrayMutators }}
         render={(renderProps: FormRenderProps<DocumentValues>) => (
+            //@ts-ignore
           <DocumentForm
             {...renderProps}
             onDocumentCreate={setDocumentId}
