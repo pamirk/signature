@@ -3,7 +3,8 @@ import * as npmPackageMeta from '../../package.json';
 export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://api.signaturely.com' as string;
 export const API_GLOBAL_PREFIX = process.env.REACT_APP_API_GLOBAL_PREFIX || 'api' as string;
 export const API_VERSION = process.env.REACT_APP_API_VERSION || 'v1' as string;
-export const API_URL = `${API_BASE_URL}/${API_GLOBAL_PREFIX}/${API_VERSION}`;
+// export const API_URL = `${API_BASE_URL}/${API_GLOBAL_PREFIX}/${API_VERSION}`;
+export const API_URL = `http://0.0.0.0:8000/proxy`;
 export const REACT_APP_GOOGLE_RECAPTCHA_SITEKEY = process.env
   .REACT_APP_GOOGLE_RECAPTCHA_SITEKEY as string;
 
